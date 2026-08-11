@@ -2,7 +2,7 @@
 -- NC HUB | OFFICIAL LOADER
 -- ==========================================
 local PlaceId = game.PlaceId
-local BaseURL = "https://raw.githubusercontent.com/May67-dev/MiScriptRoblox/refs/heads/main/"
+local BaseURL = "https://raw.githubusercontent.com/NcMay67/MiScriptRoblox/refs/heads/main/"
 
 -- Diccionario de Juegos (ID = Nombre del archivo en GitHub)
 local Games = {
