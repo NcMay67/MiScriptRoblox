@@ -11,7 +11,8 @@ local Games = {
     [142823291]    = "MM2.lua",
     [118055952211055] = "HackABusiness.lua",
     [127634932179327] = "KickBall.lua",
-    [71785281157268] = "GemCrusher.lua"
+    [71785281157268] = "GemCrusher.lua",
+    [127475054933484] = "PowerCity.lua"
 }
 
 -- Determinamos qué archivo cargar
