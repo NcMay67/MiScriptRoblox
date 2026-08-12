@@ -1081,9 +1081,9 @@ local restore = Util.Make("TextButton", {
         app:Connect(button.MouseButton1Click, callback)
     end
 
-    macButton(NX.Theme.MacRed, 15, function() app:Destroy() end)
-    macButton(NX.Theme.MacYellow, 39, minimize)
-    macButton(NX.Theme.MacGreen, 63, function()
+    macButton(NX.Theme.MacRed, 16, function() app:Destroy() end)
+    macButton(NX.Theme.MacYellow, 45, minimize)
+    macButton(NX.Theme.MacGreen, 74, function()
         main.Position = UDim2.fromScale(0.5, 0.5)
     end)
     app:Connect(restore.MouseButton1Click, restoreWindow)
