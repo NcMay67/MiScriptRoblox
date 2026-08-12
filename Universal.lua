@@ -829,6 +829,43 @@ NX:Button(CleanupCard, {
         })
     end
 })
+local DashboardCard = LabTab:Card("DASHBOARD EN VIVO")
+
+local LiveKeyValue = NX:KeyValue(DashboardCard, {
+    Name = "Estado del monitor",
+    Value = "Iniciando",
+    Color = NX.Theme.Cian
+})
+
+local LiveStat = NX:Stat(DashboardCard, {
+    Name = "Segundos activos",
+    Value = "0",
+    Color = NX.Theme.Rose
+})
+
+local LiveProgress = NX:Progress(DashboardCard, {
+    Name = "Ciclo de prueba",
+    Value = 0,
+    Max = 20,
+    Color = NX.Theme.Cian,
+    Format = function(value, max)
+        return tostring(value) .. " / " .. tostring(max)
+    end
+})
+
+task.spawn(function()
+    local seconds = 0
+    while Window.Gui and Window.Gui.Parent do
+        seconds = seconds + 1
+        local cycle = seconds % 21
+
+        LiveKeyValue:Set(cycle == 20 and "Completado" or "Actualizando")
+        LiveStat:Set(tostring(seconds))
+        LiveProgress:Set(cycle, 20)
+
+        task.wait(1)
+    end
+end)
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
