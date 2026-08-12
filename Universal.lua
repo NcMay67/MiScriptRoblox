@@ -907,6 +907,33 @@ NX:Button(NamespaceCard, {
     Name = "Mostrar listas separadas",
     Callback = showLists
 })
+local NotificationCard = LabTab:Card("NOTIFICACIONES")
+
+NX:Button(NotificationCard, {
+    Name = "Lanzar 3 notificaciones",
+    Callback = function()
+        NX:Notify("Sistema", "Primera notificación: color cian.", {
+            Color = NX.Theme.Cian,
+            Duration = 5
+        })
+
+        NX:Notify("Perfil", "Segunda notificación: color rosa.", {
+            Color = NX.Theme.Rose,
+            Duration = 5
+        })
+
+        NX:Notify("Acción", "Tercera notificación con botón.", {
+            Color = NX.Theme.MacYellow,
+            Duration = 5,
+            ActionText = "Probar",
+            Action = function()
+                NX:Notify("Correcto", "El botón de acción funcionó.", {
+                    Color = NX.Theme.MacGreen
+                })
+            end
+        })
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
