@@ -1018,9 +1018,9 @@ local restore = Util.Make("TextButton", {
     local function miniTarget()
         return UDim2.new(
             miniBar.Position.X.Scale,
-            miniBar.Position.X.Offset + 63,
+            miniBar.Position.X.Offset + 66,
             miniBar.Position.Y.Scale,
-            miniBar.Position.Y.Offset + 19
+            miniBar.Position.Y.Offset + 20
         )
     end
 
@@ -1028,7 +1028,7 @@ local restore = Util.Make("TextButton", {
         if minimized then return end
         minimized = true
         Util.Tween(main, 0.24, {
-            Size = UDim2.fromOffset(126, 38),
+            Size = UDim2.fromOffset(132, 40),
             Position = miniTarget()
         }):Play()
         task.wait(0.25)
