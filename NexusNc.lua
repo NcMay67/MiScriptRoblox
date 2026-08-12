@@ -3159,6 +3159,97 @@ end
 
 NX:EnableAutoBinding()
 
+-- [[ 07.95. PANEL DE PERFILES ]]
+function NX:ProfilePanel(card, config)
+    config = config or {}
+
+    local store = self:ProfileStore(config.Namespace or "default")
+    local status = self:Label(card, config.StatusText or "Perfil: ninguno")
+
+    local nameInput = self:Input(card, {
+        Name = config.NameLabel or "Nombre del perfil",
+        Placeholder = config.Placeholder or "Ejemplo: Farm"
+    })
+
+    local profileList = self:Dropdown(card, {
+        Name = config.ListLabel or "Perfiles guardados",
+        Placeholder = config.ListPlaceholder or "Seleccionar perfil",
+        Values = store:List(),
+        Searchable = true,
+        Callback = function(value)
+            nameInput:Set(value)
+            status:Set("Perfil seleccionado: " .. tostring(value))
+        end
+    })
+
+    local function refresh()
+        profileList:Refresh(store:List())
+    end
+
+    local function getName()
+        return tostring(nameInput:Get() or "")
+    end
+
+    local save = self:Button(card, {
+        Name = config.SaveText or "Guardar perfil",
+        Callback = function()
+            local name = getName()
+            local ok, err = store:Save(name, config.Extra)
+            if ok then
+                refresh()
+                profileList:Set(name)
+                status:Set("Perfil guardado: " .. name)
+                if config.OnSave then config.OnSave(name) end
+            else
+                status:Set("Error: " .. tostring(err))
+            end
+        end
+    })
+
+    local load = self:Button(card, {
+        Name = config.LoadText or "Cargar perfil",
+        Callback = function()
+            local name = getName()
+            local extra, err = store:Load(name)
+            if extra then
+                status:Set("Perfil cargado: " .. name)
+                if config.OnLoad then config.OnLoad(name, extra) end
+            else
+                status:Set("Error: " .. tostring(err))
+            end
+        end
+    })
+
+    local delete = self:Button(card, {
+        Name = config.DeleteText or "Borrar perfil",
+        Callback = function()
+            local name = getName()
+            local ok, err = store:Delete(name)
+            if ok then
+                refresh()
+                status:Set("Perfil borrado: " .. name)
+                if config.OnDelete then config.OnDelete(name) end
+            else
+                status:Set("Error: " .. tostring(err))
+            end
+        end
+    })
+
+    return {
+        Store = store,
+        Refresh = refresh,
+        Save = function(_, name) return store:Save(name or getName(), config.Extra) end,
+        Load = function(_, name) return store:Load(name or getName()) end,
+        Delete = function(_, name) return store:Delete(name or getName()) end,
+        GetName = getName,
+        SetName = function(_, name) nameInput:Set(name) end,
+        GetProfiles = function() return store:List() end,
+        Status = status,
+        SaveButton = save,
+        LoadButton = load,
+        DeleteButton = delete
+    }
+end
 
 -- [[ 08. FEEDBACK ]]
 -- Gestor de notificaciones apiladas.
