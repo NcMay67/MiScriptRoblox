@@ -929,64 +929,86 @@ end
 
 
     local mac = Util.Make("Frame", {
-        AnchorPoint = Vector2.new(1, 0.5),
-        BackgroundColor3 = NX.Theme.Surface2,
-        BackgroundTransparency = 0.15,
-        BorderSizePixel = 0,
-        Position = UDim2.new(1, -14, 0.5, 0),
-        Size = UDim2.fromOffset(78, 28),
-        Parent = topbar
-    })
-    Util.Round(mac, 9)
-    Util.Stroke(mac, NX.Theme.Stroke, 0.55)
+    AnchorPoint = Vector2.new(1, 0.5),
+    BackgroundColor3 = NX.Theme.Surface2,
+    BackgroundTransparency = 0.08,
+    BorderSizePixel = 0,
+    Position = UDim2.new(1, -13, 0.5, 0),
+    Size = UDim2.fromOffset(90, 30),
+    Parent = topbar
+})
+Util.Round(mac, 11)
+Util.Stroke(mac, NX.Theme.Stroke, 0.35)
 
-    local miniBar = Util.Make("Frame", {
-        BackgroundColor3 = NX.Theme.Surface,
-        BorderSizePixel = 0,
-        Position = UDim2.new(1, -145, 0, 82),
-        Size = UDim2.fromOffset(126, 38),
-        Visible = false,
-        Parent = gui
-    })
-    Util.Round(miniBar, 12)
-    Util.Stroke(miniBar, NX.Theme.Accent, 0.25)
+local miniBar = Util.Make("Frame", {
+    BackgroundColor3 = NX.Theme.Surface2,
+    BackgroundTransparency = 0.03,
+    BorderSizePixel = 0,
+    Position = UDim2.new(1, -151, 0, 82),
+    Size = UDim2.fromOffset(132, 40),
+    Visible = false,
+    Parent = gui
+})
+Util.Round(miniBar, 13)
+Util.Stroke(miniBar, NX.Theme.Accent, 0.18)
 
-    local grip = Util.Make("TextButton", {
-        AutoButtonColor = false,
-        BackgroundColor3 = NX.Theme.Surface2,
-        BorderSizePixel = 0,
-        Position = UDim2.fromOffset(4, 4),
-        Size = UDim2.fromOffset(28, 30),
-        Text = "",
-        Parent = miniBar
-    })
-    Util.Round(grip, 9)
+local miniAccent = Util.Make("Frame", {
+    BackgroundColor3 = NX.Theme.Accent,
+    BorderSizePixel = 0,
+    Position = UDim2.fromOffset(0, 10),
+    Size = UDim2.fromOffset(3, 20),
+    Parent = miniBar
+})
+Util.Round(miniAccent, 99)
 
-    for index = 1, 3 do
-        local dot = Util.Make("Frame", {
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            BackgroundColor3 = NX.Theme.Muted,
-            BorderSizePixel = 0,
-            Position = UDim2.new(0.5, 0, 0, 7 + index * 7),
-            Size = UDim2.fromOffset(3, 3),
-            Parent = grip
-        })
-        Util.Round(dot, 99)
-    end
+local grip = Util.Make("TextButton", {
+    AutoButtonColor = false,
+    BackgroundColor3 = NX.Theme.Surface,
+    BorderSizePixel = 0,
+    Position = UDim2.fromOffset(6, 4),
+    Size = UDim2.fromOffset(34, 32),
+    Text = "",
+    Parent = miniBar
+})
+Util.Round(grip, 10)
 
-    local restore = Util.Make("TextButton", {
-        AutoButtonColor = false,
-        BackgroundTransparency = 1,
+-- Agarre de tres puntos horizontal, pensado para arrastrar en móvil.
+for index = 1, 3 do
+    local dot = Util.Make("Frame", {
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundColor3 = NX.Theme.Muted,
         BorderSizePixel = 0,
-        Position = UDim2.fromOffset(37, 0),
-        Size = UDim2.new(1, -41, 1, 0),
-        Text = "N  NC HUB",
-        TextColor3 = NX.Theme.Text,
-        TextSize = 12,
-        Font = Enum.Font.GothamBold,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        Parent = miniBar
+        Position = UDim2.fromOffset(10 + (index - 1) * 7, 16),
+        Size = UDim2.fromOffset(3, 3),
+        Parent = grip
     })
+    Util.Round(dot, 99)
+end
+
+local miniLogo = Util.Make("Frame", {
+    AnchorPoint = Vector2.new(0, 0.5),
+    BackgroundColor3 = NX.Theme.Cian,
+    BorderSizePixel = 0,
+    Position = UDim2.new(0, 49, 0.5, 0),
+    Size = UDim2.fromOffset(8, 8),
+    Parent = miniBar
+})
+Util.Round(miniLogo, 99)
+
+local restore = Util.Make("TextButton", {
+    AutoButtonColor = false,
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    Position = UDim2.fromOffset(63, 0),
+    Size = UDim2.new(1, -69, 1, 0),
+    Text = "NC HUB",
+    TextColor3 = NX.Theme.Text,
+    TextSize = 12,
+    Font = Enum.Font.GothamBold,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Parent = miniBar
+})
+
     Input.Drag(grip, miniBar, app.Maid)
 
     local normalSize = main.Size
