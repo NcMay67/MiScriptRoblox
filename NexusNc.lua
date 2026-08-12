@@ -2673,13 +2673,14 @@ function NX:ColorPicker(card, config)
     Util.Round(selectButton, 9)
 
     local preview = Util.Make("Frame", {
-        AnchorPoint = Vector2.new(0, 0.5),
-        BackgroundColor3 = state:Get(),
-        BorderSizePixel = 0,
-        Position = Udim2.fromOffset(10, 42),
-        Size = UDim2.fromOffset(20, 20),
-        Parent = holder
-    })
+    AnchorPoint = Vector2.new(0, 0.5),
+    BackgroundColor3 = state:Get(),
+    BorderSizePixel = 0,
+    Position = UDim2.new(0, 10, 0.5, 0),
+    Size = UDim2.fromOffset(20, 20),
+    Parent = box
+})
+
     Util.Round(preview, 6)
     Util.Stroke(preview, NX.Theme.Text, 0.55)
 
