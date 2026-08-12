@@ -172,10 +172,11 @@ function NX:Window(config)
     title.Size = UDim2.new(0.5, 0, 1, 0)
 
     local subtitle = text(topbar, config.Subtitle or "", 12, Enum.Font.Gotham, NX.Theme.Muted)
-    subtitle.AnchorPoint = Vector2.new(1, 0)
-    subtitle.Position = UDim2.new(1, -55, 0, 0)
-    subtitle.Size = UDim2.new(0.5, 0, 1, 0)
-    subtitle.TextXAlignment = Enum.TextXAlignment.Right
+    subtitle.AnchorPoint = Vector2.new(0, 0)
+subtitle.Position = UDim2.fromOffset(172, 0)
+subtitle.Size = UDim2.new(1, -252, 1, 0)
+subtitle.TextXAlignment = Enum.TextXAlignment.Left
+
 
     local mac = make("Frame", {
     AnchorPoint = Vector2.new(1, 0.5),
