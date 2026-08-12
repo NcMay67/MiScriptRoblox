@@ -650,27 +650,32 @@ ExtensionCard:Add("Label", {
 local BindCard = LabTab:Card("PREFERENCIAS VINCULADAS")
 local BindStatus = NX:Label(BindCard, "Estado: cambia valores y guarda")
 
-local BindToggle = NX:Toggle(BindCard, {
+NX:Toggle(BindCard, {
     Name = "Opción guardable",
-    Default = false
+    Default = false,
+    Bind = "lab_toggle"
 })
 
-local BindSlider = NX:Slider(BindCard, {
+NX:Slider(BindCard, {
     Name = "Número guardable",
     Min = 0,
     Max = 100,
-    Default = 25
+    Default = 25,
+    Bind = "lab_slider"
 })
 
-local BindInput = NX:Input(BindCard, {
+NX:Input(BindCard, {
     Name = "Texto guardable",
-    Placeholder = "Escribe algo"
+    Placeholder = "Escribe algo",
+    Bind = "lab_input"
 })
 
-local BindColor = NX:ColorPicker(BindCard, {
+NX:ColorPicker(BindCard, {
     Name = "Color guardable",
-    Default = NX.Theme.Cian
+    Default = NX.Theme.Cian,
+    Bind = "lab_color"
 })
+
 
 NX:Bind("lab_toggle", BindToggle)
 NX:Bind("lab_slider", BindSlider)
