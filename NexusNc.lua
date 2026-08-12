@@ -2947,10 +2947,24 @@ NX:EnableAutoBinding()
 
 
 -- [[ 08. FEEDBACK ]]
-function NX:Notify(title, message)
-    local maid = NX:TrackOverlay(Maid.new())
+-- Gestor de notificaciones apiladas.
+NX.NotificationService = Runtime.NEXUS_NC_NOTIFICATION_SERVICE or {
+    Host = nil,
+    Maid = nil,
+    Count = 0
+}
+Runtime.NEXUS_NC_NOTIFICATION_SERVICE = NX.NotificationService
+
+function NX:_GetNotificationHost()
+    local service = self.NotificationService
+
+    if service.Host and service.Host.Parent then
+        return service.Host
+    end
+
+    local maid = self:TrackOverlay(Maid.new())
     local gui = Util.Make("ScreenGui", {
-        Name = "NEXUS_NC_NOTIFY",
+        Name = "NEXUS_NC_NOTIFICATIONS",
         IgnoreGuiInset = true,
         ResetOnSpawn = false,
         DisplayOrder = 999998,
@@ -2958,37 +2972,267 @@ function NX:Notify(title, message)
     })
     maid:Give(gui)
 
-    local box = Util.Make("Frame", {
+    local holder = Util.Make("Frame", {
         AnchorPoint = Vector2.new(1, 1),
-        BackgroundColor3 = NX.Theme.Surface,
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        Position = UDim2.new(1, 250, 1, -18),
-        Size = UDim2.fromOffset(235, 70),
+        Position = UDim2.new(1, -16, 1, -18),
+        Size = UDim2.fromOffset(245, 0),
         Parent = gui
     })
+    Util.Make("UIListLayout", {
+        Padding = UDim.new(0, 7),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        VerticalAlignment = Enum.VerticalAlignment.Bottom,
+        Parent = holder
+    })
+
+    service.Host = holder
+    service.Maid = maid
+    return holder
+end
+
+function NX:Notify(title, message, options)
+    if type(title) == "table" then
+        options = title
+        title = options.Title
+        message = options.Content or options.Message
+    end
+
+    options = options or {}
+    local holder = self:_GetNotificationHost()
+    local service = self.NotificationService
+    service.Count = service.Count + 1
+
+    local maid = Maid.new()
+    local closed = false
+    local accent = options.Color or NX.Theme.Cian
+
+    local box = Util.Make("Frame", {
+        BackgroundColor3 = NX.Theme.Surface,
+        BorderSizePixel = 0,
+        LayoutOrder = service.Count,
+        Size = UDim2.new(1, 0, 0, 68),
+        Parent = holder
+    })
     Util.Round(box, 12)
-    Util.Stroke(box, NX.Theme.Accent, 0.25)
+    Util.Stroke(box, accent, 0.22)
 
-    local heading = Util.Text(box, title or "NC HUB", 14, Enum.Font.GothamBold)
-    heading.Position = UDim2.fromOffset(12, 8)
-    heading.Size = UDim2.new(1, -24, 0, 19)
+    local accentBar = Util.Make("Frame", {
+        BackgroundColor3 = accent,
+        BorderSizePixel = 0,
+        Position = UDim2.fromOffset(0, 10),
+        Size = UDim2.fromOffset(3, 48),
+        Parent = box
+    })
+    Util.Round(accentBar, 99)
 
-    local body = Util.Text(box, message or "", 12, Enum.Font.Gotham, NX.Theme.Muted)
-    body.Position = UDim2.fromOffset(12, 30)
-    body.Size = UDim2.new(1, -24, 0, 30)
+    local heading = Util.Text(box, title or "NC HUB", 13, Enum.Font.GothamBold, NX.Theme.Text)
+    heading.Position = UDim2.fromOffset(13, 8)
+    heading.Size = UDim2.new(1, -45, 0, 18)
+
+    local body = Util.Text(box, message or "", 11, Enum.Font.Gotham, NX.Theme.Muted)
+    body.Position = UDim2.fromOffset(13, 28)
+    body.Size = UDim2.new(1, -28, 0, 29)
     body.TextWrapped = true
     body.TextYAlignment = Enum.TextYAlignment.Top
 
-    Util.Tween(box, 0.22, { Position = UDim2.new(1, -18, 1, -18) }):Play()
-    task.delay(3, function()
-        if not box.Parent then return end
-        Util.Tween(box, 0.2, {
-            Position = UDim2.new(1, 250, 1, -18),
-            BackgroundTransparency = 1
+    local closeButton = Util.Make("TextButton", {
+        AnchorPoint = Vector2.new(1, 0),
+        AutoButtonColor = false,
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Position = UDim2.new(1, -8, 0, 6),
+        Size = UDim2.fromOffset(22, 22),
+        Text = "×",
+        TextColor3 = NX.Theme.Muted,
+        TextSize = 18,
+        Font = Enum.Font.GothamBold,
+        Parent = box
+    })
+
+    local function close()
+        if closed then return end
+        closed = true
+
+        Util.Tween(box, 0.16, {
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 0, 0)
         }):Play()
-        task.wait(0.25)
+        Util.Tween(heading, 0.12, { TextTransparency = 1 }):Play()
+        Util.Tween(body, 0.12, { TextTransparency = 1 }):Play()
+        Util.Tween(closeButton, 0.12, { TextTransparency = 1 }):Play()
+        task.wait(0.18)
         maid:Destroy()
-    end)
+        if box.Parent then box:Destroy() end
+    end
+
+    maid:Give(closeButton.MouseButton1Click:Connect(close))
+
+    if type(options.Action) == "function" then
+        local action = Util.Make("TextButton", {
+            AnchorPoint = Vector2.new(1, 1),
+            AutoButtonColor = false,
+            BackgroundColor3 = NX.Theme.Surface2,
+            BorderSizePixel = 0,
+            Position = UDim2.new(1, -9, 1, -7),
+            Size = UDim2.fromOffset(70, 20),
+            Text = options.ActionText or "Abrir",
+            TextColor3 = accent,
+            TextSize = 10,
+            Font = Enum.Font.GothamBold,
+            Parent = box
+        })
+        Util.Round(action, 6)
+        maid:Give(action.MouseButton1Click:Connect(function()
+            options.Action()
+            close()
+        end))
+        body.Size = UDim2.new(1, -105, 0, 29)
+    end
+
+    box.BackgroundTransparency = 1
+    heading.TextTransparency = 1
+    body.TextTransparency = 1
+    closeButton.TextTransparency = 1
+    Util.Tween(box, 0.18, { BackgroundTransparency = 0 }):Play()
+    Util.Tween(heading, 0.14, { TextTransparency = 0 }):Play()
+    Util.Tween(body, 0.14, { TextTransparency = 0 }):Play()
+    Util.Tween(closeButton, 0.14, { TextTransparency = 0 }):Play()
+
+    local duration = tonumber(options.Duration)
+    if duration == nil then duration = 3 end
+    if duration > 0 then
+        task.delay(duration, close)
+    end
+
+    return {
+        Close = close,
+        SetTitle = function(_, value) heading.Text = tostring(value) end,
+        SetContent = function(_, value) body.Text = tostring(value) end
+    }
+end
+
+function NX:Notify(title, message, options)
+    if type(title) == "table" then
+        options = title
+        title = options.Title
+        message = options.Content or options.Message
+    end
+
+    options = options or {}
+    local holder = self:_GetNotificationHost()
+    local service = self.NotificationService
+    service.Count = service.Count + 1
+
+    local maid = Maid.new()
+    local closed = false
+    local accent = options.Color or NX.Theme.Cian
+
+    local box = Util.Make("Frame", {
+        BackgroundColor3 = NX.Theme.Surface,
+        BorderSizePixel = 0,
+        LayoutOrder = service.Count,
+        Size = UDim2.new(1, 0, 0, 68),
+        Parent = holder
+    })
+    Util.Round(box, 12)
+    Util.Stroke(box, accent, 0.22)
+
+    local accentBar = Util.Make("Frame", {
+        BackgroundColor3 = accent,
+        BorderSizePixel = 0,
+        Position = UDim2.fromOffset(0, 10),
+        Size = UDim2.fromOffset(3, 48),
+        Parent = box
+    })
+    Util.Round(accentBar, 99)
+
+    local heading = Util.Text(box, title or "NC HUB", 13, Enum.Font.GothamBold, NX.Theme.Text)
+    heading.Position = UDim2.fromOffset(13, 8)
+    heading.Size = UDim2.new(1, -45, 0, 18)
+
+    local body = Util.Text(box, message or "", 11, Enum.Font.Gotham, NX.Theme.Muted)
+    body.Position = UDim2.fromOffset(13, 28)
+    body.Size = UDim2.new(1, -28, 0, 29)
+    body.TextWrapped = true
+    body.TextYAlignment = Enum.TextYAlignment.Top
+
+    local closeButton = Util.Make("TextButton", {
+        AnchorPoint = Vector2.new(1, 0),
+        AutoButtonColor = false,
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Position = UDim2.new(1, -8, 0, 6),
+        Size = UDim2.fromOffset(22, 22),
+        Text = "×",
+        TextColor3 = NX.Theme.Muted,
+        TextSize = 18,
+        Font = Enum.Font.GothamBold,
+        Parent = box
+    })
+
+    local function close()
+        if closed then return end
+        closed = true
+
+        Util.Tween(box, 0.16, {
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 0, 0)
+        }):Play()
+        Util.Tween(heading, 0.12, { TextTransparency = 1 }):Play()
+        Util.Tween(body, 0.12, { TextTransparency = 1 }):Play()
+        Util.Tween(closeButton, 0.12, { TextTransparency = 1 }):Play()
+        task.wait(0.18)
+        maid:Destroy()
+        if box.Parent then box:Destroy() end
+    end
+
+    maid:Give(closeButton.MouseButton1Click:Connect(close))
+
+    if type(options.Action) == "function" then
+        local action = Util.Make("TextButton", {
+            AnchorPoint = Vector2.new(1, 1),
+            AutoButtonColor = false,
+            BackgroundColor3 = NX.Theme.Surface2,
+            BorderSizePixel = 0,
+            Position = UDim2.new(1, -9, 1, -7),
+            Size = UDim2.fromOffset(70, 20),
+            Text = options.ActionText or "Abrir",
+            TextColor3 = accent,
+            TextSize = 10,
+            Font = Enum.Font.GothamBold,
+            Parent = box
+        })
+        Util.Round(action, 6)
+        maid:Give(action.MouseButton1Click:Connect(function()
+            options.Action()
+            close()
+        end))
+        body.Size = UDim2.new(1, -105, 0, 29)
+    end
+
+    box.BackgroundTransparency = 1
+    heading.TextTransparency = 1
+    body.TextTransparency = 1
+    closeButton.TextTransparency = 1
+    Util.Tween(box, 0.18, { BackgroundTransparency = 0 }):Play()
+    Util.Tween(heading, 0.14, { TextTransparency = 0 }):Play()
+    Util.Tween(body, 0.14, { TextTransparency = 0 }):Play()
+    Util.Tween(closeButton, 0.14, { TextTransparency = 0 }):Play()
+
+    local duration = tonumber(options.Duration)
+    if duration == nil then duration = 3 end
+    if duration > 0 then
+        task.delay(duration, close)
+    end
+
+    return {
+        Close = close,
+        SetTitle = function(_, value) heading.Text = tostring(value) end,
+        SetContent = function(_, value) body.Text = tostring(value) end
+    }
 end
 
 function NX:Loading(config)
