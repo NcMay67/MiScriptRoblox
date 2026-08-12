@@ -520,6 +520,28 @@ NX:Button(DialogCard, {
         })
     end
 })
+local LayoutCard = LabTab:Card("LAYOUT")
+
+NX:Badge(LayoutCard, {
+    Text = "NEXUS NC v0.5",
+    Color = NX.Theme.Cian
+})
+
+NX:Paragraph(LayoutCard, {
+    Title = "Tarjeta informativa",
+    Content = "Esto es un Paragraph: sirve para mostrar información organizada dentro de cualquier módulo."
+})
+
+NX:Divider(LayoutCard, "SEPARADOR")
+
+NX:Paragraph(LayoutCard, {
+    Title = "Sin contenedor",
+    Content = "Esta variante usa Boxed = false y sirve para textos más simples.",
+    Boxed = false
+})
+
+NX:Space(LayoutCard, 4)
+NX:Label(LayoutCard, "Fin de la prueba de layout")
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
