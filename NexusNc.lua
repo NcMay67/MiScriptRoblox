@@ -1249,20 +1249,35 @@ end
                 if not tab.Visible or tab.Disabled then return end
                 for _, other in ipairs(app.Tabs) do
                     other.Page.Visible = false
-                    other.Button.BackgroundColor3 = NX.Theme.Surface
                     other.Button.TextColor3 = NX.Theme.Muted
+                    Util.Tween(other.Button, 0.14, {BackgroundColor3 = NX.Theme.Surface
+                    }):Play()
+                
+                if other.ActiveMarker then
+                    
+                    Util.Tween(other.ActiveMarker, 0.14, {
+                        BackgroundTransparency = 1,
+                        Size = UDim2.fromOffset(0, 20)
+                        }):Play()
+                    end
                 end
+                
                 page.Visible = true
-                button.BackgroundColor3 = NX.Theme.Purple
                 button.TextColor3 = NX.Theme.Text
+                Util.Tween(button, 0.16, {
+                    BackgroundColor3 = NX.Theme.Purple
+                    }):Play()
+                
+                if activeMarker then
+                    Util.Tween(activeMarker, 0.16, {
+                        BackgroundTransparency = 0, 
+                    Size = UDim2.fromOffset(3, 20)
+                    }):Play()
+                end
+                
                 app.ActiveTab = tab
-            end
-
-            function tab:Card(title)
-                local card = { Frame = nil, Maid = app.Maid }
-                function card:Add(component, config)
-    return NX:CreateComponent(component, self, config)
-end
+                 
+                    
 
                 local frame = Util.Make("Frame", {
                     AutomaticSize = Enum.AutomaticSize.Y,
