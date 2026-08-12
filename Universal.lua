@@ -1006,6 +1006,36 @@ NX:ProfilePanel(ProfilePanelCard, {
     StatusText = "Perfil de prueba: ninguno",
     Placeholder = "Ejemplo: PanelFarm"
 })
+local LoopCard = LabTab:Card("TASK RUNNER")
+local LoopStatus = NX:Label(LoopCard, "Contador: detenido")
+local LoopCount = 0
+
+NX:Button(LoopCard, {
+    Name = "Iniciar contador",
+    Callback = function()
+        NX:StartLoop("nexus_lab_counter", 1, function(token)
+            LoopCount = LoopCount + 1
+            LoopStatus:Set("Contador: " .. tostring(LoopCount) .. " | ejecuciones: " .. tostring(token.Runs + 1))
+        end, true)
+    end
+})
+
+NX:Button(LoopCard, {
+    Name = "Detener contador",
+    Callback = function()
+        local stopped = NX:StopLoop("nexus_lab_counter")
+        LoopStatus:Set(stopped and "Contador: detenido" or "Contador: ya estaba detenido")
+    end
+})
+
+NX:Button(LoopCard, {
+    Name = "Reiniciar contador",
+    Callback = function()
+        NX:StopLoop("nexus_lab_counter")
+        LoopCount = 0
+        LoopStatus:Set("Contador: reiniciado")
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
