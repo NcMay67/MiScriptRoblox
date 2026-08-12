@@ -180,53 +180,73 @@ subtitle.TextXAlignment = Enum.TextXAlignment.Left
 
     local mac = make("Frame", {
     AnchorPoint = Vector2.new(1, 0.5),
-    BackgroundTransparency = 1,
+    BackgroundColor3 = NX.Theme.Surface2,
+    BackgroundTransparency = 0.15,
+    BorderSizePixel = 0,
     Position = UDim2.new(1, -14, 0.5, 0),
-    Size = UDim2.fromOffset(62, 20),
+    Size = UDim2.fromOffset(78, 28),
     Parent = topbar
 })
+round(mac, 9)
+line(mac, NX.Theme.Stroke, 0.55)
 
 local reopen = make("TextButton", {
     AnchorPoint = Vector2.new(0.5, 0.5),
     AutoButtonColor = false,
-    BackgroundColor3 = NX.Theme.Surface,
+    BackgroundColor3 = NX.Theme.Surface2,
     BorderSizePixel = 0,
-    Position = UDim2.new(0, 42, 0.5, 0),
-    Size = UDim2.fromOffset(38, 38),
-    Text = "N",
+    Position = UDim2.new(1, -30, 1, -30),
+    Size = UDim2.fromOffset(44, 44),
+    Text = "NC",
     TextColor3 = NX.Theme.Cian,
-    TextSize = 16,
+    TextSize = 12,
     Font = Enum.Font.GothamBold,
     Visible = false,
     Parent = gui
 })
-round(reopen, 12)
-line(reopen, NX.Theme.Accent, 0.2)
+round(reopen, 14)
+line(reopen, NX.Theme.Accent, 0.25)
 
 local function macButton(color, x, callback)
     local button = make("TextButton", {
+        AnchorPoint = Vector2.new(0.5, 0.5),
         AutoButtonColor = false,
         BackgroundColor3 = color,
         BorderSizePixel = 0,
-        Position = UDim2.fromOffset(x, 2),
-        Size = UDim2.fromOffset(16, 16),
+        Position = UDim2.fromOffset(x, 14),
+        Size = UDim2.fromOffset(12, 12),
         Text = "",
         Parent = mac
     })
     round(button, 99)
+
+    button.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch
+            or input.UserInputType == Enum.UserInputType.MouseButton1 then
+            tween(button, 0.08, {Size = UDim2.fromOffset(15, 15)}):Play()
+        end
+    end)
+
+    button.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch
+            or input.UserInputType == Enum.UserInputType.MouseButton1 then
+            tween(button, 0.10, {Size = UDim2.fromOffset(12, 12)}):Play()
+        end
+    end)
+
     button.MouseButton1Click:Connect(callback)
 end
 
-macButton(NX.Theme.MacRed, 0, function()
+macButton(NX.Theme.MacRed, 15, function()
     gui:Destroy()
 end)
 
-macButton(NX.Theme.MacYellow, 23, function()
+macButton(NX.Theme.MacYellow, 39, function()
     main.Visible = false
     reopen.Visible = true
 end)
 
-macButton(NX.Theme.MacGreen, 46, function()
+macButton(NX.Theme.MacGreen, 63, function()
     main.Position = UDim2.fromScale(0.5, 0.5)
 end)
 
