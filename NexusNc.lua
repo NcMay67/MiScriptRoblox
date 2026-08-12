@@ -1061,7 +1061,7 @@ local restore = Util.Make("TextButton", {
             BackgroundColor3 = color,
             BorderSizePixel = 0,
             Position = UDim2.fromOffset(x, 14),
-            Size = UDim2.fromOffset(12, 12),
+            Size = UDim2.fromOffset(13, 13),
             Text = "",
             Parent = mac
         })
