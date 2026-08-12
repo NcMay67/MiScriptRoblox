@@ -944,7 +944,7 @@ local miniBar = Util.Make("Frame", {
     BackgroundColor3 = NX.Theme.Surface2,
     BackgroundTransparency = 0.03,
     BorderSizePixel = 0,
-    Position = UDim2.new(0.5, -66, 0, 42),
+    Position = UDim2.new(0.5, -66, 0, 0),
     Size = UDim2.fromOffset(132, 40),
     Visible = false,
     Parent = gui
@@ -1027,7 +1027,7 @@ local restore = Util.Make("TextButton", {
     local function minimize()
         if minimized then return end
         minimized = true
-        miniBar.Position = UDim2.new(0.5, -66, 0, 42)
+        miniBar.Position = UDim2.new(0.5, -66, 0, 0)
         Util.Tween(main, 0.24, {
             Size = UDim2.fromOffset(132, 40),
             Position = miniTarget()
