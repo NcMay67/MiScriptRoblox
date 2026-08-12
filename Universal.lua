@@ -767,6 +767,46 @@ NX:Button(ProfileCard, {
         end
     end
 })
+local AccordionCard = LabTab:Card("ACCORDION")
+local AccordionStatus = NX:Label(AccordionCard, "Estado: cerrado")
+
+local TestAccordion = NX:Accordion(AccordionCard, {
+    Name = "Controles avanzados",
+    Default = false,
+    Callback = function(open)
+        AccordionStatus:Set(open and "Estado: abierto" or "Estado: cerrado")
+    end
+})
+
+NX:Paragraph(TestAccordion, {
+    Title = "Grupo plegable",
+    Content = "Los controles dentro de este grupo se esconden para ahorrar espacio en móvil.",
+    Boxed = false
+})
+
+NX:Toggle(TestAccordion, {
+    Name = "Toggle interno",
+    Callback = function(state)
+        AccordionStatus:Set("Toggle interno: " .. tostring(state))
+    end
+})
+
+NX:Slider(TestAccordion, {
+    Name = "Slider interno",
+    Min = 0,
+    Max = 10,
+    Default = 5,
+    Callback = function(value)
+        AccordionStatus:Set("Slider interno: " .. tostring(value))
+    end
+})
+
+NX:Button(TestAccordion, {
+    Name = "Botón interno",
+    Callback = function()
+        AccordionStatus:Set("Botón interno correcto")
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
