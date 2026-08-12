@@ -1170,6 +1170,17 @@ Util.Round(sectionMarker, 99)
                 PaddingLeft = UDim.new(0, 10),
                 Parent = button
             })
+        local activeMarker = Util.Make("Frame", {
+    AnchorPoint = Vector2.new(0, 0.5),
+    BackgroundColor3 = NX.Theme.Cian,
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    Position = UDim2.new(0, 0, 0.5, 0),
+    Size = UDim2.fromOffset(0, 20),
+    Parent = button
+})
+Util.Round(activeMarker, 99)
+
 
             local page = Util.Make("ScrollingFrame", {
                 Active = true,
