@@ -21,8 +21,8 @@ local StartedAt = os.time()
 local Window = NX:Window({
     Title = "NC HUB",
     Subtitle = "By hidjcjgg",
-    Width = 580,
-    Height = 400
+    Width = 520,
+    Height = 350
 })
 
 local function getCharacter()
