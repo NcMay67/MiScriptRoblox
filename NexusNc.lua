@@ -2809,6 +2809,113 @@ function NX:ColorPicker(card, config)
         end
     }
 end
+
+function NX:ColorInput(card, config)
+    config = config or {}
+
+    local disabled = config.Disabled == true
+    local state = NX:Value(config.Default or NX.Theme.Accent)
+
+    local function toHex(color)
+        return string.format("#%02X%02X%02X",
+            math.floor(color.R * 255 + 0.5),
+            math.floor(color.G * 255 + 0.5),
+            math.floor(color.B * 255 + 0.5)
+        )
+    end
+
+    local function fromHex(text)
+        text = tostring(text or ""):upper():gsub("%s", "")
+        text = text:gsub("^#", "")
+        if #text ~= 6 or not text:match("^[0-9A-F]+$") then return nil end
+
+        local red = tonumber(text:sub(1, 2), 16)
+        local green = tonumber(text:sub(3, 4), 16)
+        local blue = tonumber(text:sub(5, 6), 16)
+        if not red or not green or not blue then return nil end
+        return Color3.fromRGB(red, green, blue)
+    end
+
+    local holder = Util.Make("Frame", {
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 62),
+        Parent = card.Frame
+    })
+
+    local title = Util.Text(holder, config.Name or "Color exacto", 13, Enum.Font.GothamMedium)
+    title.Size = UDim2.new(1, 0, 0, 19)
+
+    local box = Util.Make("TextBox", {
+        BackgroundColor3 = NX.Theme.Surface2,
+        BorderSizePixel = 0,
+        ClearTextOnFocus = false,
+        PlaceholderColor3 = NX.Theme.Muted,
+        PlaceholderText = "#RRGGBB",
+        Position = UDim2.fromOffset(0, 26),
+        Size = UDim2.new(1, 0, 0, 32),
+        Text = "",
+        TextColor3 = NX.Theme.Text,
+        TextSize = 13,
+        Font = Enum.Font.Gotham,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Parent = holder
+    })
+    Util.Round(box, 9)
+    Util.Make("UIPadding", {
+        PaddingLeft = UDim.new(0, 40),
+        PaddingRight = UDim.new(0, 10),
+        Parent = box
+    })
+
+    local preview = Util.Make("Frame", {
+        AnchorPoint = Vector2.new(0, 0.5),
+        BackgroundColor3 = state:Get(),
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 10, 0.5, 0),
+        Size = UDim2.fromOffset(20, 20),
+        Parent = box
+    })
+    Util.Round(preview, 6)
+    Util.Stroke(preview, NX.Theme.Text, 0.55)
+
+    local function set(color, notify)
+        if typeof(color) ~= "Color3" then return end
+        state:Set(color)
+        preview.BackgroundColor3 = color
+        box.Text = toHex(color)
+        if notify and config.Callback then config.Callback(color) end
+    end
+
+    local maid = componentMaid(card)
+    if maid then
+        maid:Give(state)
+        maid:Give(box.FocusLost:Connect(function()
+            if disabled then return end
+            local color = fromHex(box.Text)
+            if color then
+                set(color, true)
+            else
+                box.Text = toHex(state:Get())
+            end
+        end))
+    end
+
+    set(state:Get(), false)
+
+    return {
+        Set = function(_, color) set(color, true) end,
+        Get = function() return state:Get() end,
+        OnChanged = function(_, callback) return state:OnChanged(callback) end,
+        SetVisible = function(_, visible) holder.Visible = visible end,
+        SetDisabled = function(_, value)
+            disabled = value == true
+            box.TextEditable = not disabled
+            box.BackgroundTransparency = disabled and 0.45 or 0
+            title.TextTransparency = disabled and 0.45 or 0
+        end
+    }
+end
+
 function NX:Keybind(card, config)
     config = config or {}
 
