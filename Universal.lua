@@ -542,6 +542,32 @@ NX:Paragraph(LayoutCard, {
 
 NX:Space(LayoutCard, 4)
 NX:Label(LayoutCard, "Fin de la prueba de layout")
+local MultiCard = LabTab:Card("SELECCIÓN MÚLTIPLE")
+local MultiStatus = NX:Label(MultiCard, "Elegidos: ninguno")
+
+NX:MultiDropdown(MultiCard, {
+    Name = "Módulos de prueba",
+    Placeholder = "Seleccionar módulos",
+    Searchable = true,
+    Values = {
+        "Inicio",
+        "Movimiento",
+        "ESP",
+        "Sistema",
+        "Factory Tycoon",
+        "Murder Mystery 2",
+        "Slime Tycoon",
+        "Power a City"
+    },
+    Default = {"Inicio", "ESP"},
+    Callback = function(values)
+        if #values == 0 then
+            MultiStatus:Set("Elegidos: ninguno")
+        else
+            MultiStatus:Set("Elegidos: " .. table.concat(values, ", "))
+        end
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
