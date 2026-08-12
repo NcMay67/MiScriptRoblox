@@ -1117,6 +1117,7 @@ end
 
 
             function tab:Open()
+                if not tab.Visible or tab.Disabled then return end
                 for _, other in ipairs(app.Tabs) do
                     other.Page.Visible = false
                     other.Button.BackgroundColor3 = NX.Theme.Surface
@@ -1164,7 +1165,9 @@ end
             end
 
             app:Connect(button.MouseButton1Click, function() tab:Open() end)
-            table.insert(app.Tabs, tab)
+app.TabsByName[tab.Name] = tab
+table.insert(app.Tabs, tab)
+
             if #app.Tabs == 1 then tab:Open() end
             return tab
         end
