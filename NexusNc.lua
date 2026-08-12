@@ -712,6 +712,10 @@ function NX:Window(config)
 
             function tab:Card(title)
                 local card = { Frame = nil, Maid = app.Maid }
+                function card:Add(component, config)
+    return NX:CreateComponent(component, self, config)
+end
+
                 local frame = Util.Make("Frame", {
                     AutomaticSize = Enum.AutomaticSize.Y,
                     BackgroundColor3 = NX.Theme.Surface,
@@ -2207,6 +2211,112 @@ function NX:Confirm(config)
         }
     })
 end
+-- [[ 07.9. EXTENSIONES Y DIAGNÓSTICO ]]
+NX.Components = {}
+NX.Diagnostics = {
+    Enabled = false,
+    Prefix = "[NEXUS NC]"
+}
+
+function NX:SetDiagnostics(enabled)
+    self.Diagnostics.Enabled = enabled == true
+end
+
+function NX:Log(...)
+    if self.Diagnostics.Enabled then
+        print(self.Diagnostics.Prefix, ...)
+    end
+end
+
+function NX:RegisterComponent(name, factory)
+    if type(name) ~= "string" or name == "" then
+        return false, "Nombre inválido"
+    end
+    if type(factory) ~= "function" then
+        return false, "Factory inválida"
+    end
+
+    self.Components[name] = factory
+    self:Log("Componente registrado:", name)
+    return true
+end
+
+function NX:UnregisterComponent(name)
+    if not self.Components[name] then return false end
+    self.Components[name] = nil
+    self:Log("Componente eliminado:", name)
+    return true
+end
+
+function NX:HasComponent(name)
+    return type(self.Components[name]) == "function"
+end
+
+function NX:GetComponents()
+    local list = {}
+    for name in pairs(self.Components) do table.insert(list, name) end
+    table.sort(list)
+    return list
+end
+
+function NX:CreateComponent(name, card, config)
+    local factory = self.Components[name]
+    if type(factory) ~= "function" then
+        self:Log("Componente no encontrado:", tostring(name))
+        return nil, "Componente no encontrado: " .. tostring(name)
+    end
+
+    local ok, result = pcall(factory, self, card, config or {})
+    if not ok then
+        self:Log("Error creando", name, result)
+        return nil, result
+    end
+    return result
+end
+
+function NX:RegisterBuiltins()
+    self:RegisterComponent("Label", function(lib, card, config)
+        return lib:Label(card, config.Text or "")
+    end)
+
+    self:RegisterComponent("Button", function(lib, card, config)
+        return lib:Button(card, config)
+    end)
+
+    self:RegisterComponent("Toggle", function(lib, card, config)
+        return lib:Toggle(card, config)
+    end)
+
+    self:RegisterComponent("Slider", function(lib, card, config)
+        return lib:Slider(card, config)
+    end)
+
+    self:RegisterComponent("Input", function(lib, card, config)
+        return lib:Input(card, config)
+    end)
+
+    self:RegisterComponent("Dropdown", function(lib, card, config)
+        return lib:Dropdown(card, config)
+    end)
+
+    self:RegisterComponent("MultiDropdown", function(lib, card, config)
+        return lib:MultiDropdown(card, config)
+    end)
+
+    self:RegisterComponent("ColorPicker", function(lib, card, config)
+        return lib:ColorPicker(card, config)
+    end)
+
+    self:RegisterComponent("Paragraph", function(lib, card, config)
+        return lib:Paragraph(card, config)
+    end)
+
+    self:RegisterComponent("Divider", function(lib, card, config)
+        return lib:Divider(card, config.Text)
+    end)
+end
+
+NX:RegisterBuiltins()
 
 -- [[ 08. FEEDBACK ]]
 function NX:Notify(title, message)
