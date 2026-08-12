@@ -866,6 +866,47 @@ task.spawn(function()
         task.wait(1)
     end
 end)
+local NamespaceCard = LabTab:Card("PERFILES POR MÓDULO")
+local NamespaceStatus = NX:Label(NamespaceCard, "Estado: sin perfiles por módulo")
+
+local UniversalProfiles = NX:ProfileStore("Universal")
+local FactoryProfiles = NX:ProfileStore("FactoryTycoon")
+
+local NamespaceName = NX:Input(NamespaceCard, {
+    Name = "Nombre de perfil",
+    Placeholder = "Ejemplo: PruebaUniversal"
+})
+
+local function showLists()
+    local universalList = UniversalProfiles:List()
+    local factoryList = FactoryProfiles:List()
+
+    NamespaceStatus:Set(
+        "U: " .. (#universalList > 0 and table.concat(universalList, ", ") or "ninguno")
+        .. " | F: " .. (#factoryList > 0 and table.concat(factoryList, ", ") or "ninguno")
+    )
+end
+
+NX:Button(NamespaceCard, {
+    Name = "Guardar en Universal",
+    Callback = function()
+        local ok, err = UniversalProfiles:Save(NamespaceName:Get())
+        if ok then showLists() else NamespaceStatus:Set("Error: " .. tostring(err)) end
+    end
+})
+
+NX:Button(NamespaceCard, {
+    Name = "Guardar en FactoryTycoon",
+    Callback = function()
+        local ok, err = FactoryProfiles:Save(NamespaceName:Get())
+        if ok then showLists() else NamespaceStatus:Set("Error: " .. tostring(err)) end
+    end
+})
+
+NX:Button(NamespaceCard, {
+    Name = "Mostrar listas separadas",
+    Callback = showLists
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
