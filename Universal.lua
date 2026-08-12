@@ -12,9 +12,9 @@ local LP = Players.LocalPlayer
 local TiempoInicio = os.time()
 
 -- ==========================================
--- CARGA PROPIA DE NC HUB
+-- CARGA NC HUB
 -- ==========================================
-local function CreateLoadingScreen()
+local function CreateLoading()
     local Gui = Instance.new("ScreenGui")
     Gui.Name = "NC_HUB_LOADING"
     Gui.IgnoreGuiInset = true
@@ -30,109 +30,118 @@ local function CreateLoadingScreen()
     end
 
     local Background = Instance.new("Frame")
-    Background.BackgroundColor3 = Color3.fromRGB(7, 8, 14)
+    Background.BackgroundColor3 = Color3.fromRGB(6, 7, 12)
     Background.BorderSizePixel = 0
     Background.Size = UDim2.fromScale(1, 1)
     Background.Parent = Gui
 
     local Card = Instance.new("Frame")
     Card.AnchorPoint = Vector2.new(0.5, 0.5)
-    Card.BackgroundColor3 = Color3.fromRGB(15, 18, 28)
+    Card.BackgroundColor3 = Color3.fromRGB(14, 17, 27)
     Card.BorderSizePixel = 0
     Card.Position = UDim2.fromScale(0.5, 0.5)
-    Card.Size = UDim2.fromOffset(330, 130)
+    Card.Size = UDim2.fromOffset(340, 145)
     Card.Parent = Background
 
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0, 14)
-    Corner.Parent = Card
+    Instance.new("UICorner", Card).CornerRadius = UDim.new(0, 16)
 
     local Stroke = Instance.new("UIStroke")
-    Stroke.Color = Color3.fromRGB(152, 97, 255)
+    Stroke.Color = Color3.fromRGB(153, 99, 255)
     Stroke.Thickness = 1.5
     Stroke.Parent = Card
+
+    local Symbol = Instance.new("TextLabel")
+    Symbol.BackgroundTransparency = 1
+    Symbol.Font = Enum.Font.GothamBold
+    Symbol.Position = UDim2.fromOffset(18, 18)
+    Symbol.Size = UDim2.fromOffset(36, 36)
+    Symbol.Text = "✦"
+    Symbol.TextColor3 = Color3.fromRGB(179, 115, 255)
+    Symbol.TextSize = 32
+    Symbol.Parent = Card
+
+    local Spin = TweenService:Create(
+        Symbol,
+        TweenInfo.new(0.9, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, -1),
+        {Rotation = 360}
+    )
+    Spin:Play()
 
     local Title = Instance.new("TextLabel")
     Title.BackgroundTransparency = 1
     Title.Font = Enum.Font.GothamBold
-    Title.Position = UDim2.fromOffset(18, 20)
-    Title.Size = UDim2.new(1, -36, 0, 32)
+    Title.Position = UDim2.fromOffset(62, 20)
+    Title.Size = UDim2.new(1, -80, 0, 28)
     Title.Text = "NC HUB"
-    Title.TextColor3 = Color3.fromRGB(235, 235, 255)
-    Title.TextSize = 25
+    Title.TextColor3 = Color3.fromRGB(242, 242, 255)
+    Title.TextSize = 23
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = Card
 
-    local Subtitle = Instance.new("TextLabel")
-    Subtitle.BackgroundTransparency = 1
-    Subtitle.Font = Enum.Font.Gotham
-    Subtitle.Position = UDim2.fromOffset(18, 54)
-    Subtitle.Size = UDim2.new(1, -36, 0, 20)
-    Subtitle.Text = "Cargando sistema..."
-    Subtitle.TextColor3 = Color3.fromRGB(160, 171, 203)
-    Subtitle.TextSize = 13
-    Subtitle.TextXAlignment = Enum.TextXAlignment.Left
-    Subtitle.Parent = Card
+    local Status = Instance.new("TextLabel")
+    Status.BackgroundTransparency = 1
+    Status.Font = Enum.Font.Gotham
+    Status.Position = UDim2.fromOffset(20, 65)
+    Status.Size = UDim2.new(1, -40, 0, 20)
+    Status.Text = "Preparando interfaz"
+    Status.TextColor3 = Color3.fromRGB(164, 174, 207)
+    Status.TextSize = 13
+    Status.TextXAlignment = Enum.TextXAlignment.Left
+    Status.Parent = Card
 
-    local BarBackground = Instance.new("Frame")
-    BarBackground.BackgroundColor3 = Color3.fromRGB(29, 34, 51)
-    BarBackground.BorderSizePixel = 0
-    BarBackground.Position = UDim2.fromOffset(18, 94)
-    BarBackground.Size = UDim2.new(1, -36, 0, 7)
-    BarBackground.Parent = Card
+    local Track = Instance.new("Frame")
+    Track.BackgroundColor3 = Color3.fromRGB(31, 37, 56)
+    Track.BorderSizePixel = 0
+    Track.Position = UDim2.fromOffset(20, 105)
+    Track.Size = UDim2.new(1, -40, 0, 7)
+    Track.Parent = Card
+    Instance.new("UICorner", Track).CornerRadius = UDim.new(1, 0)
 
-    local BarCorner = Instance.new("UICorner")
-    BarCorner.CornerRadius = UDim.new(1, 0)
-    BarCorner.Parent = BarBackground
+    local Fill = Instance.new("Frame")
+    Fill.BackgroundColor3 = Color3.fromRGB(156, 102, 255)
+    Fill.BorderSizePixel = 0
+    Fill.Size = UDim2.fromScale(0, 1)
+    Fill.Parent = Track
+    Instance.new("UICorner", Fill).CornerRadius = UDim.new(1, 0)
 
-    local Bar = Instance.new("Frame")
-    Bar.BackgroundColor3 = Color3.fromRGB(166, 98, 255)
-    Bar.BorderSizePixel = 0
-    Bar.Size = UDim2.fromScale(0, 1)
-    Bar.Parent = BarBackground
-
-    local BarGradient = Instance.new("UIGradient")
-    BarGradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(110, 226, 255)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(166, 98, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(231, 109, 255))
+    local Gradient = Instance.new("UIGradient")
+    Gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(94, 226, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(157, 101, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(235, 107, 255))
     })
-    BarGradient.Parent = Bar
-
-    local BarFillCorner = Instance.new("UICorner")
-    BarFillCorner.CornerRadius = UDim.new(1, 0)
-    BarFillCorner.Parent = Bar
+    Gradient.Parent = Fill
 
     return function()
-        Subtitle.Text = "NC HUB listo"
+        Status.Text = "NC HUB listo"
+        TweenService:Create(Fill, TweenInfo.new(0.7, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+            Size = UDim2.fromScale(1, 1)
+        }):Play()
 
-        TweenService:Create(
-            Bar,
-            TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
-            {Size = UDim2.fromScale(1, 1)}
-        ):Play()
+        task.wait(0.9)
+        Spin:Cancel()
 
-        task.wait(0.8)
+        TweenService:Create(Background, TweenInfo.new(0.25), {
+            BackgroundTransparency = 1
+        }):Play()
 
-        TweenService:Create(
-            Background,
-            TweenInfo.new(0.25),
-            {BackgroundTransparency = 1}
-        ):Play()
-
-        TweenService:Create(
-            Card,
-            TweenInfo.new(0.25),
-            {BackgroundTransparency = 1}
-        ):Play()
+        TweenService:Create(Card, TweenInfo.new(0.25), {
+            BackgroundTransparency = 1
+        }):Play()
 
         for _, Object in ipairs(Card:GetDescendants()) do
             if Object:IsA("TextLabel") then
-                TweenService:Create(Object, TweenInfo.new(0.2), {TextTransparency = 1}):Play()
+                TweenService:Create(Object, TweenInfo.new(0.2), {
+                    TextTransparency = 1
+                }):Play()
             elseif Object:IsA("UIStroke") then
-                TweenService:Create(Object, TweenInfo.new(0.2), {Transparency = 1}):Play()
+                TweenService:Create(Object, TweenInfo.new(0.2), {
+                    Transparency = 1
+                }):Play()
             elseif Object:IsA("Frame") then
-                TweenService:Create(Object, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
+                TweenService:Create(Object, TweenInfo.new(0.2), {
+                    BackgroundTransparency = 1
+                }):Play()
             end
         end
 
@@ -141,7 +150,7 @@ local function CreateLoadingScreen()
     end
 end
 
-local FinishLoading = CreateLoadingScreen()
+local FinishLoading = CreateLoading()
 
 -- ==========================================
 -- STARLIGHT
@@ -161,25 +170,31 @@ local Window = Starlight:CreateWindow({
     BuildWarnings = false,
     InterfaceAdvertisingPrompts = false,
     NotifyOnCallbackError = true,
-
     ConfigurationSettings = {
         Enabled = false,
         RootFolder = nil,
         FolderName = nil
     },
-
     DefaultSize = UDim2.fromOffset(580, 390),
-
     KeySystem = {
         Enabled = false
     },
-
     Discord = {
         Enabled = false
     }
 })
 
-FinishLoading()
+-- La carga propia se queda por encima mientras Starlight termina de crear su GUI.
+task.spawn(function()
+    local Limit = os.clock() + 5
+
+    while not Window.Instance and os.clock() < Limit do
+        task.wait()
+    end
+
+    task.wait(0.9)
+    FinishLoading()
+end)
 
 -- ==========================================
 -- FUNCIONES BASE
@@ -200,9 +215,160 @@ local function GetTimeText()
     local Seconds = os.time() - TiempoInicio
     local Hours = math.floor(Seconds / 3600)
     local Minutes = math.floor(Seconds / 60) % 60
-    local RemainingSeconds = Seconds % 60
+    local Remaining = Seconds % 60
 
-    return string.format("%dh %dm %ds", Hours, Minutes, RemainingSeconds)
+    return string.format("%dh %dm %ds", Hours, Minutes, Remaining)
+end
+
+-- ==========================================
+-- SLIDER TÁCTIL PROPIO
+-- ==========================================
+local function CreateTouchSlider(Groupbox, Settings)
+    local Slider = {
+        Value = Settings.Default
+    }
+
+    task.spawn(function()
+        while not Groupbox.ParentingItem do
+            task.wait()
+        end
+
+        local Holder = Instance.new("Frame")
+        Holder.Name = "NC_SLIDER_" .. Settings.Name
+        Holder.BackgroundTransparency = 1
+        Holder.Size = UDim2.new(1, 0, 0, 54)
+        Holder.Parent = Groupbox.ParentingItem
+
+        local Name = Instance.new("TextLabel")
+        Name.BackgroundTransparency = 1
+        Name.Font = Enum.Font.GothamMedium
+        Name.Position = UDim2.fromOffset(6, 0)
+        Name.Size = UDim2.new(0.65, 0, 0, 22)
+        Name.Text = Settings.Name
+        Name.TextColor3 = Color3.fromRGB(218, 223, 239)
+        Name.TextSize = 13
+        Name.TextXAlignment = Enum.TextXAlignment.Left
+        Name.Parent = Holder
+
+        local Value = Instance.new("TextLabel")
+        Value.BackgroundTransparency = 1
+        Value.Font = Enum.Font.GothamBold
+        Value.Position = UDim2.new(0.65, 0, 0, 0)
+        Value.Size = UDim2.new(0.35, -6, 0, 22)
+        Value.TextColor3 = Color3.fromRGB(172, 145, 255)
+        Value.TextSize = 13
+        Value.TextXAlignment = Enum.TextXAlignment.Right
+        Value.Parent = Holder
+
+        local Bar = Instance.new("TextButton")
+        Bar.AutoButtonColor = false
+        Bar.BackgroundColor3 = Color3.fromRGB(38, 45, 68)
+        Bar.BorderSizePixel = 0
+        Bar.Position = UDim2.fromOffset(7, 31)
+        Bar.Size = UDim2.new(1, -14, 0, 6)
+        Bar.Text = ""
+        Bar.Parent = Holder
+        Instance.new("UICorner", Bar).CornerRadius = UDim.new(1, 0)
+
+        local Fill = Instance.new("Frame")
+        Fill.AnchorPoint = Vector2.new(0, 0.5)
+        Fill.BackgroundColor3 = Color3.fromRGB(159, 105, 255)
+        Fill.BorderSizePixel = 0
+        Fill.Position = UDim2.fromScale(0, 0.5)
+        Fill.Size = UDim2.fromScale(0, 1)
+        Fill.Parent = Bar
+        Instance.new("UICorner", Fill).CornerRadius = UDim.new(1, 0)
+
+        local Gradient = Instance.new("UIGradient")
+        Gradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(106, 227, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(176, 103, 255))
+        })
+        Gradient.Parent = Fill
+
+        local Knob = Instance.new("Frame")
+        Knob.AnchorPoint = Vector2.new(0.5, 0.5)
+        Knob.BackgroundColor3 = Color3.fromRGB(238, 238, 255)
+        Knob.BorderSizePixel = 0
+        Knob.Position = UDim2.fromScale(0, 0.5)
+        Knob.Size = UDim2.fromOffset(14, 14)
+        Knob.Parent = Bar
+        Instance.new("UICorner", Knob).CornerRadius = UDim.new(1, 0)
+
+        local Dragging = false
+        local ActiveInput = nil
+
+        local function SetValue(NewValue)
+            local Min = Settings.Min
+            local Max = Settings.Max
+            local Step = Settings.Step or 1
+
+            NewValue = math.clamp(NewValue, Min, Max)
+            NewValue = math.floor((NewValue - Min) / Step + 0.5) * Step + Min
+            NewValue = math.clamp(NewValue, Min, Max)
+
+            Slider.Value = NewValue
+
+            local Percent = (NewValue - Min) / (Max - Min)
+            Fill.Size = UDim2.fromScale(Percent, 1)
+            Knob.Position = UDim2.fromScale(Percent, 0.5)
+            Value.Text = tostring(NewValue)
+
+            if Settings.Callback then
+                Settings.Callback(NewValue)
+            end
+        end
+
+        local function SetFromX(X)
+            local Percent = math.clamp(
+                (X - Bar.AbsolutePosition.X) / Bar.AbsoluteSize.X,
+                0,
+                1
+            )
+
+            SetValue(Settings.Min + (Settings.Max - Settings.Min) * Percent)
+        end
+
+        Bar.InputBegan:Connect(function(Input)
+            if Input.UserInputType == Enum.UserInputType.Touch
+                or Input.UserInputType == Enum.UserInputType.MouseButton1 then
+                Dragging = true
+                ActiveInput = Input
+                SetFromX(Input.Position.X)
+            end
+        end)
+
+        UserInputService.InputChanged:Connect(function(Input)
+            if not Dragging then
+                return
+            end
+
+            if ActiveInput.UserInputType == Enum.UserInputType.Touch then
+                if Input.UserInputType == Enum.UserInputType.Touch then
+                    SetFromX(Input.Position.X)
+                end
+            elseif Input.UserInputType == Enum.UserInputType.MouseMovement then
+                SetFromX(Input.Position.X)
+            end
+        end)
+
+        UserInputService.InputEnded:Connect(function(Input)
+            if not Dragging then
+                return
+            end
+
+            if Input == ActiveInput
+                or Input.UserInputType == Enum.UserInputType.MouseButton1
+                or Input.UserInputType == Enum.UserInputType.Touch then
+                Dragging = false
+                ActiveInput = nil
+            end
+        end)
+
+        SetValue(Settings.Default)
+    end)
+
+    return Slider
 end
 
 -- ==========================================
@@ -212,46 +378,25 @@ local WalkSpeed = 16
 local InfiniteJump = false
 local Noclip = false
 local ESP = false
-
 local Fly = false
 local FlySpeed = 80
 local FlyUpUntil = 0
 local FlyDownUntil = 0
-
 local OriginalCollision = {}
 
 -- ==========================================
--- SECCIONES
+-- TABS
 -- ==========================================
-local HomeSection = Window:CreateTabSection("HOME")
+local HomeSection = Window:CreateTabSection("INICIO")
 local MovementSection = Window:CreateTabSection("MOVIMIENTO")
 local VisualSection = Window:CreateTabSection("VISUAL")
 local ToolsSection = Window:CreateTabSection("SISTEMA")
 
-local HomeTab = HomeSection:CreateTab({
-    Name = "Inicio",
-    Columns = 2
-}, "home")
-
-local MovementTab = MovementSection:CreateTab({
-    Name = "Movimiento",
-    Columns = 2
-}, "movement")
-
-local FlyTab = MovementSection:CreateTab({
-    Name = "Fly",
-    Columns = 2
-}, "fly")
-
-local VisualTab = VisualSection:CreateTab({
-    Name = "ESP",
-    Columns = 2
-}, "esp")
-
-local ToolsTab = ToolsSection:CreateTab({
-    Name = "Tools",
-    Columns = 2
-}, "tools")
+local HomeTab = HomeSection:CreateTab({Name = "Home", Columns = 2}, "home")
+local MovementTab = MovementSection:CreateTab({Name = "Movimiento", Columns = 2}, "movement")
+local FlyTab = MovementSection:CreateTab({Name = "Fly", Columns = 2}, "fly")
+local VisualTab = VisualSection:CreateTab({Name = "ESP", Columns = 2}, "esp")
+local ToolsTab = ToolsSection:CreateTab({Name = "Tools", Columns = 2}, "tools")
 
 -- ==========================================
 -- HOME
@@ -262,31 +407,18 @@ local ProfileBox = HomeTab:CreateGroupbox({
     Style = 2
 }, "profile")
 
-ProfileBox:CreateLabel({
-    Name = LP.DisplayName
-}, "display_name")
+ProfileBox:CreateLabel({Name = LP.DisplayName}, "display")
+ProfileBox:CreateLabel({Name = "@" .. LP.Name}, "username")
+ProfileBox:CreateLabel({Name = "Cuenta: " .. LP.AccountAge .. " días"}, "age")
 
-ProfileBox:CreateLabel({
-    Name = "@" .. LP.Name
-}, "username")
-
-ProfileBox:CreateLabel({
-    Name = "Cuenta: " .. LP.AccountAge .. " días"
-}, "account_age")
-
-local StatusBox = HomeTab:CreateGroupbox({
+local SessionBox = HomeTab:CreateGroupbox({
     Name = "SESIÓN",
     Column = 2,
     Style = 2
 }, "session")
 
-local TimeLabel = StatusBox:CreateLabel({
-    Name = "Tiempo: 0h 0m 0s"
-}, "time")
-
-StatusBox:CreateLabel({
-    Name = "Status: Operacional"
-}, "status")
+local TimeLabel = SessionBox:CreateLabel({Name = "Tiempo: 0h 0m 0s"}, "time")
+SessionBox:CreateLabel({Name = "Status: Operacional"}, "status")
 
 -- ==========================================
 -- MOVIMIENTO
@@ -297,58 +429,20 @@ local SpeedBox = MovementTab:CreateGroupbox({
     Style = 2
 }, "speed")
 
-local SpeedLabel = SpeedBox:CreateLabel({
-    Name = "Actual: 16"
-}, "speed_label")
-
-local function SetWalkSpeed(Value)
-    WalkSpeed = Value
-
-    local Humanoid = GetHumanoid()
-    if Humanoid then
-        Humanoid.WalkSpeed = WalkSpeed
+CreateTouchSlider(SpeedBox, {
+    Name = "Velocidad",
+    Min = 16,
+    Max = 256,
+    Step = 1,
+    Default = 16,
+    Callback = function(Value)
+        WalkSpeed = Value
+        local Humanoid = GetHumanoid()
+        if Humanoid then
+            Humanoid.WalkSpeed = Value
+        end
     end
-
-    SpeedLabel:Set({
-        Name = "Actual: " .. WalkSpeed
-    })
-end
-
-SpeedBox:CreateButton({
-    Name = "Normal | 16",
-    Style = 1,
-    CenterContent = true,
-    Callback = function()
-        SetWalkSpeed(16)
-    end
-}, "speed_16")
-
-SpeedBox:CreateButton({
-    Name = "Rápido | 32",
-    Style = 1,
-    CenterContent = true,
-    Callback = function()
-        SetWalkSpeed(32)
-    end
-}, "speed_32")
-
-SpeedBox:CreateButton({
-    Name = "Turbo | 50",
-    Style = 1,
-    CenterContent = true,
-    Callback = function()
-        SetWalkSpeed(50)
-    end
-}, "speed_50")
-
-SpeedBox:CreateButton({
-    Name = "Máximo | 75",
-    Style = 1,
-    CenterContent = true,
-    Callback = function()
-        SetWalkSpeed(75)
-    end
-}, "speed_75")
+})
 
 local MovementBox = MovementTab:CreateGroupbox({
     Name = "MOVIMIENTO",
@@ -377,13 +471,13 @@ MovementBox:CreateToggle({
 -- ==========================================
 -- FLY
 -- ==========================================
-local FlyMainBox = FlyTab:CreateGroupbox({
+local FlyBox = FlyTab:CreateGroupbox({
     Name = "FLY",
     Column = 1,
     Style = 2
-}, "fly_main")
+}, "fly")
 
-FlyMainBox:CreateToggle({
+FlyBox:CreateToggle({
     Name = "Activar Fly",
     CurrentValue = false,
     Style = 2,
@@ -405,11 +499,11 @@ FlyMainBox:CreateToggle({
             if OldGyro then OldGyro:Destroy() end
 
             Humanoid.PlatformStand = true
+            FlyUpUntil = os.clock() + 0.55
 
             local Force = Instance.new("BodyVelocity")
             Force.Name = "NC_FlyForce"
             Force.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-            Force.Velocity = Vector3.zero
             Force.Parent = Root
 
             local Gyro = Instance.new("BodyGyro")
@@ -441,7 +535,7 @@ FlyMainBox:CreateToggle({
                     if os.clock() < FlyUpUntil then
                         Velocity = Velocity + Vector3.new(0, FlySpeed, 0)
                     elseif os.clock() < FlyDownUntil then
-                         Velocity = Velocity + Vector3.new(0, -FlySpeed, 0)
+                        Velocity = Velocity + Vector3.new(0, -FlySpeed, 0)
                     end
 
                     Force.Velocity = Velocity
@@ -449,11 +543,10 @@ FlyMainBox:CreateToggle({
                 end
 
                 if Root and Root.Parent then
-                    local ExistingForce = Root:FindFirstChild("NC_FlyForce")
-                    local ExistingGyro = Root:FindFirstChild("NC_FlyGyro")
-
-                    if ExistingForce then ExistingForce:Destroy() end
-                    if ExistingGyro then ExistingGyro:Destroy() end
+                    local ForceObject = Root:FindFirstChild("NC_FlyForce")
+                    local GyroObject = Root:FindFirstChild("NC_FlyGyro")
+                    if ForceObject then ForceObject:Destroy() end
+                    if GyroObject then GyroObject:Destroy() end
                 end
 
                 if Humanoid and Humanoid.Parent then
@@ -465,81 +558,44 @@ FlyMainBox:CreateToggle({
     end
 }, "fly_toggle")
 
-FlyMainBox:CreateButton({
+FlyBox:CreateButton({
     Name = "Subir",
     Style = 1,
     CenterContent = true,
     Callback = function()
         if Fly then
-            FlyUpUntil = os.clock() + 0.35
+            FlyUpUntil = os.clock() + 0.4
         end
     end
-}, "fly_up")
+}, "up")
 
-FlyMainBox:CreateButton({
+FlyBox:CreateButton({
     Name = "Bajar",
     Style = 1,
     CenterContent = true,
     Callback = function()
         if Fly then
-            FlyDownUntil = os.clock() + 0.35
+            FlyDownUntil = os.clock() + 0.4
         end
     end
-}, "fly_down")
+}, "down")
 
 local FlySpeedBox = FlyTab:CreateGroupbox({
-    Name = "VELOCIDAD DE FLY",
+    Name = "VELOCIDAD",
     Column = 2,
     Style = 2
 }, "fly_speed")
 
-local FlySpeedLabel = FlySpeedBox:CreateLabel({
-    Name = "Actual: 80"
-}, "fly_speed_label")
-
-local function SetFlySpeed(Value)
-    FlySpeed = Value
-
-    FlySpeedLabel:Set({
-        Name = "Actual: " .. FlySpeed
-    })
-end
-
-FlySpeedBox:CreateButton({
-    Name = "Lento | 30",
-    Style = 1,
-    CenterContent = true,
-    Callback = function()
-        SetFlySpeed(30)
+CreateTouchSlider(FlySpeedBox, {
+    Name = "Velocidad Fly",
+    Min = 10,
+    Max = 400,
+    Step = 5,
+    Default = 80,
+    Callback = function(Value)
+        FlySpeed = Value
     end
-}, "fly_30")
-
-FlySpeedBox:CreateButton({
-    Name = "Normal | 80",
-    Style = 1,
-    CenterContent = true,
-    Callback = function()
-        SetFlySpeed(80)
-    end
-}, "fly_80")
-
-FlySpeedBox:CreateButton({
-    Name = "Rápido | 150",
-    Style = 1,
-    CenterContent = true,
-    Callback = function()
-        SetFlySpeed(150)
-    end
-}, "fly_150")
-
-FlySpeedBox:CreateButton({
-    Name = "Máximo | 250",
-    Style = 1,
-    CenterContent = true,
-    Callback = function()
-        SetFlySpeed(250)
-    end
-}, "fly_250")
+})
 
 -- ==========================================
 -- ESP
@@ -548,7 +604,7 @@ local ESPBox = VisualTab:CreateGroupbox({
     Name = "ESP",
     Column = 1,
     Style = 2
-}, "esp_box")
+}, "esp")
 
 local function AddESP(Character)
     if not Character or Character:FindFirstChild("NC_ESP") then
@@ -566,9 +622,7 @@ end
 
 local function RemoveESP(Character)
     local Highlight = Character and Character:FindFirstChild("NC_ESP")
-    if Highlight then
-        Highlight:Destroy()
-    end
+    if Highlight then Highlight:Destroy() end
 end
 
 ESPBox:CreateToggle({
@@ -594,10 +648,10 @@ ESPBox:CreateToggle({
 -- TOOLS
 -- ==========================================
 local DeveloperBox = ToolsTab:CreateGroupbox({
-    Name = "DEVELOPER TOOLS",
+    Name = "TOOLS",
     Column = 1,
     Style = 2
-}, "developer_tools")
+}, "dev")
 
 DeveloperBox:CreateButton({
     Name = "Cargar Dark Dex",
@@ -608,7 +662,7 @@ DeveloperBox:CreateButton({
             "https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"
         ))()
     end
-}, "dark_dex")
+}, "dex")
 
 DeveloperBox:CreateButton({
     Name = "Cargar SimpleSpy",
@@ -619,7 +673,7 @@ DeveloperBox:CreateButton({
             "https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"
         ))()
     end
-}, "simple_spy")
+}, "spy")
 
 local SystemBox = ToolsTab:CreateGroupbox({
     Name = "SISTEMA",
@@ -641,12 +695,13 @@ SystemBox:CreateButton({
 -- ==========================================
 UserInputService.JumpRequest:Connect(function()
     if Fly then
-        FlyUpUntil = os.clock() + 0.35
+        FlyUpUntil = os.clock() + 0.4
         return
     end
 
     if InfiniteJump then
         local Humanoid = GetHumanoid()
+
         if Humanoid then
             Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
         end
@@ -655,7 +710,10 @@ end)
 
 RunService.Stepped:Connect(function()
     local Character = LP.Character
-    if not Character then return end
+
+    if not Character then
+        return
+    end
 
     for _, Part in ipairs(Character:GetDescendants()) do
         if Part:IsA("BasePart") then
@@ -663,6 +721,7 @@ RunService.Stepped:Connect(function()
                 if OriginalCollision[Part] == nil then
                     OriginalCollision[Part] = Part.CanCollide
                 end
+
                 Part.CanCollide = false
             elseif OriginalCollision[Part] ~= nil then
                 Part.CanCollide = OriginalCollision[Part]
@@ -683,7 +742,12 @@ end)
 
 LP.CharacterAdded:Connect(function()
     task.wait(1)
-    SetWalkSpeed(WalkSpeed)
+
+    local Humanoid = GetHumanoid()
+
+    if Humanoid then
+        Humanoid.WalkSpeed = WalkSpeed
+    end
 end)
 
 task.spawn(function()
