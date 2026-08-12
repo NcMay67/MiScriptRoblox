@@ -588,6 +588,41 @@ NX:ColorPicker(ColorCard, {
         ))
     end
 })
+local StorageCard = LabTab:Card("CONFIGURACIÓN LOCAL")
+local StorageStatus = NX:Label(StorageCard, "Estado: sin probar")
+
+NX:Button(StorageCard, {
+    Name = "Guardar prueba local",
+    Callback = function()
+        local ok, err = NX:SaveConfig("nexus_lab_test", {
+            Version = "0.7",
+            Theme = NX.ActiveTheme,
+            SavedAt = os.time()
+        })
+
+        StorageStatus:Set(ok and "Estado: guardado local correcto" or "Error: " .. tostring(err))
+    end
+})
+
+NX:Button(StorageCard, {
+    Name = "Leer prueba local",
+    Callback = function()
+        local data, err = NX:LoadConfig("nexus_lab_test")
+        if data then
+            StorageStatus:Set("Leído: tema " .. tostring(data.Theme))
+        else
+            StorageStatus:Set("Error: " .. tostring(err))
+        end
+    end
+})
+
+NX:Button(StorageCard, {
+    Name = "Borrar prueba local",
+    Callback = function()
+        local ok, err = NX:DeleteConfig("nexus_lab_test")
+        StorageStatus:Set(ok and "Estado: prueba borrada" or "Error: " .. tostring(err))
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
