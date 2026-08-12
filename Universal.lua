@@ -2,7 +2,7 @@
 -- Interfaz propia: NEXUS NC Interface
 
 local BASE_URL = "https://raw.githubusercontent.com/NcMay67/MiScriptRoblox/refs/heads/main/"
-local NX = loadstring(game:HttpGet(BASE_URL .. "NexusNC.lua"))()
+local NX = loadstring(game:HttpGet(BASE_URL .. "NexusNc.lua"))()
 
 local FinishLoading = NX:Loading({
     Title = "NC HUB",
