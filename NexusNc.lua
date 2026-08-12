@@ -1246,67 +1246,78 @@ end
 
 
             function tab:Open()
-                if not tab.Visible or tab.Disabled then return end
-                for _, other in ipairs(app.Tabs) do
-                    other.Page.Visible = false
-                    other.Button.TextColor3 = NX.Theme.Muted
-                    Util.Tween(other.Button, 0.14, {BackgroundColor3 = NX.Theme.Surface
-                    }):Play()
-                
-                if other.ActiveMarker then
-                    
-                    Util.Tween(other.ActiveMarker, 0.14, {
-                        BackgroundTransparency = 1,
-                        Size = UDim2.fromOffset(0, 20)
-                        }):Play()
-                    end
-                end
-                
-                page.Visible = true
-                button.TextColor3 = NX.Theme.Text
-                Util.Tween(button, 0.16, {
-                    BackgroundColor3 = NX.Theme.Purple
-                    }):Play()
-                
-                if activeMarker then
-                    Util.Tween(activeMarker, 0.16, {
-                        BackgroundTransparency = 0, 
-                    Size = UDim2.fromOffset(3, 20)
-                    }):Play()
-                end
-                
-                app.ActiveTab = tab
-                 
-                    
+    if not tab.Visible or tab.Disabled then return end
 
-                local frame = Util.Make("Frame", {
-                    AutomaticSize = Enum.AutomaticSize.Y,
-                    BackgroundColor3 = NX.Theme.Surface,
-                    BorderSizePixel = 0,
-                    Size = UDim2.new(1, 0, 0, 0),
-                    Parent = page
-                })
-                Util.Round(frame, 12)
-                Util.Stroke(frame, NX.Theme.Stroke, 0.35)
-                Util.Make("UIPadding", {
-                    PaddingLeft = UDim.new(0, 12),
-                    PaddingRight = UDim.new(0, 12),
-                    PaddingTop = UDim.new(0, 11),
-                    PaddingBottom = UDim.new(0, 11),
-                    Parent = frame
-                })
-                Util.Make("UIListLayout", {
-                    Padding = UDim.new(0, 8),
-                    SortOrder = Enum.SortOrder.LayoutOrder,
-                    Parent = frame
-                })
-                if title then
-                    local heading = Util.Text(frame, title, 12, Enum.Font.GothamBold, NX.Theme.Cian)
-                    heading.Size = UDim2.new(1, 0, 0, 18)
-                end
-                card.Frame = frame
-                return card
-            end
+    for _, other in ipairs(app.Tabs) do
+        other.Page.Visible = false
+        other.Button.TextColor3 = NX.Theme.Muted
+        Util.Tween(other.Button, 0.14, {
+            BackgroundColor3 = NX.Theme.Surface
+        }):Play()
+
+        if other.ActiveMarker then
+            Util.Tween(other.ActiveMarker, 0.14, {
+                BackgroundTransparency = 1,
+                Size = UDim2.fromOffset(0, 20)
+            }):Play()
+        end
+    end
+
+    page.Visible = true
+    button.TextColor3 = NX.Theme.Text
+    Util.Tween(button, 0.16, {
+        BackgroundColor3 = NX.Theme.Purple
+    }):Play()
+
+    if activeMarker then
+        Util.Tween(activeMarker, 0.16, {
+            BackgroundTransparency = 0,
+            Size = UDim2.fromOffset(3, 20)
+        }):Play()
+    end
+
+    app.ActiveTab = tab
+end
+
+function tab:Card(title)
+    local card = { Frame = nil, Maid = app.Maid }
+
+    function card:Add(component, config)
+        return NX:CreateComponent(component, self, config)
+    end
+
+    local frame = Util.Make("Frame", {
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundColor3 = NX.Theme.Surface,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 0),
+        Parent = page
+    })
+    Util.Round(frame, 12)
+    Util.Stroke(frame, NX.Theme.Stroke, 0.35)
+
+    Util.Make("UIPadding", {
+        PaddingLeft = UDim.new(0, 12),
+        PaddingRight = UDim.new(0, 12),
+        PaddingTop = UDim.new(0, 11),
+        PaddingBottom = UDim.new(0, 11),
+        Parent = frame
+    })
+
+    Util.Make("UIListLayout", {
+        Padding = UDim.new(0, 8),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = frame
+    })
+
+    if title then
+        local heading = Util.Text(frame, title, 12, Enum.Font.GothamBold, NX.Theme.Cian)
+        heading.Size = UDim2.new(1, 0, 0, 18)
+    end
+
+    card.Frame = frame
+    return card
+end
 
             app:Connect(button.MouseButton1Click, function() tab:Open() end)
 app.TabsByName[tab.Name] = tab
