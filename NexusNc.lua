@@ -2421,7 +2421,7 @@ end
 function NX:Dialog(config)
     config = config or {}
 
-    local maid = Maid.new()
+    local maid = NX:TrackOverlay(Maid.new())
     local closed = false
     local gui = overlayGui("NEXUS_NC_DIALOG", 999997)
     maid:Give(gui)
@@ -2728,7 +2728,7 @@ NX:EnableAutoBinding()
 
 -- [[ 08. FEEDBACK ]]
 function NX:Notify(title, message)
-    local maid = Maid.new()
+    local maid = NX:TrackOverlay(Maid.new())
     local gui = Util.Make("ScreenGui", {
         Name = "NEXUS_NC_NOTIFY",
         IgnoreGuiInset = true,
@@ -2773,7 +2773,7 @@ end
 
 function NX:Loading(config)
     config = config or {}
-    local maid = Maid.new()
+    local maid = NX:TrackOverlay(Maid.new())
 
     local gui = Util.Make("ScreenGui", {
         Name = "NEXUS_NC_LOADING",
