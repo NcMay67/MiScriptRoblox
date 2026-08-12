@@ -248,6 +248,38 @@ NX:Paragraph(AutomationCard, {
     Boxed = false
 })
 
+local BoostCard = AutomationTab:Card("X5 BOOST")
+local BoostStatus = NX:Label(BoostCard, "Estado: listo para activar")
+
+NX:Button(BoostCard, {
+    Name = "Activar X5 Boost",
+    Callback = function()
+        local data = getDataFolder()
+        local boost = data and data:FindFirstChild("Money5xBoost")
+
+        if boost and (boost:IsA("NumberValue") or boost:IsA("IntValue")) then
+            boost.Value = os.time() + 999999
+            BoostStatus:Set("Estado: Boost x5 activado")
+            NX:Notify("X5 Boost", "Boost de dinero activado localmente.", {
+                Color = NX.Theme.Rose,
+                Duration = 4
+            })
+        else
+            BoostStatus:Set("Estado: Money5xBoost no fue encontrado")
+            NX:Notify("X5 Boost", "No se encontró Money5xBoost en DataFolder.", {
+                Color = NX.Theme.MacYellow,
+                Duration = 4
+            })
+        end
+    end
+})
+
+NX:Paragraph(BoostCard, {
+    Title = "Boost recuperado",
+    Content = "Usa el valor local Money5xBoost recuperado de tu código original.",
+    Boxed = false
+})
+
 local RebirthCard = AutomationTab:Card("REBIRTH")
 local RebirthStatus = NX:Label(RebirthCard, "Estado: desactivado")
 
