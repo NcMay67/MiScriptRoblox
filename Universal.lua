@@ -430,6 +430,59 @@ task.spawn(function()
         task.wait(1)
     end
 end)
+-- =========================================================
+-- NEXUS NC LAB | Prueba temporal v0.3
+-- =========================================================
+local LabSection = Window:Section("NEXUS LAB")
+local LabTab = LabSection:Tab("Controles")
+local LabCard = LabTab:Card("INPUT Y DROPDOWN")
+
+local LabStatus = NX:Label(LabCard, "Estado: esperando prueba")
+
+NX:Input(LabCard, {
+    Name = "Texto de prueba",
+    Placeholder = "Escribe cualquier cosa",
+    Callback = function(value)
+        LabStatus:Set("Texto: " .. tostring(value))
+    end
+})
+
+NX:Input(LabCard, {
+    Name = "Número de prueba",
+    Placeholder = "Solo números",
+    Numeric = true,
+    Finished = true,
+    Callback = function(value)
+        LabStatus:Set("Número: " .. tostring(value or 0))
+    end
+})
+
+NX:Dropdown(LabCard, {
+    Name = "Modo de interfaz",
+    Values = {"Normal", "Compacto", "Minimal"},
+    Default = 1,
+    Callback = function(value)
+        LabStatus:Set("Modo: " .. tostring(value))
+    end
+})
+
+NX:Dropdown(LabCard, {
+    Name = "Lista con búsqueda",
+    Placeholder = "Elige una opción",
+    Values = {
+        "Factory Tycoon",
+        "Murder Mystery 2",
+        "Slime Tycoon",
+        "Power a City",
+        "Build a Gem Crusher",
+        "The Stronger Lifter",
+        "Kick to Space"
+    },
+    Searchable = true,
+    Callback = function(value)
+        LabStatus:Set("Juego: " .. tostring(value))
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
