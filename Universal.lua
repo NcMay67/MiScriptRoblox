@@ -999,6 +999,13 @@ NX:Segment(SegmentCard, {
         SegmentStatus:Set("Modo actual: " .. tostring(value))
     end
 })
+local ProfilePanelCard = LabTab:Card("PROFILE PANEL")
+
+NX:ProfilePanel(ProfilePanelCard, {
+    Namespace = "ProfilePanelTest",
+    StatusText = "Perfil de prueba: ninguno",
+    Placeholder = "Ejemplo: PanelFarm"
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
