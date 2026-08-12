@@ -3,6 +3,7 @@
 
 local BASE_URL = "https://raw.githubusercontent.com/NcMay67/MiScriptRoblox/refs/heads/main/"
 local NX = loadstring(game:HttpGet(BASE_URL .. "NexusNc.lua"))()
+NX:UseTheme("Void")
 
 local FinishLoading = NX:Loading({
     Title = "NC HUB",
