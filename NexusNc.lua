@@ -1359,11 +1359,21 @@ end
 
 function NX:Button(card, config)
     config = config or {}
-    local disabled = config.Disabled == true
 
+    local disabled = config.Disabled == true
+    local variant = config.Variant or "primary"
+
+    local function getColor()
+        if variant == "danger" then return NX.Theme.MacRed end
+        if variant == "success" then return NX.Theme.MacGreen end
+        if variant == "secondary" then return NX.Theme.Surface2 end
+        return config.Color or NX.Theme.Purple
+    end
+
+    local baseColor = getColor()
     local item = Util.Make("TextButton", {
         AutoButtonColor = false,
-        BackgroundColor3 = NX.Theme.Purple,
+        BackgroundColor3 = baseColor,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 38),
         Text = config.Name or "Button",
@@ -1374,17 +1384,50 @@ function NX:Button(card, config)
     })
     Util.Round(item, 10)
 
+    local stroke = Util.Stroke(item, baseColor, 0.58)
+
+    local function paint(pressed)
+        local transparency = disabled and 0.45 or 0
+        local strokeTransparency = disabled and 0.84 or (pressed and 0.12 or 0.58)
+
+        Util.Tween(item, 0.10, {
+            BackgroundTransparency = transparency
+        }):Play()
+        Util.Tween(stroke, 0.10, {
+            Transparency = strokeTransparency
+        }):Play()
+    end
+
     local function setDisabled(value)
         disabled = value == true
         item.TextTransparency = disabled and 0.45 or 0
-        item.BackgroundTransparency = disabled and 0.45 or 0
+        paint(false)
     end
 
     local maid = componentMaid(card)
-    local connection = item.MouseButton1Click:Connect(function()
-        if not disabled and config.Callback then config.Callback() end
-    end)
-    if maid then maid:Give(connection) end
+    if maid then
+        maid:Give(item.InputBegan:Connect(function(input)
+            if disabled then return end
+            if input.UserInputType == Enum.UserInputType.Touch
+                or input.UserInputType == Enum.UserInputType.MouseButton1 then
+                paint(true)
+            end
+        end))
+
+        maid:Give(item.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.Touch
+                or input.UserInputType == Enum.UserInputType.MouseButton1 then
+                paint(false)
+            end
+        end))
+
+        maid:Give(item.MouseButton1Click:Connect(function()
+            if not disabled and config.Callback then
+                config.Callback()
+            end
+        end))
+    end
+
     setDisabled(disabled)
 
     return {
