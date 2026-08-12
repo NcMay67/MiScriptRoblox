@@ -1,24 +1,150 @@
---[[
-    NC HUB | UNIVERSAL EDITION
-    VISUAL: AURORA CORE
-    UI: Starlight Interface Suite
-
-    Starlight Interface Suite by Nebula Softworks
-    Used privately by NC HUB.
-]]
-
 -- ==========================================
--- 0. SERVICIOS Y VARIABLES
+-- NC HUB | UNIVERSAL
 -- ==========================================
+
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
 
 local LP = Players.LocalPlayer
 local TiempoInicio = os.time()
 
 -- ==========================================
--- 1. CARGA DE STARLIGHT
+-- CARGA PROPIA DE NC HUB
+-- ==========================================
+local function CreateLoadingScreen()
+    local Gui = Instance.new("ScreenGui")
+    Gui.Name = "NC_HUB_LOADING"
+    Gui.IgnoreGuiInset = true
+    Gui.ResetOnSpawn = false
+    Gui.DisplayOrder = 999999
+
+    pcall(function()
+        Gui.Parent = gethui and gethui() or CoreGui
+    end)
+
+    if not Gui.Parent then
+        Gui.Parent = LP:WaitForChild("PlayerGui")
+    end
+
+    local Background = Instance.new("Frame")
+    Background.BackgroundColor3 = Color3.fromRGB(7, 8, 14)
+    Background.BorderSizePixel = 0
+    Background.Size = UDim2.fromScale(1, 1)
+    Background.Parent = Gui
+
+    local Card = Instance.new("Frame")
+    Card.AnchorPoint = Vector2.new(0.5, 0.5)
+    Card.BackgroundColor3 = Color3.fromRGB(15, 18, 28)
+    Card.BorderSizePixel = 0
+    Card.Position = UDim2.fromScale(0.5, 0.5)
+    Card.Size = UDim2.fromOffset(330, 130)
+    Card.Parent = Background
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 14)
+    Corner.Parent = Card
+
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Color = Color3.fromRGB(152, 97, 255)
+    Stroke.Thickness = 1.5
+    Stroke.Parent = Card
+
+    local Title = Instance.new("TextLabel")
+    Title.BackgroundTransparency = 1
+    Title.Font = Enum.Font.GothamBold
+    Title.Position = UDim2.fromOffset(18, 20)
+    Title.Size = UDim2.new(1, -36, 0, 32)
+    Title.Text = "NC HUB"
+    Title.TextColor3 = Color3.fromRGB(235, 235, 255)
+    Title.TextSize = 25
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Parent = Card
+
+    local Subtitle = Instance.new("TextLabel")
+    Subtitle.BackgroundTransparency = 1
+    Subtitle.Font = Enum.Font.Gotham
+    Subtitle.Position = UDim2.fromOffset(18, 54)
+    Subtitle.Size = UDim2.new(1, -36, 0, 20)
+    Subtitle.Text = "Cargando sistema..."
+    Subtitle.TextColor3 = Color3.fromRGB(160, 171, 203)
+    Subtitle.TextSize = 13
+    Subtitle.TextXAlignment = Enum.TextXAlignment.Left
+    Subtitle.Parent = Card
+
+    local BarBackground = Instance.new("Frame")
+    BarBackground.BackgroundColor3 = Color3.fromRGB(29, 34, 51)
+    BarBackground.BorderSizePixel = 0
+    BarBackground.Position = UDim2.fromOffset(18, 94)
+    BarBackground.Size = UDim2.new(1, -36, 0, 7)
+    BarBackground.Parent = Card
+
+    local BarCorner = Instance.new("UICorner")
+    BarCorner.CornerRadius = UDim.new(1, 0)
+    BarCorner.Parent = BarBackground
+
+    local Bar = Instance.new("Frame")
+    Bar.BackgroundColor3 = Color3.fromRGB(166, 98, 255)
+    Bar.BorderSizePixel = 0
+    Bar.Size = UDim2.fromScale(0, 1)
+    Bar.Parent = BarBackground
+
+    local BarGradient = Instance.new("UIGradient")
+    BarGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(110, 226, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(166, 98, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(231, 109, 255))
+    })
+    BarGradient.Parent = Bar
+
+    local BarFillCorner = Instance.new("UICorner")
+    BarFillCorner.CornerRadius = UDim.new(1, 0)
+    BarFillCorner.Parent = Bar
+
+    return function()
+        Subtitle.Text = "NC HUB listo"
+
+        TweenService:Create(
+            Bar,
+            TweenInfo.new(0.55, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
+            {Size = UDim2.fromScale(1, 1)}
+        ):Play()
+
+        task.wait(0.8)
+
+        TweenService:Create(
+            Background,
+            TweenInfo.new(0.25),
+            {BackgroundTransparency = 1}
+        ):Play()
+
+        TweenService:Create(
+            Card,
+            TweenInfo.new(0.25),
+            {BackgroundTransparency = 1}
+        ):Play()
+
+        for _, Object in ipairs(Card:GetDescendants()) do
+            if Object:IsA("TextLabel") then
+                TweenService:Create(Object, TweenInfo.new(0.2), {TextTransparency = 1}):Play()
+            elseif Object:IsA("UIStroke") then
+                TweenService:Create(Object, TweenInfo.new(0.2), {Transparency = 1}):Play()
+            elseif Object:IsA("Frame") then
+                TweenService:Create(Object, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play()
+            end
+        end
+
+        task.wait(0.3)
+        Gui:Destroy()
+    end
+end
+
+local FinishLoading = CreateLoadingScreen()
+
+-- ==========================================
+-- STARLIGHT
 -- ==========================================
 local Starlight = loadstring(game:HttpGet(
     "https://raw.githubusercontent.com/Nebula-Softworks/Starlight-Interface-Suite/master/Source.lua"
@@ -31,7 +157,6 @@ end)
 local Window = Starlight:CreateWindow({
     Name = "NC HUB",
     Subtitle = "By hidjcjgg",
-
     LoadingEnabled = false,
     BuildWarnings = false,
     InterfaceAdvertisingPrompts = false,
@@ -43,7 +168,7 @@ local Window = Starlight:CreateWindow({
         FolderName = nil
     },
 
-    DefaultSize = UDim2.fromOffset(620, 430),
+    DefaultSize = UDim2.fromOffset(580, 390),
 
     KeySystem = {
         Enabled = false
@@ -54,145 +179,184 @@ local Window = Starlight:CreateWindow({
     }
 })
 
+FinishLoading()
+
 -- ==========================================
--- 2. FUNCIONES BASE
+-- FUNCIONES BASE
 -- ==========================================
 local function GetCharacter()
     return LP.Character or LP.CharacterAdded:Wait()
 end
 
 local function GetHumanoid()
-    local Character = GetCharacter()
-    return Character:FindFirstChildOfClass("Humanoid")
+    return GetCharacter():FindFirstChildOfClass("Humanoid")
 end
 
 local function GetRoot()
-    local Character = GetCharacter()
-    return Character:FindFirstChild("HumanoidRootPart")
+    return GetCharacter():FindFirstChild("HumanoidRootPart")
 end
 
-local function FormatTime()
-    local Segundos = os.time() - TiempoInicio
-    local Horas = math.floor(Segundos / 3600)
-    local Minutos = math.floor(Segundos / 60) % 60
-    local SegundosRestantes = Segundos % 60
+local function GetTimeText()
+    local Seconds = os.time() - TiempoInicio
+    local Hours = math.floor(Seconds / 3600)
+    local Minutes = math.floor(Seconds / 60) % 60
+    local RemainingSeconds = Seconds % 60
 
-    return string.format("%dh %dm %ds", Horas, Minutos, SegundosRestantes)
+    return string.format("%dh %dm %ds", Hours, Minutes, RemainingSeconds)
 end
 
 -- ==========================================
--- 3. VARIABLES DE FUNCIONES
+-- VARIABLES
 -- ==========================================
+local WalkSpeed = 16
 local InfiniteJump = false
 local Noclip = false
 local ESP = false
+
 local Fly = false
 local FlySpeed = 80
+local FlyUpUntil = 0
+local FlyDownUntil = 0
 
-local CollisionState = {}
+local OriginalCollision = {}
 
 -- ==========================================
--- 4. SECCIONES Y TABS
+-- SECCIONES
 -- ==========================================
-local CoreSection = Window:CreateTabSection("NC CORE")
-local MovementSection = Window:CreateTabSection("MOVEMENT")
-local VisualSection = Window:CreateTabSection("VISUALS")
-local SystemSection = Window:CreateTabSection("TOOLS")
+local HomeSection = Window:CreateTabSection("HOME")
+local MovementSection = Window:CreateTabSection("MOVIMIENTO")
+local VisualSection = Window:CreateTabSection("VISUAL")
+local ToolsSection = Window:CreateTabSection("SISTEMA")
 
-local HomeTab = CoreSection:CreateTab({
-    Name = "Home",
+local HomeTab = HomeSection:CreateTab({
+    Name = "Inicio",
     Columns = 2
-}, "nc_home")
+}, "home")
 
-local MoveTab = MovementSection:CreateTab({
-    Name = "Movement",
+local MovementTab = MovementSection:CreateTab({
+    Name = "Movimiento",
     Columns = 2
-}, "nc_movement")
+}, "movement")
 
 local FlyTab = MovementSection:CreateTab({
     Name = "Fly",
     Columns = 2
-}, "nc_fly")
+}, "fly")
 
 local VisualTab = VisualSection:CreateTab({
-    Name = "Visuals",
+    Name = "ESP",
     Columns = 2
-}, "nc_visuals")
+}, "esp")
 
-local ToolsTab = SystemSection:CreateTab({
+local ToolsTab = ToolsSection:CreateTab({
     Name = "Tools",
     Columns = 2
-}, "nc_tools")
+}, "tools")
 
 -- ==========================================
--- 5. HOME | DASHBOARD AURORA
+-- HOME
 -- ==========================================
-local IdentityBox = HomeTab:CreateGroupbox({
-    Name = "IDENTIDAD DIGITAL",
+local ProfileBox = HomeTab:CreateGroupbox({
+    Name = "PERFIL",
     Column = 1,
     Style = 2
-}, "identity")
-
-IdentityBox:CreateParagraph({
-    Name = LP.DisplayName,
-    Content = "@" .. LP.Name .. "\nCuenta creada hace " .. LP.AccountAge .. " días."
 }, "profile")
 
-IdentityBox:CreateParagraph({
-    Name = "NC HUB",
-    Content = "Aurora Core Edition\nSistema modular activo."
-}, "hub_status")
+ProfileBox:CreateLabel({
+    Name = LP.DisplayName
+}, "display_name")
 
-local SessionBox = HomeTab:CreateGroupbox({
-    Name = "MONITOR DE SESIÓN",
+ProfileBox:CreateLabel({
+    Name = "@" .. LP.Name
+}, "username")
+
+ProfileBox:CreateLabel({
+    Name = "Cuenta: " .. LP.AccountAge .. " días"
+}, "account_age")
+
+local StatusBox = HomeTab:CreateGroupbox({
+    Name = "SESIÓN",
     Column = 2,
     Style = 2
 }, "session")
 
-local SessionLabel = SessionBox:CreateParagraph({
-    Name = "TIEMPO ACTIVO",
-    Content = "Calculando..."
-}, "session_time")
+local TimeLabel = StatusBox:CreateLabel({
+    Name = "Tiempo: 0h 0m 0s"
+}, "time")
 
-SessionBox:CreateParagraph({
-    Name = "ESTADO",
-    Content = "NC HUB operativo.\nListo para cualquier juego."
-}, "system_state")
-
-HomeTab:CreateGroupbox({
-    Name = "BIENVENIDO",
-    Column = 1,
-    Style = 1
-}, "welcome"):CreateParagraph({
-    Name = "HECHO PARA TI",
-    Content = "Este es tu hub universal.\nLos módulos de juegos se cargan por separado desde el loader."
-}, "welcome_text")
+StatusBox:CreateLabel({
+    Name = "Status: Operacional"
+}, "status")
 
 -- ==========================================
--- 6. MOVEMENT
+-- MOVIMIENTO
 -- ==========================================
-local MobilityBox = MoveTab:CreateGroupbox({
-    Name = "MOVILIDAD",
+local SpeedBox = MovementTab:CreateGroupbox({
+    Name = "VELOCIDAD",
     Column = 1,
     Style = 2
-}, "mobility")
+}, "speed")
 
-MobilityBox:CreateSlider({
-    Name = "WalkSpeed",
-    CurrentValue = 16,
-    Range = {16, 256},
-    Increment = 1,
-    Suffix = " studs",
-    Callback = function(Value)
-        local Humanoid = GetHumanoid()
+local SpeedLabel = SpeedBox:CreateLabel({
+    Name = "Actual: 16"
+}, "speed_label")
 
-        if Humanoid then
-            Humanoid.WalkSpeed = Value
-        end
+local function SetWalkSpeed(Value)
+    WalkSpeed = Value
+
+    local Humanoid = GetHumanoid()
+    if Humanoid then
+        Humanoid.WalkSpeed = WalkSpeed
     end
-}, "walkspeed")
 
-MobilityBox:CreateToggle({
+    SpeedLabel:Set({
+        Name = "Actual: " .. WalkSpeed
+    })
+end
+
+SpeedBox:CreateButton({
+    Name = "Normal | 16",
+    Style = 1,
+    CenterContent = true,
+    Callback = function()
+        SetWalkSpeed(16)
+    end
+}, "speed_16")
+
+SpeedBox:CreateButton({
+    Name = "Rápido | 32",
+    Style = 1,
+    CenterContent = true,
+    Callback = function()
+        SetWalkSpeed(32)
+    end
+}, "speed_32")
+
+SpeedBox:CreateButton({
+    Name = "Turbo | 50",
+    Style = 1,
+    CenterContent = true,
+    Callback = function()
+        SetWalkSpeed(50)
+    end
+}, "speed_50")
+
+SpeedBox:CreateButton({
+    Name = "Máximo | 75",
+    Style = 1,
+    CenterContent = true,
+    Callback = function()
+        SetWalkSpeed(75)
+    end
+}, "speed_75")
+
+local MovementBox = MovementTab:CreateGroupbox({
+    Name = "MOVIMIENTO",
+    Column = 2,
+    Style = 2
+}, "movement_options")
+
+MovementBox:CreateToggle({
     Name = "Infinite Jump",
     CurrentValue = false,
     Style = 2,
@@ -201,13 +365,7 @@ MobilityBox:CreateToggle({
     end
 }, "infinite_jump")
 
-local NoclipBox = MoveTab:CreateGroupbox({
-    Name = "COLISIÓN",
-    Column = 2,
-    Style = 2
-}, "collision")
-
-NoclipBox:CreateToggle({
+MovementBox:CreateToggle({
     Name = "Noclip",
     CurrentValue = false,
     Style = 2,
@@ -216,32 +374,16 @@ NoclipBox:CreateToggle({
     end
 }, "noclip")
 
-NoclipBox:CreateParagraph({
-    Name = "INFO",
-    Content = "Al apagar Noclip, el hub restaura la colisión original de tu personaje."
-}, "noclip_info")
-
 -- ==========================================
--- 7. FLY
+-- FLY
 -- ==========================================
-local FlyBox = FlyTab:CreateGroupbox({
-    Name = "VUELO AURORA",
+local FlyMainBox = FlyTab:CreateGroupbox({
+    Name = "FLY",
     Column = 1,
     Style = 2
 }, "fly_main")
 
-FlyBox:CreateSlider({
-    Name = "Fly Speed",
-    CurrentValue = 80,
-    Range = {10, 400},
-    Increment = 5,
-    Suffix = " studs",
-    Callback = function(Value)
-        FlySpeed = Value
-    end
-}, "fly_speed")
-
-FlyBox:CreateToggle({
+FlyMainBox:CreateToggle({
     Name = "Activar Fly",
     CurrentValue = false,
     Style = 2,
@@ -280,23 +422,29 @@ FlyBox:CreateToggle({
                 while Fly and Root.Parent and Humanoid.Parent do
                     local Camera = workspace.CurrentCamera
                     local Direction = Humanoid.MoveDirection
+                    local Velocity = Vector3.zero
 
                     Gyro.CFrame = Camera.CFrame
 
-                    if Direction.Magnitude > 0 then
-                        local FlatLook = Vector3.new(Camera.CFrame.LookVector.X, 0, Camera.CFrame.LookVector.Z)
-                        local FlatRight = Vector3.new(Camera.CFrame.RightVector.X, 0, Camera.CFrame.RightVector.Z)
+                    local Look = Vector3.new(Camera.CFrame.LookVector.X, 0, Camera.CFrame.LookVector.Z)
+                    local Right = Vector3.new(Camera.CFrame.RightVector.X, 0, Camera.CFrame.RightVector.Z)
 
-                        if FlatLook.Magnitude > 0 and FlatRight.Magnitude > 0 then
-                            local Move = (FlatLook.Unit * Direction:Dot(FlatLook.Unit))
-                                + (FlatRight.Unit * Direction:Dot(FlatRight.Unit))
+                    if Direction.Magnitude > 0 and Look.Magnitude > 0 and Right.Magnitude > 0 then
+                        local Horizontal = (Look.Unit * Direction:Dot(Look.Unit))
+                            + (Right.Unit * Direction:Dot(Right.Unit))
 
-                            Force.Velocity = Move * FlySpeed
+                        if Horizontal.Magnitude > 0 then
+                            Velocity = Horizontal.Unit * FlySpeed
                         end
-                    else
-                        Force.Velocity = Vector3.zero
                     end
 
+                    if os.clock() < FlyUpUntil then
+                        Velocity = Velocity + Vector3.new(0, FlySpeed, 0)
+                    elseif os.clock() < FlyDownUntil then
+                         Velocity = Velocity + Vector3.new(0, -FlySpeed, 0)
+                    end
+
+                    Force.Velocity = Velocity
                     task.wait()
                 end
 
@@ -317,23 +465,111 @@ FlyBox:CreateToggle({
     end
 }, "fly_toggle")
 
-FlyTab:CreateGroupbox({
-    Name = "CONTROLES",
+FlyMainBox:CreateButton({
+    Name = "Subir",
+    Style = 1,
+    CenterContent = true,
+    Callback = function()
+        if Fly then
+            FlyUpUntil = os.clock() + 0.35
+        end
+    end
+}, "fly_up")
+
+FlyMainBox:CreateButton({
+    Name = "Bajar",
+    Style = 1,
+    CenterContent = true,
+    Callback = function()
+        if Fly then
+            FlyDownUntil = os.clock() + 0.35
+        end
+    end
+}, "fly_down")
+
+local FlySpeedBox = FlyTab:CreateGroupbox({
+    Name = "VELOCIDAD DE FLY",
     Column = 2,
-    Style = 1
-}, "fly_info"):CreateParagraph({
-    Name = "MODO MÓVIL",
-    Content = "Usa el joystick para moverte.\nEl personaje mira hacia la cámara mientras vuelas."
-}, "fly_description")
+    Style = 2
+}, "fly_speed")
+
+local FlySpeedLabel = FlySpeedBox:CreateLabel({
+    Name = "Actual: 80"
+}, "fly_speed_label")
+
+local function SetFlySpeed(Value)
+    FlySpeed = Value
+
+    FlySpeedLabel:Set({
+        Name = "Actual: " .. FlySpeed
+    })
+end
+
+FlySpeedBox:CreateButton({
+    Name = "Lento | 30",
+    Style = 1,
+    CenterContent = true,
+    Callback = function()
+        SetFlySpeed(30)
+    end
+}, "fly_30")
+
+FlySpeedBox:CreateButton({
+    Name = "Normal | 80",
+    Style = 1,
+    CenterContent = true,
+    Callback = function()
+        SetFlySpeed(80)
+    end
+}, "fly_80")
+
+FlySpeedBox:CreateButton({
+    Name = "Rápido | 150",
+    Style = 1,
+    CenterContent = true,
+    Callback = function()
+        SetFlySpeed(150)
+    end
+}, "fly_150")
+
+FlySpeedBox:CreateButton({
+    Name = "Máximo | 250",
+    Style = 1,
+    CenterContent = true,
+    Callback = function()
+        SetFlySpeed(250)
+    end
+}, "fly_250")
 
 -- ==========================================
--- 8. VISUALS
+-- ESP
 -- ==========================================
 local ESPBox = VisualTab:CreateGroupbox({
-    Name = "PLAYER ESP",
+    Name = "ESP",
     Column = 1,
     Style = 2
-}, "esp")
+}, "esp_box")
+
+local function AddESP(Character)
+    if not Character or Character:FindFirstChild("NC_ESP") then
+        return
+    end
+
+    local Highlight = Instance.new("Highlight")
+    Highlight.Name = "NC_ESP"
+    Highlight.FillColor = Color3.fromRGB(166, 98, 255)
+    Highlight.OutlineColor = Color3.fromRGB(106, 235, 255)
+    Highlight.FillTransparency = 0.55
+    Highlight.OutlineTransparency = 0
+    Highlight.Parent = Character
+end
+
+local function RemoveESP(Character)
+    local Highlight = Character and Character:FindFirstChild("NC_ESP")
+    if Highlight then
+        Highlight:Destroy()
+    end
+end
 
 ESPBox:CreateToggle({
     Name = "ESP Jugadores",
@@ -343,49 +579,30 @@ ESPBox:CreateToggle({
         ESP = Value
 
         for _, Player in ipairs(Players:GetPlayers()) do
-            if Player ~= LP and Player.Character then
-                local Highlight = Player.Character:FindFirstChild("NC_ESP")
-
+            if Player ~= LP then
                 if Value then
-                    if not Highlight then
-                        Highlight = Instance.new("Highlight")
-                        Highlight.Name = "NC_ESP"
-                        Highlight.FillColor = Color3.fromRGB(166, 98, 255)
-                        Highlight.OutlineColor = Color3.fromRGB(106, 235, 255)
-                        Highlight.FillTransparency = 0.55
-                        Highlight.OutlineTransparency = 0
-                        Highlight.Parent = Player.Character
-                    end
-                elseif Highlight then
-                    Highlight:Destroy()
+                    AddESP(Player.Character)
+                else
+                    RemoveESP(Player.Character)
                 end
             end
         end
     end
-}, "player_esp")
-
-VisualTab:CreateGroupbox({
-    Name = "AURORA VISUALS",
-    Column = 2,
-    Style = 1
-}, "visual_info"):CreateParagraph({
-    Name = "COLOR DEL HUB",
-    Content = "Violeta + cian sobre negro espacial.\nDiseñado para mantener buena visibilidad en móvil."
-}, "visual_theme")
+}, "esp_toggle")
 
 -- ==========================================
--- 9. TOOLS
+-- TOOLS
 -- ==========================================
-local DevBox = ToolsTab:CreateGroupbox({
+local DeveloperBox = ToolsTab:CreateGroupbox({
     Name = "DEVELOPER TOOLS",
     Column = 1,
     Style = 2
-}, "dev_tools")
+}, "developer_tools")
 
-DevBox:CreateButton({
+DeveloperBox:CreateButton({
     Name = "Cargar Dark Dex",
-    CenterContent = true,
     Style = 1,
+    CenterContent = true,
     Callback = function()
         loadstring(game:HttpGet(
             "https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"
@@ -393,10 +610,10 @@ DevBox:CreateButton({
     end
 }, "dark_dex")
 
-DevBox:CreateButton({
+DeveloperBox:CreateButton({
     Name = "Cargar SimpleSpy",
-    CenterContent = true,
     Style = 1,
+    CenterContent = true,
     Callback = function()
         loadstring(game:HttpGet(
             "https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"
@@ -412,25 +629,24 @@ local SystemBox = ToolsTab:CreateGroupbox({
 
 SystemBox:CreateButton({
     Name = "Cerrar NC HUB",
-    CenterContent = true,
     Style = 2,
+    CenterContent = true,
     Callback = function()
         Starlight:Destroy()
     end
-}, "close_hub")
-
-SystemBox:CreateParagraph({
-    Name = "NC HUB | AURORA CORE",
-    Content = "Universal Edition\nDiseño personalizado para hidjcjgg."
-}, "hub_version")
+}, "close")
 
 -- ==========================================
--- 10. MOTORES UNIVERSALES
+-- MOTORES
 -- ==========================================
 UserInputService.JumpRequest:Connect(function()
+    if Fly then
+        FlyUpUntil = os.clock() + 0.35
+        return
+    end
+
     if InfiniteJump then
         local Humanoid = GetHumanoid()
-
         if Humanoid then
             Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
         end
@@ -439,22 +655,18 @@ end)
 
 RunService.Stepped:Connect(function()
     local Character = LP.Character
-
-    if not Character then
-        return
-    end
+    if not Character then return end
 
     for _, Part in ipairs(Character:GetDescendants()) do
         if Part:IsA("BasePart") then
             if Noclip then
-                if CollisionState[Part] == nil then
-                    CollisionState[Part] = Part.CanCollide
+                if OriginalCollision[Part] == nil then
+                    OriginalCollision[Part] = Part.CanCollide
                 end
-
                 Part.CanCollide = false
-            elseif CollisionState[Part] ~= nil then
-                Part.CanCollide = CollisionState[Part]
-                CollisionState[Part] = nil
+            elseif OriginalCollision[Part] ~= nil then
+                Part.CanCollide = OriginalCollision[Part]
+                OriginalCollision[Part] = nil
             end
         end
     end
@@ -462,28 +674,23 @@ end)
 
 Players.PlayerAdded:Connect(function(Player)
     Player.CharacterAdded:Connect(function(Character)
-        if not ESP then
-            return
+        if ESP then
+            task.wait(1)
+            AddESP(Character)
         end
-
-        task.wait(1)
-
-        local Highlight = Instance.new("Highlight")
-        Highlight.Name = "NC_ESP"
-        Highlight.FillColor = Color3.fromRGB(166, 98, 255)
-        Highlight.OutlineColor = Color3.fromRGB(106, 235, 255)
-        Highlight.FillTransparency = 0.55
-        Highlight.OutlineTransparency = 0
-        Highlight.Parent = Character
     end)
+end)
+
+LP.CharacterAdded:Connect(function()
+    task.wait(1)
+    SetWalkSpeed(WalkSpeed)
 end)
 
 task.spawn(function()
     while task.wait(1) do
         pcall(function()
-            SessionLabel:Set({
-                Name = "TIEMPO ACTIVO",
-                Content = FormatTime() .. "\nNC HUB sigue operativo."
+            TimeLabel:Set({
+                Name = "Tiempo: " .. GetTimeText()
             })
         end)
     end
