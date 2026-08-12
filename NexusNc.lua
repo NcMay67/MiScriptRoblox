@@ -143,6 +143,7 @@ function NX:Window(config)
     local main = make("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = NX.Theme.Background,
+        ClipsDescendants = true,
         BorderSizePixel = 0,
         Position = UDim2.fromScale(0.5, 0.5),
         Size = UDim2.fromOffset(config.Width or 520, config.Height or 350),
