@@ -241,9 +241,29 @@ macButton(NX.Theme.MacRed, 15, function()
     gui:Destroy()
 end)
 
+local normalSize = main.Size
+local normalPosition = main.Position
+local minimized = false
+
 macButton(NX.Theme.MacYellow, 39, function()
+    if minimized then return end
+    minimized = true
+
+    main.ClipsDescendants = true
+    tween(main, 0.24, {
+        Size = UDim2.fromOffset(64, 44),
+        Position = UDim2.new(1, -52, 1, -52)
+    }):Play()
+
+    task.wait(0.25)
     main.Visible = false
+    main.Size = normalSize
+    main.Position = normalPosition
     reopen.Visible = true
+    reopen.Size = UDim2.fromOffset(34, 34)
+    tween(reopen, 0.18, {
+        Size = UDim2.fromOffset(46, 46)
+    }):Play()
 end)
 
 macButton(NX.Theme.MacGreen, 63, function()
@@ -251,8 +271,24 @@ macButton(NX.Theme.MacGreen, 63, function()
 end)
 
 reopen.MouseButton1Click:Connect(function()
-    main.Visible = true
+    if not minimized then return end
+    minimized = false
+
     reopen.Visible = false
+    main.Visible = true
+    main.Size = UDim2.fromOffset(64, 44)
+    main.Position = UDim2.new(1, -52, 1, -52)
+
+    tween(main, 0.28, {
+        Size = normalSize,
+        Position = normalPosition
+    }):Play()
+
+    task.delay(0.30, function()
+        if main and main.Parent then
+            main.ClipsDescendants = false
+        end
+    end)
 end)
 
 
