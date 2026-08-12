@@ -1294,7 +1294,16 @@ function tab:Card(title)
         Parent = page
     })
     Util.Round(frame, 12)
-    Util.Stroke(frame, NX.Theme.Stroke, 0.35)
+Util.Make("UIGradient", {
+    Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, NX.Theme.Surface2),
+        ColorSequenceKeypoint.new(1, NX.Theme.Surface)
+    }),
+    Rotation = 90,
+    Parent = frame
+})
+Util.Stroke(frame, NX.Theme.Stroke, 0.35)
+
 
     Util.Make("UIPadding", {
         PaddingLeft = UDim.new(0, 12),
