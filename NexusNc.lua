@@ -190,22 +190,47 @@ subtitle.TextXAlignment = Enum.TextXAlignment.Left
 round(mac, 9)
 line(mac, NX.Theme.Stroke, 0.55)
 
-local reopen = make("TextButton", {
-    AnchorPoint = Vector2.new(0.5, 0.5),
-    AutoButtonColor = false,
-    BackgroundColor3 = NX.Theme.Surface2,
+local restoreBar = make("Frame", {
+    BackgroundColor3 = NX.Theme.Surface,
     BorderSizePixel = 0,
-    Position = UDim2.new(1, -30, 1, -30),
-    Size = UDim2.fromOffset(44, 44),
-    Text = "N",
-    TextColor3 = NX.Theme.Cian,
-    TextSize = 16,
-    Font = Enum.Font.GothamBold,
+    Position = UDim2.new(1, -145, 0, 82),
+    Size = UDim2.fromOffset(126, 38),
     Visible = false,
     Parent = gui
 })
-round(reopen, 14)
-line(reopen, NX.Theme.Accent, 0.25)
+round(restoreBar, 12)
+line(restoreBar, NX.Theme.Accent, 0.25)
+
+local grip = make("TextButton", {
+    AutoButtonColor = false,
+    BackgroundColor3 = NX.Theme.Surface2,
+    BorderSizePixel = 0,
+    Position = UDim2.fromOffset(4, 4),
+    Size = UDim2.fromOffset(28, 30),
+    Text = "⋮",
+    TextColor3 = NX.Theme.Muted,
+    TextSize = 19,
+    Font = Enum.Font.GothamBold,
+    Parent = restoreBar
+})
+round(grip, 9)
+
+local restoreButton = make("TextButton", {
+    AutoButtonColor = false,
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    Position = UDim2.fromOffset(37, 0),
+    Size = UDim2.new(1, -41, 1, 0),
+    Text = "N  NC HUB",
+    TextColor3 = NX.Theme.Text,
+    TextSize = 12,
+    Font = Enum.Font.GothamBold,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Parent = restoreBar
+})
+
+-- Se arrastra desde los tres puntos, así tocar NC HUB no abre por accidente.
+drag(grip, restoreBar)
 
 local function macButton(color, x, callback)
     local button = make("TextButton", {
@@ -237,13 +262,22 @@ local function macButton(color, x, callback)
     button.MouseButton1Click:Connect(callback)
 end
 
-macButton(NX.Theme.MacRed, 15, function()
-    gui:Destroy()
-end)
-
 local normalSize = main.Size
 local normalPosition = main.Position
 local minimized = false
+
+local function barCenter()
+    return UDim2.new(
+        restoreBar.Position.X.Scale,
+        restoreBar.Position.X.Offset + 63,
+        restoreBar.Position.Y.Scale,
+        restoreBar.Position.Y.Offset + 19
+    )
+end
+
+macButton(NX.Theme.MacRed, 15, function()
+    gui:Destroy()
+end)
 
 macButton(NX.Theme.MacYellow, 39, function()
     if minimized then return end
@@ -251,18 +285,19 @@ macButton(NX.Theme.MacYellow, 39, function()
 
     main.ClipsDescendants = true
     tween(main, 0.24, {
-        Size = UDim2.fromOffset(64, 44),
-        Position = UDim2.new(1, -52, 1, -52)
+        Size = UDim2.fromOffset(126, 38),
+        Position = barCenter()
     }):Play()
 
     task.wait(0.25)
     main.Visible = false
     main.Size = normalSize
     main.Position = normalPosition
-    reopen.Visible = true
-    reopen.Size = UDim2.fromOffset(34, 34)
-    tween(reopen, 0.18, {
-        Size = UDim2.fromOffset(46, 46)
+
+    restoreBar.Visible = true
+    restoreBar.Size = UDim2.fromOffset(86, 30)
+    tween(restoreBar, 0.18, {
+        Size = UDim2.fromOffset(126, 38)
     }):Play()
 end)
 
@@ -270,14 +305,14 @@ macButton(NX.Theme.MacGreen, 63, function()
     main.Position = UDim2.fromScale(0.5, 0.5)
 end)
 
-reopen.MouseButton1Click:Connect(function()
+restoreButton.MouseButton1Click:Connect(function()
     if not minimized then return end
     minimized = false
 
-    reopen.Visible = false
+    restoreBar.Visible = false
     main.Visible = true
-    main.Size = UDim2.fromOffset(64, 44)
-    main.Position = UDim2.new(1, -52, 1, -52)
+    main.Size = UDim2.fromOffset(126, 38)
+    main.Position = barCenter()
 
     tween(main, 0.28, {
         Size = normalSize,
