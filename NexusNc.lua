@@ -103,6 +103,9 @@ function NX:GetThemeNames()
     table.sort(names)
     return names
 end
+-- Tema oficial de NEXUS NC
+NX:UseTheme("Void")
+
 
 function NX:ResolveWindowSize(width, height)
     local camera = workspace.CurrentCamera
