@@ -7,15 +7,19 @@ local CoreGui = game:GetService("CoreGui")
 local Player = Players.LocalPlayer
 
 NX.Theme = {
-    Background = Color3.fromRGB(1, 17, 66),
-    Surface = Color3.fromRGB(8, 25, 79),
-    Surface2 = Color3.fromRGB(16, 36, 94),
-    Purple = Color3.fromRGB(42, 0, 72),
-    Accent = Color3.fromRGB(129, 84, 235),
-    Cian = Color3.fromRGB(85, 219, 255),
-    Text = Color3.fromRGB(242, 244, 255),
-    Muted = Color3.fromRGB(165, 180, 222),
-    Stroke = Color3.fromRGB(67, 88, 155)
+    Background = Color3.fromRGB(17, 18, 25),
+    Surface = Color3.fromRGB(25, 27, 36),
+    Surface2 = Color3.fromRGB(41, 44, 56),
+    Purple = Color3.fromRGB(57, 61, 78),
+    Accent = Color3.fromRGB(117, 164, 206),
+    Cian = Color3.fromRGB(123, 201, 201),
+    Rose = Color3.fromRGB(224, 138, 175),
+    Text = Color3.fromRGB(241, 243, 248),
+    Muted = Color3.fromRGB(166, 171, 190),
+    Stroke = Color3.fromRGB(78, 83, 105),
+    MacRed = Color3.fromRGB(255, 95, 86),
+    MacYellow = Color3.fromRGB(255, 189, 46),
+    MacGreen = Color3.fromRGB(39, 201, 63)
 }
 
 local function make(class, props)
