@@ -1129,7 +1129,21 @@ local restore = Util.Make("TextButton", {
     function app:Section(name)
         local section = { App = self }
         local header = Util.Text(sidebar, name, 11, Enum.Font.GothamBold, NX.Theme.Muted)
-        header.Size = UDim2.new(1, 0, 0, 20)
+header.Size = UDim2.new(1, 0, 0, 20)
+header.TextXAlignment = Enum.TextXAlignment.Left
+header.TextTransparency = 0.16
+
+local sectionMarker = Util.Make("Frame", {
+    AnchorPoint = Vector2.new(0, 0.5),
+    BackgroundColor3 = NX.Theme.Cian,
+    BackgroundTransparency = 0.15,
+    BorderSizePixel = 0,
+    Position = UDim2.new(0, 0, 0.5, 0),
+    Size = UDim2.fromOffset(3, 12),
+    Parent = header
+})
+Util.Round(sectionMarker, 99)
+
 
         function section:Tab(name)
             local tab = {
