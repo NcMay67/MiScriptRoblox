@@ -647,6 +647,57 @@ ExtensionCard:Add("Divider", {
 ExtensionCard:Add("Label", {
     Text = "NEXUS NC ya admite extensiones modulares"
 })
+local BindCard = LabTab:Card("PREFERENCIAS VINCULADAS")
+local BindStatus = NX:Label(BindCard, "Estado: cambia valores y guarda")
+
+local BindToggle = NX:Toggle(BindCard, {
+    Name = "Opción guardable",
+    Default = false
+})
+
+local BindSlider = NX:Slider(BindCard, {
+    Name = "Número guardable",
+    Min = 0,
+    Max = 100,
+    Default = 25
+})
+
+local BindInput = NX:Input(BindCard, {
+    Name = "Texto guardable",
+    Placeholder = "Escribe algo"
+})
+
+local BindColor = NX:ColorPicker(BindCard, {
+    Name = "Color guardable",
+    Default = NX.Theme.Cian
+})
+
+NX:Bind("lab_toggle", BindToggle)
+NX:Bind("lab_slider", BindSlider)
+NX:Bind("lab_input", BindInput)
+NX:Bind("lab_color", BindColor)
+
+NX:Button(BindCard, {
+    Name = "Guardar preferencias",
+    Callback = function()
+        local ok, err = NX:SaveBindings("nexus_bindings_lab", {
+            Source = "NEXUS LAB"
+        })
+        BindStatus:Set(ok and "Estado: preferencias guardadas" or "Error: " .. tostring(err))
+    end
+})
+
+NX:Button(BindCard, {
+    Name = "Cargar preferencias",
+    Callback = function()
+        local extra, err = NX:LoadBindings("nexus_bindings_lab")
+        if extra then
+            BindStatus:Set("Estado: preferencias restauradas")
+        else
+            BindStatus:Set("Error: " .. tostring(err))
+        end
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
