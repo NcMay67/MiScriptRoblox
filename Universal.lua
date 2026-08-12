@@ -987,6 +987,18 @@ NX:Button(NavigationCard, {
         NavigationStatus:Set(DynamicTab.Disabled and "Estado: pestaña desactivada" or "Estado: pestaña activada")
     end
 })
+local SegmentCard = LabTab:Card("SEGMENT")
+local SegmentStatus = NX:Label(SegmentCard, "Modo actual: Normal")
+
+NX:Segment(SegmentCard, {
+    Name = "Modo rápido",
+    Values = {"Normal", "Farm", "Visuales"},
+    Default = "Normal",
+    Bind = "lab_segment_mode",
+    Callback = function(value)
+        SegmentStatus:Set("Modo actual: " .. tostring(value))
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
