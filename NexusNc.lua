@@ -3296,6 +3296,10 @@ end)
         return lib:ColorPicker(card, config)
     end)
     
+    self:RegisterComponent("ColorInput", function(lib, card, config)
+    return lib:ColorInput(card, config)
+end)
+    
     self:RegisterComponent("ProfilePanel", function(lib, card, config)
     return lib:ProfilePanel(card, config)
 end)
