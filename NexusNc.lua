@@ -1128,7 +1128,7 @@ local restore = Util.Make("TextButton", {
 
     function app:Section(name)
         local section = { App = self }
-        local header = Util.Text(sidebar, name, 11, Enum.Font.GothamBold, NX.Theme.Muted)
+        local header = Util.Text(sidebar, "   " .. name, 11, Enum.Font.GothamBold, NX.Theme.Muted)
 header.Size = UDim2.new(1, 0, 0, 20)
 header.TextXAlignment = Enum.TextXAlignment.Left
 header.TextTransparency = 0.16
