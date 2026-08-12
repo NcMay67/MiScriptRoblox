@@ -1597,6 +1597,187 @@ function NX:MultiDropdown(card, config)
         end
     }
 end
+function NX:ColorPicker(card, config)
+    config = config or {}
+
+    local defaultPalette = {
+        Color3.fromRGB(117, 164, 206),
+        Color3.fromRGB(123, 201, 201),
+        Color3.fromRGB(224, 138, 175),
+        Color3.fromRGB(255, 189, 46),
+        Color3.fromRGB(255, 95, 86),
+        Color3.fromRGB(39, 201, 63),
+        Color3.fromRGB(174, 113, 255),
+        Color3.fromRGB(241, 243, 248)
+    }
+
+    local palette = config.Palette or defaultPalette
+    local disabled = config.Disabled == true
+    local state = NX:Value(config.Default or NX.Theme.Accent)
+    local open = false
+
+    local holder = Util.Make("Frame", {
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 0),
+        Parent = card.Frame
+    })
+    Util.Make("UIListLayout", {
+        Padding = UDim.new(0, 6),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = holder
+    })
+
+    local title = Util.Text(holder, config.Name or "Color", 13, Enum.Font.GothamMedium)
+    title.Size = UDim2.new(1, 0, 0, 19)
+
+    local selectButton = Util.Make("TextButton", {
+        AutoButtonColor = false,
+        BackgroundColor3 = NX.Theme.Surface2,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 36),
+        Text = "",
+        Parent = holder
+    })
+    Util.Round(selectButton, 9)
+
+    local preview = Util.Make("Frame", {
+        AnchorPoint = Vector2.new(0, 0.5),
+        BackgroundColor3 = state:Get(),
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 10, 0.5, 0),
+        Size = UDim2.fromOffset(20, 20),
+        Parent = selectButton
+    })
+    Util.Round(preview, 6)
+    Util.Stroke(preview, NX.Theme.Text, 0.55)
+
+    local hexText = Util.Text(selectButton, "", 13, Enum.Font.Gotham, NX.Theme.Text)
+    hexText.Position = UDim2.fromOffset(40, 0)
+    hexText.Size = UDim2.new(1, -72, 1, 0)
+
+    local arrow = Util.Text(selectButton, "⌄", 18, Enum.Font.GothamBold, NX.Theme.Cian)
+    arrow.AnchorPoint = Vector2.new(1, 0.5)
+    arrow.Position = UDim2.new(1, -11, 0.5, -1)
+    arrow.Size = UDim2.fromOffset(18, 20)
+    arrow.TextXAlignment = Enum.TextXAlignment.Center
+
+    local paletteBox = Util.Make("Frame", {
+        BackgroundColor3 = NX.Theme.Surface2,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 0),
+        Visible = false,
+        Parent = holder
+    })
+    Util.Round(paletteBox, 10)
+    Util.Stroke(paletteBox, NX.Theme.Stroke, 0.45)
+    Util.Make("UIPadding", {
+        PaddingLeft = UDim.new(0, 9),
+        PaddingRight = UDim.new(0, 9),
+        PaddingTop = UDim.new(0, 9),
+        PaddingBottom = UDim.new(0, 9),
+        Parent = paletteBox
+    })
+
+    Util.Make("UIGridLayout", {
+        CellPadding = UDim2.fromOffset(7, 7),
+        CellSize = UDim2.fromOffset(34, 34),
+        FillDirectionMaxCells = 6,
+        HorizontalAlignment = Enum.HorizontalAlignment.Center,
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = paletteBox
+    })
+
+    local function toHex(color)
+        local red = math.floor(color.R * 255 + 0.5)
+        local green = math.floor(color.G * 255 + 0.5)
+        local blue = math.floor(color.B * 255 + 0.5)
+        return string.format("#%02X%02X%02X", red, green, blue)
+    end
+
+    local function paint(color)
+        preview.BackgroundColor3 = color
+        hexText.Text = toHex(color)
+    end
+
+    local function set(color, notify)
+        if typeof(color) ~= "Color3" then return end
+        if state:Get() == color then
+            paint(color)
+            return
+        end
+        paint(color)
+        state:Set(color)
+        if notify and config.Callback then config.Callback(color) end
+    end
+
+    local function redraw()
+        for _, child in ipairs(paletteBox:GetChildren()) do
+            if child:IsA("TextButton") then child:Destroy() end
+        end
+
+        for _, color in ipairs(palette) do
+            local chosen = state:Get() == color
+            local option = Util.Make("TextButton", {
+                AutoButtonColor = false,
+                BackgroundColor3 = color,
+                BorderSizePixel = 0,
+                Text = chosen and "✓" or "",
+                TextColor3 = NX.Theme.Background,
+                TextSize = 15,
+                Font = Enum.Font.GothamBold,
+                Parent = paletteBox
+            })
+            Util.Round(option, 9)
+            Util.Stroke(option, chosen and NX.Theme.Text or NX.Theme.Stroke, chosen and 0.05 or 0.5)
+
+            local maid = componentMaid(card)
+            local connection = option.MouseButton1Click:Connect(function()
+                set(color, true)
+                redraw()
+            end)
+            if maid then maid:Give(connection) end
+        end
+
+        local rows = math.max(1, math.ceil(#palette / 6))
+        paletteBox.Size = UDim2.new(1, 0, 0, rows * 41 + 11)
+    end
+
+    local function setOpen(value)
+        if disabled then return end
+        open = value == true
+        paletteBox.Visible = open
+        arrow.Text = open and "⌃" or "⌄"
+        if open then redraw() end
+    end
+
+    local maid = componentMaid(card)
+    if maid then
+        maid:Give(state)
+        maid:Give(selectButton.MouseButton1Click:Connect(function()
+            setOpen(not open)
+        end))
+    end
+
+    paint(state:Get())
+
+    return {
+        Set = function(_, color) set(color, true) end,
+        Get = function() return state:Get() end,
+        OnChanged = function(_, callback) return state:OnChanged(callback) end,
+        SetPalette = function(_, nextPalette)
+            palette = nextPalette or {}
+            if open then redraw() end
+        end,
+        SetVisible = function(_, visible) holder.Visible = visible end,
+        SetDisabled = function(_, value)
+            disabled = value == true
+            selectButton.BackgroundTransparency = disabled and 0.45 or 0
+            title.TextTransparency = disabled and 0.45 or 0
+            if disabled then setOpen(false) end
+        end
+    }
+end
 
 -- [[ 07.75. OVERLAYS Y DIÁLOGOS ]]
 local function overlayGui(name, order)
