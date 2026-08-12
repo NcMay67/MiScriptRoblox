@@ -1778,6 +1778,111 @@ function NX:ColorPicker(card, config)
         end
     }
 end
+function NX:Keybind(card, config)
+    config = config or {}
+
+    local disabled = config.Disabled == true
+    local listening = false
+    local key = nil
+    local state = NX:Value(nil)
+
+    local function parse(value)
+        if typeof(value) == "EnumItem" and value.EnumType == Enum.KeyCode then
+            return value
+        end
+        if type(value) == "string" then
+            return Enum.KeyCode[value]
+        end
+        return nil
+    end
+
+    local holder = Util.Make("Frame", {
+        BackgroundColor3 = NX.Theme.Surface2,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 38),
+        Parent = card.Frame
+    })
+    Util.Round(holder, 10)
+
+    local name = Util.Text(holder, config.Name or "Keybind", 13, Enum.Font.GothamMedium)
+    name.Position = UDim2.fromOffset(11, 0)
+    name.Size = UDim2.new(1, -130, 1, 0)
+
+    local bindButton = Util.Make("TextButton", {
+        AnchorPoint = Vector2.new(1, 0.5),
+        AutoButtonColor = false,
+        BackgroundColor3 = NX.Theme.Background,
+        BorderSizePixel = 0,
+        Position = UDim2.new(1, -8, 0.5, 0),
+        Size = UDim2.fromOffset(104, 26),
+        Text = "Sin tecla",
+        TextColor3 = NX.Theme.Muted,
+        TextSize = 11,
+        Font = Enum.Font.GothamMedium,
+        Parent = holder
+    })
+    Util.Round(bindButton, 7)
+
+    local function format(value)
+        if not value then return "Sin tecla" end
+        return value.Name
+    end
+
+    local function render()
+        bindButton.Text = listening and "Pulsa una tecla" or format(key)
+        bindButton.TextColor3 = listening and NX.Theme.Cian or (key and NX.Theme.Text or NX.Theme.Muted)
+    end
+
+    local function set(value, notify)
+        key = parse(value)
+        state:Set(key)
+        render()
+        if notify and config.Changed then config.Changed(key) end
+    end
+
+    local maid = componentMaid(card)
+    if maid then
+        maid:Give(state)
+        maid:Give(bindButton.MouseButton1Click:Connect(function()
+            if disabled then return end
+            listening = not listening
+            render()
+        end))
+        maid:Give(UIS.InputBegan:Connect(function(input, processed)
+            if processed then return end
+
+            if listening then
+                if input.UserInputType == Enum.UserInputType.Keyboard then
+                    listening = false
+                    set(input.KeyCode, true)
+                end
+                return
+            end
+
+            if key and input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == key then
+                if config.Callback then config.Callback(key) end
+            end
+        end))
+    end
+
+    set(config.Default, false)
+
+    return {
+        Set = function(_, value) set(value, true) end,
+        Get = function() return key end,
+        OnChanged = function(_, callback) return state:OnChanged(callback) end,
+        SetVisible = function(_, visible) holder.Visible = visible end,
+        SetDisabled = function(_, value)
+            disabled = value == true
+            bindButton.BackgroundTransparency = disabled and 0.45 or 0
+            name.TextTransparency = disabled and 0.45 or 0
+            if disabled then
+                listening = false
+                render()
+            end
+        end
+    }
+end
 
 -- [[ 07.75. OVERLAYS Y DIÁLOGOS ]]
 local function overlayGui(name, order)
