@@ -3108,6 +3108,11 @@ end)
     self:RegisterComponent("ColorPicker", function(lib, card, config)
         return lib:ColorPicker(card, config)
     end)
+    
+    self:RegisterComponent("ProfilePanel", function(lib, card, config)
+    return lib:ProfilePanel(card, config)
+end)
+
 
     self:RegisterComponent("Paragraph", function(lib, card, config)
         return lib:Paragraph(card, config)
