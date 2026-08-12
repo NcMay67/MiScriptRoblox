@@ -568,6 +568,26 @@ NX:MultiDropdown(MultiCard, {
         end
     end
 })
+local ColorCard = LabTab:Card("COLOR PICKER")
+
+local ColorBadge = NX:Badge(ColorCard, {
+    Text = "COLOR ACTIVO",
+    Color = NX.Theme.Cian
+})
+
+NX:ColorPicker(ColorCard, {
+    Name = "Color de prueba",
+    Default = NX.Theme.Cian,
+    Callback = function(color)
+        ColorBadge:SetColor(color)
+        LabStatus:Set("Color: " .. string.format(
+            "RGB(%d, %d, %d)",
+            math.floor(color.R * 255 + 0.5),
+            math.floor(color.G * 255 + 0.5),
+            math.floor(color.B * 255 + 0.5)
+        ))
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
