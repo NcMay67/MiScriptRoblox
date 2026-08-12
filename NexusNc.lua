@@ -1339,6 +1339,265 @@ function NX:Dropdown(card, config)
         end
     }
 end
+-- [[ 07.6. CONTROLES AVANZADOS ]]
+function NX:MultiDropdown(card, config)
+    config = config or {}
+
+    local values = config.Values or {}
+    local searchable = config.Searchable ~= false
+    local disabled = config.Disabled == true
+    local selected = {}
+    local changed = NX:Value(0)
+    local open = false
+
+    local holder = Util.Make("Frame", {
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 0),
+        Parent = card.Frame
+    })
+    Util.Make("UIListLayout", {
+        Padding = UDim.new(0, 6),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = holder
+    })
+
+    local title = Util.Text(holder, config.Name or "Selección múltiple", 13, Enum.Font.GothamMedium)
+    title.Size = UDim2.new(1, 0, 0, 19)
+
+    local selectButton = Util.Make("TextButton", {
+        AutoButtonColor = false,
+        BackgroundColor3 = NX.Theme.Surface2,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 36),
+        Text = "",
+        Parent = holder
+    })
+    Util.Round(selectButton, 9)
+
+    local summary = Util.Text(selectButton, config.Placeholder or "Seleccionar opciones", 13, Enum.Font.Gotham, NX.Theme.Muted)
+    summary.Position = UDim2.fromOffset(10, 0)
+    summary.Size = UDim2.new(1, -40, 1, 0)
+
+    local arrow = Util.Text(selectButton, "⌄", 18, Enum.Font.GothamBold, NX.Theme.Cian)
+    arrow.AnchorPoint = Vector2.new(1, 0.5)
+    arrow.Position = UDim2.new(1, -11, 0.5, -1)
+    arrow.Size = UDim2.fromOffset(18, 20)
+    arrow.TextXAlignment = Enum.TextXAlignment.Center
+
+    local list = Util.Make("ScrollingFrame", {
+        Active = true,
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+        BackgroundColor3 = NX.Theme.Surface2,
+        BorderSizePixel = 0,
+        CanvasSize = UDim2.new(),
+        ClipsDescendants = true,
+        ScrollBarImageColor3 = NX.Theme.Accent,
+        ScrollBarThickness = 3,
+        Size = UDim2.new(1, 0, 0, 0),
+        Visible = false,
+        Parent = holder
+    })
+    Util.Round(list, 9)
+    Util.Stroke(list, NX.Theme.Stroke, 0.45)
+    Util.Make("UIPadding", {
+        PaddingLeft = UDim.new(0, 7),
+        PaddingRight = UDim.new(0, 7),
+        PaddingTop = UDim.new(0, 7),
+        PaddingBottom = UDim.new(0, 7),
+        Parent = list
+    })
+    Util.Make("UIListLayout", {
+        Padding = UDim.new(0, 5),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = list
+    })
+
+    local search = Util.Make("TextBox", {
+        BackgroundColor3 = NX.Theme.Background,
+        BorderSizePixel = 0,
+        ClearTextOnFocus = false,
+        PlaceholderColor3 = NX.Theme.Muted,
+        PlaceholderText = "Buscar",
+        Size = UDim2.new(1, 0, 0, 30),
+        Text = "",
+        TextColor3 = NX.Theme.Text,
+        TextSize = 12,
+        Font = Enum.Font.Gotham,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Visible = searchable,
+        Parent = list
+    })
+    Util.Round(search, 8)
+    Util.Make("UIPadding", {
+        PaddingLeft = UDim.new(0, 9),
+        PaddingRight = UDim.new(0, 9),
+        Parent = search
+    })
+
+    local options = Util.Make("Frame", {
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 0),
+        Parent = list
+    })
+    Util.Make("UIListLayout", {
+        Padding = UDim.new(0, 4),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = options
+    })
+
+    local function copySelection()
+        local result = {}
+        for _, value in ipairs(values) do
+            if selected[value] then table.insert(result, value) end
+        end
+        return result
+    end
+
+    local function updateSummary()
+        local listValues = copySelection()
+        if #listValues == 0 then
+            summary.Text = config.Placeholder or "Seleccionar opciones"
+            summary.TextColor3 = NX.Theme.Muted
+        elseif #listValues == 1 then
+            summary.Text = tostring(listValues[1])
+            summary.TextColor3 = NX.Theme.Text
+        else
+            summary.Text = tostring(#listValues) .. " opciones seleccionadas"
+            summary.TextColor3 = NX.Theme.Text
+        end
+    end
+
+    local function emit()
+        changed:Set(changed:Get() + 1)
+        if config.Callback then config.Callback(copySelection()) end
+    end
+
+    local function filtered()
+        local query = searchable and search.Text:lower() or ""
+        local result = {}
+        for _, value in ipairs(values) do
+            if query == "" or tostring(value):lower():find(query, 1, true) then
+                table.insert(result, value)
+            end
+        end
+        return result
+    end
+
+    local function resize(count)
+        if not open then return end
+        local rows = math.min(math.max(count, 1), 5)
+        list.Size = UDim2.new(1, 0, 0, rows * 31 + (searchable and 35 or 0) + 14)
+    end
+
+    local function rebuild()
+        for _, child in ipairs(options:GetChildren()) do
+            if child:IsA("GuiObject") then child:Destroy() end
+        end
+
+        local matches = filtered()
+        if #matches == 0 then
+            local empty = Util.Text(options, "Sin resultados", 12, Enum.Font.Gotham, NX.Theme.Muted)
+            empty.Size = UDim2.new(1, 0, 0, 28)
+            empty.TextXAlignment = Enum.TextXAlignment.Center
+        else
+            for _, value in ipairs(matches) do
+                local chosen = selected[value] == true
+                local option = Util.Make("TextButton", {
+                    AutoButtonColor = false,
+                    BackgroundColor3 = chosen and NX.Theme.Purple or NX.Theme.Background,
+                    BorderSizePixel = 0,
+                    Size = UDim2.new(1, 0, 0, 28),
+                    Text = tostring(value),
+                    TextColor3 = NX.Theme.Text,
+                    TextSize = 12,
+                    Font = Enum.Font.Gotham,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    Parent = options
+                })
+                Util.Round(option, 7)
+                Util.Make("UIPadding", {
+                    PaddingLeft = UDim.new(0, 9),
+                    PaddingRight = UDim.new(0, 9),
+                    Parent = option
+                })
+
+                local check = Util.Text(option, chosen and "✓" or "", 14, Enum.Font.GothamBold, NX.Theme.Cian)
+                check.AnchorPoint = Vector2.new(1, 0.5)
+                check.Position = UDim2.new(1, -8, 0.5, 0)
+                check.Size = UDim2.fromOffset(18, 18)
+                check.TextXAlignment = Enum.TextXAlignment.Center
+
+                local maid = componentMaid(card)
+                local connection = option.MouseButton1Click:Connect(function()
+                    selected[value] = not selected[value] or nil
+                    updateSummary()
+                    emit()
+                    rebuild()
+                end)
+                if maid then maid:Give(connection) end
+            end
+        end
+        resize(#matches)
+    end
+
+    local function setOpen(value)
+        if disabled then return end
+        open = value == true
+        list.Visible = open
+        arrow.Text = open and "⌃" or "⌄"
+        if open then
+            rebuild()
+        else
+            list.Size = UDim2.new(1, 0, 0, 0)
+        end
+    end
+
+    local function set(valuesToSelect, notify)
+        table.clear(selected)
+        for _, value in ipairs(valuesToSelect or {}) do
+            selected[value] = true
+        end
+        updateSummary()
+        if notify then emit() end
+        if open then rebuild() end
+    end
+
+    local maid = componentMaid(card)
+    if maid then
+        maid:Give(changed)
+        maid:Give(selectButton.MouseButton1Click:Connect(function()
+            setOpen(not open)
+        end))
+        maid:Give(search:GetPropertyChangedSignal("Text"):Connect(rebuild))
+    end
+
+    set(config.Default or {}, false)
+
+    return {
+        Set = function(_, nextValues) set(nextValues, true) end,
+        Get = function() return copySelection() end,
+        Clear = function() set({}, true) end,
+        OnChanged = function(_, callback)
+            return changed:OnChanged(function() callback(copySelection()) end)
+        end,
+        Refresh = function(_, nextValues)
+            values = nextValues or {}
+            local preserved = copySelection()
+            set(preserved, false)
+            if open then rebuild() end
+        end,
+        SetVisible = function(_, visible) holder.Visible = visible end,
+        SetDisabled = function(_, value)
+            disabled = value == true
+            selectButton.BackgroundTransparency = disabled and 0.45 or 0
+            title.TextTransparency = disabled and 0.45 or 0
+            if disabled then setOpen(false) end
+        end
+    }
+end
+
 -- [[ 07.75. OVERLAYS Y DIÁLOGOS ]]
 local function overlayGui(name, order)
     return Util.Make("ScreenGui", {
