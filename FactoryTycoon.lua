@@ -156,7 +156,6 @@ local AutomationCard = AutomationTab:Card("AUTO-FARM")
 local AutomationStatus = NX:Label(AutomationCard, "Estado: ninguna automatización activa")
 
 local AutoCollectEnabled = false
-local X5BoostEnabled = false
 local AutoBuyEnabled = false
 local AutoRebirthEnabled = false
 
@@ -164,7 +163,6 @@ local function updateAutomationStatus()
     local active = {}
 
     if AutoCollectEnabled then table.insert(active, "Cobrar") end
-    if X5BoostEnabled then table.insert(active, "Boost x5") end
     if AutoBuyEnabled then table.insert(active, "Comprar") end
     if AutoRebirthEnabled then table.insert(active, "Rebirth") end
 
@@ -198,38 +196,6 @@ NX:Toggle(AutomationCard, {
             end)
         else
             stopFactoryLoop("factory_auto_collect")
-        end
-
-        updateAutomationStatus()
-    end
-})
-
-NX:Toggle(AutomationCard, {
-    Name = "Activar X5 Boost",
-    Default = false,
-    Bind = "factory_x5_boost",
-    Callback = function(enabled)
-        X5BoostEnabled = enabled == true
-
-        if X5BoostEnabled then
-            startFactoryLoop("factory_x5_boost", 0.8, function()
-                local tycoon = getTycoon()
-                local events = getEvents()
-                if not tycoon or not events then return end
-
-                local build = tycoon:FindFirstChild("Build")
-                local collectPart = build and build:FindFirstChild("Collect")
-                local collectRemote = events:FindFirstChild("CollectMoney")
-
-                if collectPart and collectRemote and collectRemote:IsA("RemoteEvent") then
-                    for _ = 1, 5 do
-                        collectRemote:FireServer(collectPart)
-                        task.wait(0.05)
-                    end
-                end
-            end)
-        else
-            stopFactoryLoop("factory_x5_boost")
         end
 
         updateAutomationStatus()
