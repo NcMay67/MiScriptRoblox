@@ -711,9 +711,11 @@ function NX:Loading(config)
     round(fill, 99)
     make("UIGradient", {
         Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, NX.Theme.Cian),
-            ColorSequenceKeypoint.new(1, NX.Theme.Accent)
-        }),
+    ColorSequenceKeypoint.new(0, NX.Theme.Accent),
+    ColorSequenceKeypoint.new(0.5, NX.Theme.Cian),
+    ColorSequenceKeypoint.new(1, NX.Theme.Rose)
+}),
+
         Parent = fill
     })
 
