@@ -2163,6 +2163,134 @@ function NX:Dropdown(card, config)
     }
 end
 -- [[ 07.6. CONTROLES AVANZADOS ]]
+function NX:Segment(card, config)
+    config = config or {}
+
+    local values = config.Values or {}
+    local disabled = config.Disabled == true
+    local state = NX:Value(config.Default or values[1])
+    local buttons = {}
+
+    local holder = Util.Make("Frame", {
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 63),
+        Parent = card.Frame
+    })
+
+    local title = Util.Text(holder, config.Name or "Modo", 13, Enum.Font.GothamMedium)
+    title.Size = UDim2.new(1, 0, 0, 19)
+
+    local rail = Util.Make("ScrollingFrame", {
+        Active = true,
+        AutomaticCanvasSize = Enum.AutomaticSize.X,
+        BackgroundColor3 = NX.Theme.Surface2,
+        BorderSizePixel = 0,
+        CanvasSize = UDim2.new(),
+        Position = UDim2.fromOffset(0, 26),
+        ScrollBarThickness = 0,
+        ScrollingDirection = Enum.ScrollingDirection.X,
+        Size = UDim2.new(1, 0, 0, 34),
+        Parent = holder
+    })
+    Util.Round(rail, 9)
+    Util.Make("UIPadding", {
+        PaddingLeft = UDim.new(0, 4),
+        PaddingRight = UDim.new(0, 4),
+        PaddingTop = UDim.new(0, 4),
+        PaddingBottom = UDim.new(0, 4),
+        Parent = rail
+    })
+    Util.Make("UIListLayout", {
+        FillDirection = Enum.FillDirection.Horizontal,
+        Padding = UDim.new(0, 4),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = rail
+    })
+
+    local function display(value)
+        if config.Format then return tostring(config.Format(value)) end
+        return tostring(value)
+    end
+
+    local function paint()
+        for value, button in pairs(buttons) do
+            local chosen = state:Get() == value
+            button.BackgroundColor3 = chosen and NX.Theme.Purple or NX.Theme.Background
+            button.TextColor3 = chosen and NX.Theme.Text or NX.Theme.Muted
+        end
+    end
+
+    local function set(value, notify)
+        if state:Get() == value then
+            paint()
+            return
+        end
+        state:Set(value)
+        paint()
+        if notify and config.Callback then config.Callback(value) end
+    end
+
+    local function rebuild()
+        for _, child in ipairs(rail:GetChildren()) do
+            if child:IsA("TextButton") then child:Destroy() end
+        end
+        table.clear(buttons)
+
+        for _, value in ipairs(values) do
+            local button = Util.Make("TextButton", {
+                AutoButtonColor = false,
+                AutomaticSize = Enum.AutomaticSize.X,
+                BackgroundColor3 = NX.Theme.Background,
+                BorderSizePixel = 0,
+                Size = UDim2.new(0, 0, 1, 0),
+                Text = display(value),
+                TextColor3 = NX.Theme.Muted,
+                TextSize = 11,
+                Font = Enum.Font.GothamMedium,
+                Parent = rail
+            })
+            Util.Round(button, 7)
+            Util.Make("UIPadding", {
+                PaddingLeft = UDim.new(0, 12),
+                PaddingRight = UDim.new(0, 12),
+                Parent = button
+            })
+            buttons[value] = button
+
+            local maid = componentMaid(card)
+            local connection = button.MouseButton1Click:Connect(function()
+                if not disabled then set(value, true) end
+            end)
+            if maid then maid:Give(connection) end
+        end
+        paint()
+    end
+
+    local maid = componentMaid(card)
+    if maid then maid:Give(state) end
+    rebuild()
+    if state:Get() ~= nil then set(state:Get(), false) end
+
+    return {
+        Set = function(_, value) set(value, true) end,
+        Get = function() return state:Get() end,
+        OnChanged = function(_, callback) return state:OnChanged(callback) end,
+        Refresh = function(_, nextValues)
+            values = nextValues or {}
+            if #values > 0 and not table.find(values, state:Get()) then
+                state.Current = values[1]
+            end
+            rebuild()
+        end,
+        SetVisible = function(_, visible) holder.Visible = visible end,
+        SetDisabled = function(_, value)
+            disabled = value == true
+            title.TextTransparency = disabled and 0.45 or 0
+            rail.BackgroundTransparency = disabled and 0.45 or 0
+        end
+    }
+end
+
 function NX:MultiDropdown(card, config)
     config = config or {}
 
@@ -3018,6 +3146,7 @@ function NX:EnableAutoBinding()
     wrap("Slider")
     wrap("Input")
     wrap("Dropdown")
+    wrap("Segment")
     wrap("MultiDropdown")
     wrap("ColorPicker")
     wrap("Keybind")
