@@ -1029,7 +1029,13 @@ end
         header.Size = UDim2.new(1, 0, 0, 20)
 
         function section:Tab(name)
-            local tab = { App = app }
+            local tab = {
+    App = app,
+    Name = tostring(name),
+    Visible = true,
+    Disabled = false
+}
+
             local button = Util.Make("TextButton", {
                 AutoButtonColor = false,
                 BackgroundColor3 = NX.Theme.Surface,
@@ -1075,6 +1081,40 @@ end
 
             tab.Button = button
             tab.Page = page
+            
+            function tab:SetName(value)
+    value = tostring(value)
+    if app.TabsByName[self.Name] == self then
+        app.TabsByName[self.Name] = nil
+    end
+    self.Name = value
+    button.Text = value
+    app.TabsByName[value] = self
+end
+
+function tab:SetVisible(visible)
+    self.Visible = visible == true
+    button.Visible = self.Visible
+
+    if not self.Visible then
+        page.Visible = false
+        if app.ActiveTab == self then
+            for _, other in ipairs(app.Tabs) do
+                if other.Visible and not other.Disabled then
+                    other:Open()
+                    break
+                end
+            end
+        end
+    end
+end
+
+function tab:SetDisabled(disabled)
+    self.Disabled = disabled == true
+    button.TextTransparency = self.Disabled and 0.45 or 0
+    button.BackgroundTransparency = self.Disabled and 0.35 or 0
+end
+
 
             function tab:Open()
                 for _, other in ipairs(app.Tabs) do
