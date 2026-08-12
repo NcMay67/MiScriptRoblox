@@ -661,6 +661,7 @@ function NX:Window(config)
         if Runtime.NEXUS_NC_ACTIVE_WINDOW == self then
             Runtime.NEXUS_NC_ACTIVE_WINDOW = nil
         end
+        NX:ClearOverlays()
         self.Maid:Destroy()
     end
 
