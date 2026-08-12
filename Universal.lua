@@ -807,6 +807,28 @@ NX:Button(TestAccordion, {
         AccordionStatus:Set("Botón interno correcto")
     end
 })
+local CleanupCard = LabTab:Card("LIMPIEZA DE UI")
+
+NX:Button(CleanupCard, {
+    Name = "Probar cierre total",
+    Callback = function()
+        NX:Notify("Prueba activa", "Esta notificación y el diálogo deben desaparecer al cerrar.")
+
+        NX:Dialog({
+            Title = "Prueba de limpieza",
+            Content = "Toca el botón rojo. NC HUB, este diálogo y la notificación deben desaparecer juntos.",
+            Buttons = {
+                {
+                    Name = "Cerrar NC HUB",
+                    Variant = "danger",
+                    Callback = function()
+                        Window:Destroy()
+                    end
+                }
+            }
+        })
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
