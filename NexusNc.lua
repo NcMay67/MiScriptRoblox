@@ -1167,7 +1167,7 @@ Util.Round(sectionMarker, 99)
             })
             Util.Round(button, 9)
             Util.Make("UIPadding", {
-                PaddingLeft = UDim.new(0, 14),
+                PaddingLeft = UDim.new(0, 18),
                 Parent = button
             })
         local activeMarker = Util.Make("Frame", {
