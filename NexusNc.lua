@@ -1537,6 +1537,141 @@ function NX:Accordion(card, config)
 
     return accordion
 end
+-- [[ 07.4. COMPONENTES DE DASHBOARD ]]
+function NX:KeyValue(card, config)
+    config = config or {}
+
+    local row = Util.Make("Frame", {
+        BackgroundColor3 = NX.Theme.Surface2,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 32),
+        Parent = card.Frame
+    })
+    Util.Round(row, 8)
+
+    local name = Util.Text(row, config.Name or "Dato", 12, Enum.Font.Gotham, NX.Theme.Muted)
+    name.Position = UDim2.fromOffset(10, 0)
+    name.Size = UDim2.new(0.58, 0, 1, 0)
+
+    local value = Util.Text(row, tostring(config.Value or "—"), 12, Enum.Font.GothamBold, config.Color or NX.Theme.Text)
+    value.AnchorPoint = Vector2.new(1, 0)
+    value.Position = UDim2.new(1, -10, 0, 0)
+    value.Size = UDim2.new(0.42, 0, 1, 0)
+    value.TextXAlignment = Enum.TextXAlignment.Right
+
+    return {
+        Set = function(_, nextValue) value.Text = tostring(nextValue) end,
+        SetName = function(_, nextName) name.Text = tostring(nextName) end,
+        SetColor = function(_, color) value.TextColor3 = color end,
+        SetVisible = function(_, visible) row.Visible = visible end
+    }
+end
+
+function NX:Stat(card, config)
+    config = config or {}
+
+    local holder = Util.Make("Frame", {
+        BackgroundColor3 = NX.Theme.Surface2,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 58),
+        Parent = card.Frame
+    })
+    Util.Round(holder, 10)
+    Util.Stroke(holder, NX.Theme.Stroke, 0.62)
+
+    local accent = Util.Make("Frame", {
+        BackgroundColor3 = config.Color or NX.Theme.Cian,
+        BorderSizePixel = 0,
+        Position = UDim2.fromOffset(0, 8),
+        Size = UDim2.fromOffset(3, 42),
+        Parent = holder
+    })
+    Util.Round(accent, 99)
+
+    local name = Util.Text(holder, config.Name or "Estadística", 11, Enum.Font.GothamMedium, NX.Theme.Muted)
+    name.Position = UDim2.fromOffset(13, 8)
+    name.Size = UDim2.new(1, -26, 0, 17)
+
+    local value = Util.Text(holder, tostring(config.Value or "0"), 19, Enum.Font.GothamBold, NX.Theme.Text)
+    value.Position = UDim2.fromOffset(13, 25)
+    value.Size = UDim2.new(1, -26, 0, 25)
+
+    return {
+        Set = function(_, nextValue) value.Text = tostring(nextValue) end,
+        SetName = function(_, nextName) name.Text = tostring(nextName) end,
+        SetColor = function(_, color) accent.BackgroundColor3 = color end,
+        SetVisible = function(_, visible) holder.Visible = visible end
+    }
+end
+
+function NX:Progress(card, config)
+    config = config or {}
+
+    local maximum = math.max(tonumber(config.Max) or 100, 1)
+    local current = math.clamp(tonumber(config.Value) or 0, 0, maximum)
+
+    local holder = Util.Make("Frame", {
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 52),
+        Parent = card.Frame
+    })
+
+    local name = Util.Text(holder, config.Name or "Progreso", 12, Enum.Font.GothamMedium)
+    name.Size = UDim2.new(0.68, 0, 0, 19)
+
+    local amount = Util.Text(holder, "", 12, Enum.Font.GothamBold, config.Color or NX.Theme.Cian)
+    amount.AnchorPoint = Vector2.new(1, 0)
+    amount.Position = UDim2.new(1, 0, 0, 0)
+    amount.Size = UDim2.new(0.32, 0, 0, 19)
+    amount.TextXAlignment = Enum.TextXAlignment.Right
+
+    local track = Util.Make("Frame", {
+        BackgroundColor3 = NX.Theme.Surface2,
+        BorderSizePixel = 0,
+        Position = UDim2.fromOffset(0, 31),
+        Size = UDim2.new(1, 0, 0, 8),
+        Parent = holder
+    })
+    Util.Round(track, 99)
+
+    local fill = Util.Make("Frame", {
+        BackgroundColor3 = config.Color or NX.Theme.Cian,
+        BorderSizePixel = 0,
+        Size = UDim2.fromScale(0, 1),
+        Parent = track
+    })
+    Util.Round(fill, 99)
+
+    local function format(value, max)
+        if config.Format then return tostring(config.Format(value, max)) end
+        return string.format("%s / %s", tostring(value), tostring(max))
+    end
+
+    local function set(value, max, instant)
+        if max ~= nil then maximum = math.max(tonumber(max) or maximum, 1) end
+        current = math.clamp(tonumber(value) or 0, 0, maximum)
+        amount.Text = format(current, maximum)
+        local size = UDim2.fromScale(current / maximum, 1)
+        if instant then
+            fill.Size = size
+        else
+            Util.Tween(fill, 0.16, { Size = size }):Play()
+        end
+    end
+
+    set(current, maximum, true)
+
+    return {
+        Set = function(_, value, max) set(value, max, false) end,
+        Get = function() return current, maximum end,
+        SetName = function(_, nextName) name.Text = tostring(nextName) end,
+        SetColor = function(_, color)
+            fill.BackgroundColor3 = color
+            amount.TextColor3 = color
+        end,
+        SetVisible = function(_, visible) holder.Visible = visible end
+    }
+end
 
 -- [[ 07.5. CONTROLES DE FORMULARIO ]]
 function NX:Input(card, config)
