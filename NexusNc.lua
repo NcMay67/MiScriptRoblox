@@ -880,7 +880,7 @@ function NX:Window(config)
         AutoButtonColor = false,
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        Size = UDim2.new(1, -94, 1, 0),
+        Size = UDim2.new(1, -112, 1, 0),
         Text = "",
         Parent = topbar
     })
