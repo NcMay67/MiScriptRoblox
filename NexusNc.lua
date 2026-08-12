@@ -2678,8 +2678,9 @@ function NX:ColorPicker(card, config)
     BorderSizePixel = 0,
     Position = UDim2.new(0, 10, 0.5, 0),
     Size = UDim2.fromOffset(20, 20),
-    Parent = box
+    Parent = selectButton
 })
+
 
     Util.Round(preview, 6)
     Util.Stroke(preview, NX.Theme.Text, 0.55)
