@@ -2453,6 +2453,45 @@ function NX:RegisterBuiltins()
 end
 
 NX:RegisterBuiltins()
+-- Auto-vínculo opcional: usa Bind = "mi_id" en un control.
+NX._AutoBindWrapped = NX._AutoBindWrapped or {}
+
+function NX:EnableAutoBinding()
+    local function wrap(methodName)
+        if self._AutoBindWrapped[methodName] then return end
+
+        local original = self[methodName]
+        if type(original) ~= "function" then return end
+
+        self[methodName] = function(lib, card, config, ...)
+            local handle = original(lib, card, config, ...)
+
+            if type(config) == "table"
+                and type(config.Bind) == "string"
+                and config.Bind ~= ""
+                and type(handle) == "table"
+                and type(handle.Get) == "function"
+                and type(handle.Set) == "function" then
+                lib:Bind(config.Bind, handle, config.BindOptions)
+            end
+
+            return handle
+        end
+
+        self._AutoBindWrapped[methodName] = true
+    end
+
+    wrap("Toggle")
+    wrap("Slider")
+    wrap("Input")
+    wrap("Dropdown")
+    wrap("MultiDropdown")
+    wrap("ColorPicker")
+    wrap("Keybind")
+end
+
+NX:EnableAutoBinding()
+
 
 -- [[ 08. FEEDBACK ]]
 function NX:Notify(title, message)
