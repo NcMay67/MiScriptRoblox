@@ -730,11 +730,14 @@ function NX:Window(config)
     if leftover then leftover:Destroy() end
 
     local app = {
-        Tabs = {},
-        ActiveTab = nil,
-        Maid = Maid.new(),
-        Destroyed = false
-    }
+    Tabs = {},
+    TabsByName = {},
+    Sections = {},
+    ActiveTab = nil,
+    Maid = Maid.new(),
+    Destroyed = false
+}
+
 
     function app:Connect(signal, callback)
         return self.Maid:Give(signal:Connect(callback))
