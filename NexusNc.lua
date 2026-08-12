@@ -3346,6 +3346,7 @@ function NX:EnableAutoBinding()
     wrap("Segment")
     wrap("MultiDropdown")
     wrap("ColorPicker")
+    wrap("ColorInput")
     wrap("Keybind")
 end
 
