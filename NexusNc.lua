@@ -323,6 +323,96 @@ function NX:LoadBindings(name)
     if not ok then return nil, applyErr end
     return data.Extra or {}
 end
+-- [[ 02.9. PERFILES DE PREFERENCIAS ]]
+NX.Profiles = {
+    IndexName = "__nexus_profiles"
+}
+
+local function profileName(name)
+    name = tostring(name or "")
+    name = name:gsub("^%s+", ""):gsub("%s+$", "")
+    return name
+end
+
+local function readProfileIndex()
+    local data = NX:LoadConfig(NX.Profiles.IndexName)
+    if type(data) ~= "table" or type(data.Profiles) ~= "table" then
+        return { Profiles = {} }
+    end
+    return data
+end
+
+local function writeProfileIndex(index)
+    return NX:SaveConfig(NX.Profiles.IndexName, index)
+end
+
+local function findProfile(index, name)
+    for position, item in ipairs(index.Profiles) do
+        if item:lower() == name:lower() then
+            return position, item
+        end
+    end
+    return nil, nil
+end
+
+function NX:ListProfiles()
+    local index = readProfileIndex()
+    table.sort(index.Profiles, function(a, b) return a:lower() < b:lower() end)
+    return index.Profiles
+end
+
+function NX:SaveProfile(name, extra)
+    name = profileName(name)
+    if name == "" then return false, "Nombre de perfil vacío" end
+
+    local ok, err = self:SaveBindings("profile_" .. name, extra)
+    if not ok then return false, err end
+
+    local index = readProfileIndex()
+    local _, found = findProfile(index, name)
+    if not found then
+        table.insert(index.Profiles, name)
+        local saved, indexErr = writeProfileIndex(index)
+        if not saved then return false, indexErr end
+    end
+
+    self:Log("Perfil guardado:", name)
+    return true
+end
+
+function NX:LoadProfile(name)
+    name = profileName(name)
+    if name == "" then return nil, "Nombre de perfil vacío" end
+    return self:LoadBindings("profile_" .. name)
+end
+
+function NX:DeleteProfile(name)
+    name = profileName(name)
+    if name == "" then return false, "Nombre de perfil vacío" end
+
+    local index = readProfileIndex()
+    local position, storedName = findProfile(index, name)
+    if not position then return false, "Perfil no existe" end
+
+    local deleted, err = self:DeleteConfig("profile_" .. storedName)
+    if not deleted then return false, err end
+
+    table.remove(index.Profiles, position)
+    local saved, indexErr = writeProfileIndex(index)
+    if not saved then return false, indexErr end
+
+    self:Log("Perfil borrado:", storedName)
+    return true
+end
+
+function NX:HasProfile(name)
+    name = profileName(name)
+    if name == "" then return false end
+
+    local index = readProfileIndex()
+    local _, found = findProfile(index, name)
+    return found ~= nil
+end
 
 -- [[ 03. UTILIDADES VISUALES ]]
 local Util = {}
