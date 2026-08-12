@@ -550,6 +550,35 @@ end
 function NX:Value(default)
     return Value.new(default)
 end
+-- [[ 04.25. REGISTRO DE OVERLAYS ]]
+NX.Overlays = Runtime.NEXUS_NC_OVERLAYS or {}
+Runtime.NEXUS_NC_OVERLAYS = NX.Overlays
+
+function NX:TrackOverlay(maid)
+    if type(maid) ~= "table" or type(maid.Destroy) ~= "function" then
+        return maid
+    end
+
+    if self.Overlays[maid] then return maid end
+    self.Overlays[maid] = true
+
+    local originalDestroy = maid.Destroy
+    function maid:Destroy()
+        NX.Overlays[self] = nil
+        return originalDestroy(self)
+    end
+
+    return maid
+end
+
+function NX:ClearOverlays()
+    local active = {}
+    for maid in pairs(self.Overlays) do table.insert(active, maid) end
+
+    for _, maid in ipairs(active) do
+        pcall(function() maid:Destroy() end)
+    end
+end
 
 -- [[ 05. ENTRADA MÓVIL ]]
 local Input = {}
