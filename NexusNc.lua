@@ -187,6 +187,142 @@ function NX:DeleteConfig(name)
     local ok, result = pcall(function() delfile(path) end)
     return ok, result
 end
+-- [[ 02.75. VÍNCULOS DE CONFIGURACIÓN ]]
+NX.Bindings = {}
+
+local function serializeValue(value)
+    local kind = typeof(value)
+
+    if kind == "Color3" then
+        return {
+            __NexusType = "Color3",
+            R = value.R,
+            G = value.G,
+            B = value.B
+        }
+    end
+
+    if kind == "EnumItem" then
+        return {
+            __NexusType = "EnumItem",
+            EnumType = tostring(value.EnumType):gsub("Enum%.", ""),
+            Name = value.Name
+        }
+    end
+
+    if type(value) == "table" then
+        local result = {}
+        for key, item in pairs(value) do
+            result[key] = serializeValue(item)
+        end
+        return result
+    end
+
+    return value
+end
+
+local function deserializeValue(value)
+    if type(value) ~= "table" then return value end
+
+    if value.__NexusType == "Color3" then
+        return Color3.new(value.R or 0, value.G or 0, value.B or 0)
+    end
+
+    if value.__NexusType == "EnumItem" then
+        local enumType = Enum[value.EnumType]
+        return enumType and enumType[value.Name] or nil
+    end
+
+    local result = {}
+    for key, item in pairs(value) do
+        result[key] = deserializeValue(item)
+    end
+    return result
+end
+
+function NX:Bind(id, control, options)
+    if type(id) ~= "string" or id == "" then
+        return nil, "Bind necesita un identificador"
+    end
+    if type(control) ~= "table" or type(control.Get) ~= "function" or type(control.Set) ~= "function" then
+        return nil, "Control no compatible"
+    end
+
+    options = options or {}
+    self.Bindings[id] = {
+        Control = control,
+        Serialize = options.Serialize,
+        Deserialize = options.Deserialize
+    }
+    self:Log("Control vinculado:", id)
+    return control
+end
+
+function NX:Unbind(id)
+    if not self.Bindings[id] then return false end
+    self.Bindings[id] = nil
+    return true
+end
+
+function NX:ClearBindings()
+    table.clear(self.Bindings)
+end
+
+function NX:CollectBindings()
+    local result = {}
+
+    for id, binding in pairs(self.Bindings) do
+        local ok, value = pcall(function()
+            return binding.Control:Get()
+        end)
+
+        if ok then
+            if binding.Serialize then
+                local success, custom = pcall(binding.Serialize, value)
+                result[id] = success and custom or serializeValue(value)
+            else
+                result[id] = serializeValue(value)
+            end
+        end
+    end
+
+    return result
+end
+
+function NX:ApplyBindings(data)
+    if type(data) ~= "table" then return false, "Datos inválidos" end
+
+    for id, value in pairs(data) do
+        local binding = self.Bindings[id]
+        if binding then
+            local decoded = binding.Deserialize and binding.Deserialize(value) or deserializeValue(value)
+            pcall(function()
+                binding.Control:Set(decoded)
+            end)
+        end
+    end
+
+    return true
+end
+
+function NX:SaveBindings(name, extra)
+    local data = {
+        Version = "NEXUS_NC_BINDINGS_1",
+        Values = self:CollectBindings(),
+        Extra = extra or {}
+    }
+    return self:SaveConfig(name, data)
+end
+
+function NX:LoadBindings(name)
+    local data, err = self:LoadConfig(name)
+    if not data then return nil, err end
+    if type(data.Values) ~= "table" then return nil, "Archivo incompatible" end
+
+    local ok, applyErr = self:ApplyBindings(data.Values)
+    if not ok then return nil, applyErr end
+    return data.Extra or {}
+end
 
 -- [[ 03. UTILIDADES VISUALES ]]
 local Util = {}
