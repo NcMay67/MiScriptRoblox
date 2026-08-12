@@ -1200,6 +1200,179 @@ function NX:Dropdown(card, config)
         end
     }
 end
+-- [[ 07.75. OVERLAYS Y DIÁLOGOS ]]
+local function overlayGui(name, order)
+    return Util.Make("ScreenGui", {
+        Name = name,
+        IgnoreGuiInset = true,
+        ResetOnSpawn = false,
+        DisplayOrder = order or 999997,
+        Parent = Util.GuiParent()
+    })
+end
+
+function NX:Dialog(config)
+    config = config or {}
+
+    local maid = Maid.new()
+    local closed = false
+    local gui = overlayGui("NEXUS_NC_DIALOG", 999997)
+    maid:Give(gui)
+
+    local backdrop = Util.Make("TextButton", {
+        AutoButtonColor = false,
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Size = UDim2.fromScale(1, 1),
+        Text = "",
+        Parent = gui
+    })
+
+    local panel = Util.Make("Frame", {
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundColor3 = NX.Theme.Surface,
+        BorderSizePixel = 0,
+        Position = UDim2.fromScale(0.5, 0.54),
+        Size = UDim2.fromOffset(config.Width or 300, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        Parent = gui
+    })
+    Util.Round(panel, 16)
+    Util.Stroke(panel, NX.Theme.Accent, 0.16)
+    Util.Make("UIPadding", {
+        PaddingLeft = UDim.new(0, 16),
+        PaddingRight = UDim.new(0, 16),
+        PaddingTop = UDim.new(0, 15),
+        PaddingBottom = UDim.new(0, 15),
+        Parent = panel
+    })
+    Util.Make("UIListLayout", {
+        Padding = UDim.new(0, 9),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = panel
+    })
+
+    local title = Util.Text(panel, config.Title or "NC HUB", 17, Enum.Font.GothamBold)
+    title.Size = UDim2.new(1, 0, 0, 23)
+
+    local content = Util.Text(panel, config.Content or "", 12, Enum.Font.Gotham, NX.Theme.Muted)
+    content.AutomaticSize = Enum.AutomaticSize.Y
+    content.Size = UDim2.new(1, 0, 0, 0)
+    content.TextWrapped = true
+    content.TextYAlignment = Enum.TextYAlignment.Top
+
+    local actions = Util.Make("Frame", {
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 0),
+        Parent = panel
+    })
+    Util.Make("UIListLayout", {
+        Padding = UDim.new(0, 6),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = actions
+    })
+
+    local function close(result)
+        if closed then return end
+        closed = true
+        Util.Tween(backdrop, 0.16, { BackgroundTransparency = 1 }):Play()
+        Util.Tween(panel, 0.16, {
+            Position = UDim2.fromScale(0.5, 0.54),
+            BackgroundTransparency = 1
+        }):Play()
+        task.wait(0.18)
+        maid:Destroy()
+        if config.OnClose then config.OnClose(result) end
+    end
+
+    local function buttonColor(variant)
+        if variant == "danger" then return NX.Theme.MacRed end
+        if variant == "secondary" then return NX.Theme.Surface2 end
+        return NX.Theme.Accent
+    end
+
+    for _, definition in ipairs(config.Buttons or {}) do
+        local button = Util.Make("TextButton", {
+            AutoButtonColor = false,
+            BackgroundColor3 = buttonColor(definition.Variant),
+            BorderSizePixel = 0,
+            Size = UDim2.new(1, 0, 0, 36),
+            Text = definition.Name or "Aceptar",
+            TextColor3 = definition.Variant == "secondary" and NX.Theme.Text or NX.Theme.Background,
+            TextSize = 13,
+            Font = Enum.Font.GothamMedium,
+            Parent = actions
+        })
+        Util.Round(button, 9)
+
+        maid:Give(button.MouseButton1Click:Connect(function()
+            local result = definition.Result
+            if definition.Callback then definition.Callback(result) end
+            if definition.Close ~= false then close(result) end
+        end))
+    end
+
+    if #(config.Buttons or {}) == 0 then
+        local button = Util.Make("TextButton", {
+            AutoButtonColor = false,
+            BackgroundColor3 = NX.Theme.Accent,
+            BorderSizePixel = 0,
+            Size = UDim2.new(1, 0, 0, 36),
+            Text = "Aceptar",
+            TextColor3 = NX.Theme.Background,
+            TextSize = 13,
+            Font = Enum.Font.GothamMedium,
+            Parent = actions
+        })
+        Util.Round(button, 9)
+        maid:Give(button.MouseButton1Click:Connect(function() close(true) end))
+    end
+
+    if config.CloseOnBackdrop == true then
+        maid:Give(backdrop.MouseButton1Click:Connect(function() close(false) end))
+    end
+
+    Util.Tween(backdrop, 0.18, { BackgroundTransparency = 0.42 }):Play()
+    Util.Tween(panel, 0.20, { Position = UDim2.fromScale(0.5, 0.5) }):Play()
+
+    return {
+        Close = close,
+        SetTitle = function(_, value) title.Text = tostring(value) end,
+        SetContent = function(_, value) content.Text = tostring(value) end,
+        IsOpen = function() return not closed end
+    }
+end
+
+function NX:Confirm(config)
+    config = config or {}
+
+    return self:Dialog({
+        Title = config.Title or "Confirmar acción",
+        Content = config.Content or "¿Deseas continuar?",
+        CloseOnBackdrop = config.CloseOnBackdrop == true,
+        OnClose = config.OnClose,
+        Buttons = {
+            {
+                Name = config.CancelText or "Cancelar",
+                Variant = "secondary",
+                Result = false,
+                Callback = function()
+                    if config.Callback then config.Callback(false) end
+                end
+            },
+            {
+                Name = config.ConfirmText or "Confirmar",
+                Variant = config.Danger == true and "danger" or "primary",
+                Result = true,
+                Callback = function()
+                    if config.Callback then config.Callback(true) end
+                end
+            }
+        }
+    })
+end
 
 -- [[ 08. FEEDBACK ]]
 function NX:Notify(title, message)
