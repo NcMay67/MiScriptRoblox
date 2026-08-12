@@ -1209,7 +1209,7 @@ Util.Round(activeMarker, 99)
 
             tab.Button = button
             tab.Page = page
-            tab.ActiveMarker = ActiveMarker
+            tab.ActiveMarker = activeMarker
             
             function tab:SetName(value)
     value = tostring(value)
