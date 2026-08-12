@@ -875,6 +875,145 @@ function NX:Slider(card, config)
         end
     }
 end
+-- [[ 07.25. COMPONENTES DE LAYOUT ]]
+local function layoutCard(card)
+    return card and card.Frame
+end
+
+function NX:Paragraph(card, config)
+    config = config or {}
+
+    local holder = Util.Make("Frame", {
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundColor3 = NX.Theme.Surface2,
+        BackgroundTransparency = config.Boxed == false and 1 or 0,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 0),
+        Parent = layoutCard(card)
+    })
+    Util.Round(holder, 10)
+
+    if config.Boxed ~= false then
+        Util.Stroke(holder, NX.Theme.Stroke, 0.55)
+    end
+
+    Util.Make("UIPadding", {
+        PaddingLeft = UDim.new(0, config.Boxed == false and 0 or 11),
+        PaddingRight = UDim.new(0, config.Boxed == false and 0 or 11),
+        PaddingTop = UDim.new(0, config.Boxed == false and 0 or 10),
+        PaddingBottom = UDim.new(0, config.Boxed == false and 0 or 10),
+        Parent = holder
+    })
+    Util.Make("UIListLayout", {
+        Padding = UDim.new(0, 4),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = holder
+    })
+
+    local title = Util.Text(holder, config.Title or "Información", 13, Enum.Font.GothamBold, config.Color or NX.Theme.Text)
+    title.AutomaticSize = Enum.AutomaticSize.Y
+    title.Size = UDim2.new(1, 0, 0, 0)
+    title.TextWrapped = true
+
+    local content = Util.Text(holder, config.Content or "", 12, Enum.Font.Gotham, NX.Theme.Muted)
+    content.AutomaticSize = Enum.AutomaticSize.Y
+    content.Size = UDim2.new(1, 0, 0, 0)
+    content.TextWrapped = true
+    content.TextYAlignment = Enum.TextYAlignment.Top
+
+    return {
+        SetTitle = function(_, value) title.Text = tostring(value) end,
+        SetContent = function(_, value) content.Text = tostring(value) end,
+        SetVisible = function(_, visible) holder.Visible = visible end
+    }
+end
+
+function NX:Divider(card, text)
+    local holder = Util.Make("Frame", {
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, text and 19 or 9),
+        Parent = layoutCard(card)
+    })
+
+    Util.Make("Frame", {
+        AnchorPoint = Vector2.new(0, 0.5),
+        BackgroundColor3 = NX.Theme.Stroke,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 0.5, 0),
+        Size = UDim2.new(text and 0.3 or 1, text and -5 or 0, 0, 1),
+        Parent = holder
+    })
+
+    if text then
+        local label = Util.Text(holder, tostring(text), 10, Enum.Font.GothamBold, NX.Theme.Muted)
+        label.AnchorPoint = Vector2.new(0.5, 0.5)
+        label.Position = UDim2.new(0.5, 0, 0.5, 0)
+        label.Size = UDim2.new(0.38, 0, 1, 0)
+        label.TextXAlignment = Enum.TextXAlignment.Center
+
+        Util.Make("Frame", {
+            AnchorPoint = Vector2.new(1, 0.5),
+            BackgroundColor3 = NX.Theme.Stroke,
+            BorderSizePixel = 0,
+            Position = UDim2.new(1, 0, 0.5, 0),
+            Size = UDim2.new(0.3, -5, 0, 1),
+            Parent = holder
+        })
+    end
+
+    return {
+        SetVisible = function(_, visible) holder.Visible = visible end
+    }
+end
+
+function NX:Space(card, height)
+    local spacer = Util.Make("Frame", {
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, height or 8),
+        Parent = layoutCard(card)
+    })
+
+    return {
+        SetHeight = function(_, value)
+            spacer.Size = UDim2.new(1, 0, 0, value or 8)
+        end,
+        SetVisible = function(_, visible) spacer.Visible = visible end
+    }
+end
+
+function NX:Badge(card, config)
+    if type(config) ~= "table" then config = { Text = tostring(config) } end
+
+    local color = config.Color or NX.Theme.Cian
+    local badge = Util.Make("TextLabel", {
+        AutomaticSize = Enum.AutomaticSize.X,
+        BackgroundColor3 = color,
+        BackgroundTransparency = 0.82,
+        BorderSizePixel = 0,
+        Size = UDim2.new(0, 0, 0, 24),
+        Text = config.Text or "Etiqueta",
+        TextColor3 = color,
+        TextSize = 11,
+        Font = Enum.Font.GothamBold,
+        TextXAlignment = Enum.TextXAlignment.Center,
+        Parent = layoutCard(card)
+    })
+    Util.Round(badge, 8)
+    Util.Make("UIPadding", {
+        PaddingLeft = UDim.new(0, 9),
+        PaddingRight = UDim.new(0, 9),
+        Parent = badge
+    })
+
+    return {
+        Set = function(_, value) badge.Text = tostring(value) end,
+        SetColor = function(_, value)
+            badge.BackgroundColor3 = value
+            badge.TextColor3 = value
+        end,
+        SetVisible = function(_, visible) badge.Visible = visible end
+    }
+end
 
 -- [[ 07.5. CONTROLES DE FORMULARIO ]]
 function NX:Input(card, config)
