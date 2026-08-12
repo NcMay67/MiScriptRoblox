@@ -623,6 +623,30 @@ NX:Button(StorageCard, {
         StorageStatus:Set(ok and "Estado: prueba borrada" or "Error: " .. tostring(err))
     end
 })
+-- Prueba de extensión: componente creado fuera del núcleo.
+NX:RegisterComponent("EstadoNexus", function(lib, card, config)
+    return lib:Paragraph(card, {
+        Title = config.Title or "Estado",
+        Content = config.Content or "Sin contenido",
+        Color = config.Color or lib.Theme.Cian
+    })
+end)
+
+local ExtensionCard = LabTab:Card("EXTENSIONES")
+
+ExtensionCard:Add("EstadoNexus", {
+    Title = "Componente propio",
+    Content = "Este Paragraph fue creado usando RegisterComponent y Card:Add, sin editar el núcleo de NEXUS NC.",
+    Color = NX.Theme.Rose
+})
+
+ExtensionCard:Add("Divider", {
+    Text = "REGISTRO ACTIVO"
+})
+
+ExtensionCard:Add("Label", {
+    Text = "NEXUS NC ya admite extensiones modulares"
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
