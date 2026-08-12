@@ -703,6 +703,70 @@ NX:Button(BindCard, {
         end
     end
 })
+local ProfileCard = LabTab:Card("PERFILES")
+local ProfileStatus = NX:Label(ProfileCard, "Estado: crea un perfil")
+
+local ProfileNameInput = NX:Input(ProfileCard, {
+    Name = "Nombre del perfil",
+    Placeholder = "Ejemplo: Farm"
+})
+
+local ProfileList = NX:Dropdown(ProfileCard, {
+    Name = "Perfiles guardados",
+    Placeholder = "Seleccionar perfil",
+    Values = NX:ListProfiles(),
+    Searchable = true,
+    Callback = function(value)
+        ProfileNameInput:Set(value)
+        ProfileStatus:Set("Perfil seleccionado: " .. tostring(value))
+    end
+})
+
+local function refreshProfiles()
+    ProfileList:Refresh(NX:ListProfiles())
+end
+
+NX:Button(ProfileCard, {
+    Name = "Guardar perfil",
+    Callback = function()
+        local name = ProfileNameInput:Get()
+        local ok, err = NX:SaveProfile(name, {
+            CreatedFrom = "NEXUS LAB"
+        })
+
+        if ok then
+            refreshProfiles()
+            ProfileList:Set(name)
+            ProfileStatus:Set("Perfil guardado: " .. tostring(name))
+        else
+            ProfileStatus:Set("Error: " .. tostring(err))
+        end
+    end
+})
+
+NX:Button(ProfileCard, {
+    Name = "Cargar perfil",
+    Callback = function()
+        local name = ProfileNameInput:Get()
+        local extra, err = NX:LoadProfile(name)
+        ProfileStatus:Set(extra and "Perfil cargado: " .. tostring(name) or "Error: " .. tostring(err))
+    end
+})
+
+NX:Button(ProfileCard, {
+    Name = "Borrar perfil",
+    Callback = function()
+        local name = ProfileNameInput:Get()
+        local ok, err = NX:DeleteProfile(name)
+
+        if ok then
+            refreshProfiles()
+            ProfileStatus:Set("Perfil borrado: " .. tostring(name))
+        else
+            ProfileStatus:Set("Error: " .. tostring(err))
+        end
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
