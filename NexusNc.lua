@@ -145,16 +145,16 @@ function NX:Window(config)
         BackgroundColor3 = NX.Theme.Background,
         BorderSizePixel = 0,
         Position = UDim2.fromScale(0.5, 0.5),
-        Size = UDim2.fromOffset(config.Width or 580, config.Height or 400),
+        Size = UDim2.fromOffset(config.Width or 520, config.Height or 350),
         Parent = gui
     })
-    round(main, 16)
+    round(main, 20)
     line(main, NX.Theme.Accent, 0.15)
 
     local topbar = make("Frame", {
         BackgroundColor3 = NX.Theme.Surface,
         BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 0, 48),
+        Size = UDim2.new(1, 0, 0, 44),
         Parent = main
     })
     round(topbar, 16)
@@ -333,10 +333,10 @@ end)
         BackgroundColor3 = NX.Theme.Surface,
         BorderSizePixel = 0,
         CanvasSize = UDim2.new(),
-        Position = UDim2.fromOffset(0, 48),
+        Position = UDim2.fromOffset(0, 44),
         ScrollBarImageColor3 = NX.Theme.Accent,
         ScrollBarThickness = 3,
-        Size = UDim2.new(0, 154, 1, -48),
+        Size = UDim2.new(0, 130, 1, -44),
         Parent = main
     })
     make("UIPadding", {
@@ -355,8 +355,8 @@ end)
     local content = make("Frame", {
         BackgroundColor3 = NX.Theme.Background,
         BorderSizePixel = 0,
-        Position = UDim2.fromOffset(154, 48),
-        Size = UDim2.new(1, -154, 1, -48),
+        Position = UDim2.fromOffset(130, 44),
+        Size = UDim2.new(1, -130, 1, -44),
         Parent = main
     })
 
@@ -375,7 +375,7 @@ end)
                 AutoButtonColor = false,
                 BackgroundColor3 = NX.Theme.Surface,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 36),
+                Size = UDim2.new(1, 0, 0, 34),
                 Text = name,
                 TextColor3 = NX.Theme.Muted,
                 TextSize = 14,
@@ -402,10 +402,10 @@ end)
                 Parent = content
             })
             make("UIPadding", {
-                PaddingLeft = UDim.new(0, 14),
-                PaddingRight = UDim.new(0, 14),
-                PaddingTop = UDim.new(0, 14),
-                PaddingBottom = UDim.new(0, 14),
+                PaddingLeft = UDim.new(0, 11),
+                PaddingRight = UDim.new(0, 11),
+                PaddingTop = UDim.new(0, 11),
+                PaddingBottom = UDim.new(0, 11),
                 Parent = page
             })
             make("UIListLayout", {
