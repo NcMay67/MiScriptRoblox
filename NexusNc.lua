@@ -340,6 +340,9 @@ end)
         Size = UDim2.new(0, 130, 1, -44),
         Parent = main
     })
+round(sidebar, 20)
+sidebar.ClipsDescendants = true
+
     make("UIPadding", {
         PaddingLeft = UDim.new(0, 10),
         PaddingRight = UDim.new(0, 10),
@@ -360,6 +363,7 @@ end)
         Size = UDim2.new(1, -130, 1, -44),
         Parent = main
     })
+round(content, 20)
 
     function app:Destroy()
         gui:Destroy()
