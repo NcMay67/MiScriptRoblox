@@ -427,7 +427,7 @@ function NX:Window(config)
         BorderSizePixel = 0,
         ClipsDescendants = true,
         Position = UDim2.fromScale(0.5, 0.5),
-        Size = UDim2.fromOffset(config.Width or 520, config.Height or 350),
+        Size = NX:ResolveWindowSize(config.Width or 520, config.Height or 350),
         Parent = gui
     })
     Util.Round(main, 20)
