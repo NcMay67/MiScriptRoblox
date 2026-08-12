@@ -813,6 +813,40 @@ function NX:Window(config)
     local subtitle = Util.Text(topbar, config.Subtitle or "", 12, Enum.Font.Gotham, NX.Theme.Muted)
     subtitle.Position = UDim2.fromOffset(172, 0)
     subtitle.Size = UDim2.new(1, -266, 1, 0)
+    app.TitleLabel = title
+app.SubtitleLabel = subtitle
+
+function app:SetTitle(value)
+    title.Text = tostring(value)
+end
+
+function app:SetSubtitle(value)
+    subtitle.Text = tostring(value)
+end
+
+function app:GetTab(name)
+    return self.TabsByName[tostring(name)]
+end
+
+function app:GetTabs()
+    local names = {}
+    for _, tab in ipairs(self.Tabs) do
+        if tab.Visible then table.insert(names, tab.Name) end
+    end
+    return names
+end
+
+function app:SelectTab(tabOrName)
+    local tab = type(tabOrName) == "table" and tabOrName or self:GetTab(tabOrName)
+    if not tab or not tab.Visible or tab.Disabled then return false end
+    tab:Open()
+    return true
+end
+
+function app:SetVisible(visible)
+    main.Visible = visible == true
+end
+
 
     local mac = Util.Make("Frame", {
         AnchorPoint = Vector2.new(1, 0.5),
