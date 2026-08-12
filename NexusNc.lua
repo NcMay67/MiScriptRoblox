@@ -177,23 +177,63 @@ function NX:Window(config)
     subtitle.Size = UDim2.new(0.5, 0, 1, 0)
     subtitle.TextXAlignment = Enum.TextXAlignment.Right
 
-    local close = make("TextButton", {
-        AnchorPoint = Vector2.new(1, 0.5),
+    local mac = make("Frame", {
+    AnchorPoint = Vector2.new(1, 0.5),
+    BackgroundTransparency = 1,
+    Position = UDim2.new(1, -14, 0.5, 0),
+    Size = UDim2.fromOffset(62, 20),
+    Parent = topbar
+})
+
+local reopen = make("TextButton", {
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    AutoButtonColor = false,
+    BackgroundColor3 = NX.Theme.Surface,
+    BorderSizePixel = 0,
+    Position = UDim2.new(0, 42, 0.5, 0),
+    Size = UDim2.fromOffset(38, 38),
+    Text = "N",
+    TextColor3 = NX.Theme.Cian,
+    TextSize = 16,
+    Font = Enum.Font.GothamBold,
+    Visible = false,
+    Parent = gui
+})
+round(reopen, 12)
+line(reopen, NX.Theme.Accent, 0.2)
+
+local function macButton(color, x, callback)
+    local button = make("TextButton", {
         AutoButtonColor = false,
-        BackgroundColor3 = NX.Theme.Purple,
+        BackgroundColor3 = color,
         BorderSizePixel = 0,
-        Position = UDim2.new(1, -14, 0.5, 0),
-        Size = UDim2.fromOffset(28, 28),
-        Text = "×",
-        TextColor3 = NX.Theme.Text,
-        TextSize = 22,
-        Font = Enum.Font.GothamBold,
-        Parent = topbar
+        Position = UDim2.fromOffset(x, 2),
+        Size = UDim2.fromOffset(16, 16),
+        Text = "",
+        Parent = mac
     })
-    round(close, 8)
-    close.MouseButton1Click:Connect(function()
-        gui:Destroy()
-    end)
+    round(button, 99)
+    button.MouseButton1Click:Connect(callback)
+end
+
+macButton(NX.Theme.MacRed, 0, function()
+    gui:Destroy()
+end)
+
+macButton(NX.Theme.MacYellow, 23, function()
+    main.Visible = false
+    reopen.Visible = true
+end)
+
+macButton(NX.Theme.MacGreen, 46, function()
+    main.Position = UDim2.fromScale(0.5, 0.5)
+end)
+
+reopen.MouseButton1Click:Connect(function()
+    main.Visible = true
+    reopen.Visible = false
+end)
+
 
     local sidebar = make("ScrollingFrame", {
         Active = true,
