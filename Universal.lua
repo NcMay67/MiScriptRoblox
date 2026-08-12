@@ -934,6 +934,59 @@ NX:Button(NotificationCard, {
         })
     end
 })
+-- Prueba temporal del controlador de navegación.
+local DynamicSection = Window:Section("PRUEBA DINÁMICA")
+local DynamicTab = DynamicSection:Tab("Temporal")
+local DynamicCard = DynamicTab:Card("PÁGINA DINÁMICA")
+NX:Label(DynamicCard, "Esta pestaña se controla desde NEXUS LAB.")
+
+local NavigationCard = LabTab:Card("CONTROL DE PESTAÑAS")
+local NavigationStatus = NX:Label(NavigationCard, "Estado: lista para probar")
+
+NX:Button(NavigationCard, {
+    Name = "Ir a pestaña temporal",
+    Callback = function()
+        local ok = Window:SelectTab(DynamicTab)
+        NavigationStatus:Set(ok and "Estado: pestaña temporal abierta" or "Estado: no se pudo abrir")
+    end
+})
+
+NX:Button(NavigationCard, {
+    Name = "Renombrar pestaña temporal",
+    Callback = function()
+        if DynamicTab.Name == "Temporal" then
+            DynamicTab:SetName("Dinámica")
+            NavigationStatus:Set("Estado: ahora se llama Dinámica")
+        else
+            DynamicTab:SetName("Temporal")
+            NavigationStatus:Set("Estado: volvió a llamarse Temporal")
+        end
+    end
+})
+
+NX:Button(NavigationCard, {
+    Name = "Ocultar pestaña temporal",
+    Callback = function()
+        DynamicTab:SetVisible(false)
+        NavigationStatus:Set("Estado: pestaña temporal oculta")
+    end
+})
+
+NX:Button(NavigationCard, {
+    Name = "Mostrar pestaña temporal",
+    Callback = function()
+        DynamicTab:SetVisible(true)
+        NavigationStatus:Set("Estado: pestaña temporal visible")
+    end
+})
+
+NX:Button(NavigationCard, {
+    Name = "Activar/desactivar temporal",
+    Callback = function()
+        DynamicTab:SetDisabled(not DynamicTab.Disabled)
+        NavigationStatus:Set(DynamicTab.Disabled and "Estado: pestaña desactivada" or "Estado: pestaña activada")
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
