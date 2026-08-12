@@ -37,6 +37,153 @@ function NX:SetTheme(tokens)
         end
     end
 end
+-- [[ 02.5. TEMAS, TAMAÑO Y CONFIGURACIÓN ]]
+local HttpService = game:GetService("HttpService")
+
+local function copyTable(source)
+    local copy = {}
+    for key, value in pairs(source or {}) do copy[key] = value end
+    return copy
+end
+
+NX.Themes = {
+    Default = copyTable(NX.Theme),
+    Midnight = {
+        Background = Color3.fromRGB(11, 13, 20),
+        Surface = Color3.fromRGB(19, 22, 31),
+        Surface2 = Color3.fromRGB(33, 37, 49),
+        Purple = Color3.fromRGB(53, 57, 73),
+        Accent = Color3.fromRGB(117, 164, 206),
+        Cian = Color3.fromRGB(123, 201, 201),
+        Rose = Color3.fromRGB(224, 138, 175),
+        Text = Color3.fromRGB(241, 243, 248),
+        Muted = Color3.fromRGB(166, 171, 190),
+        Stroke = Color3.fromRGB(78, 83, 105),
+        MacRed = Color3.fromRGB(255, 95, 86),
+        MacYellow = Color3.fromRGB(255, 189, 46),
+        MacGreen = Color3.fromRGB(39, 201, 63)
+    },
+    Void = {
+        Background = Color3.fromRGB(12, 10, 18),
+        Surface = Color3.fromRGB(23, 18, 32),
+        Surface2 = Color3.fromRGB(38, 30, 51),
+        Purple = Color3.fromRGB(67, 47, 88),
+        Accent = Color3.fromRGB(174, 113, 255),
+        Cian = Color3.fromRGB(152, 235, 255),
+        Rose = Color3.fromRGB(240, 135, 193),
+        Text = Color3.fromRGB(247, 242, 255),
+        Muted = Color3.fromRGB(190, 179, 209),
+        Stroke = Color3.fromRGB(100, 79, 124),
+        MacRed = Color3.fromRGB(255, 95, 86),
+        MacYellow = Color3.fromRGB(255, 189, 46),
+        MacGreen = Color3.fromRGB(39, 201, 63)
+    }
+}
+
+NX.ActiveTheme = "Default"
+
+function NX:RegisterTheme(name, tokens)
+    if type(name) ~= "string" or name == "" then return false end
+    if type(tokens) ~= "table" then return false end
+    self.Themes[name] = copyTable(tokens)
+    return true
+end
+
+function NX:UseTheme(name)
+    local tokens = type(name) == "table" and name or self.Themes[name]
+    if type(tokens) ~= "table" then return false end
+    self:SetTheme(tokens)
+    if type(name) == "string" then self.ActiveTheme = name end
+    return true
+end
+
+function NX:GetThemeNames()
+    local names = {}
+    for name in pairs(self.Themes) do table.insert(names, name) end
+    table.sort(names)
+    return names
+end
+
+function NX:ResolveWindowSize(width, height)
+    local camera = workspace.CurrentCamera
+    if not camera then return UDim2.fromOffset(width, height) end
+
+    local viewport = camera.ViewportSize
+    local safeWidth = math.max(310, viewport.X - 32)
+    local safeHeight = math.max(240, viewport.Y - 80)
+    return UDim2.fromOffset(
+        math.min(width, safeWidth),
+        math.min(height, safeHeight)
+    )
+end
+
+NX.Storage = {
+    Folder = "NCHUBScripts/NexusNC"
+}
+
+local function storageAvailable()
+    return type(readfile) == "function"
+        and type(writefile) == "function"
+        and type(isfile) == "function"
+        and type(makefolder) == "function"
+end
+
+local function safeFileName(name)
+    return tostring(name or "default"):gsub("[^%w%-%_]", "_")
+end
+
+local function ensureFolder()
+    if not storageAvailable() then return false end
+    pcall(function()
+        if type(isfolder) == "function" and not isfolder("NCHUBScripts") then
+            makefolder("NCHUBScripts")
+        end
+        if type(isfolder) == "function" and not isfolder(NX.Storage.Folder) then
+            makefolder(NX.Storage.Folder)
+        end
+    end)
+    return true
+end
+
+function NX:HasStorage()
+    return storageAvailable()
+end
+
+function NX:SaveConfig(name, data)
+    if type(data) ~= "table" or not ensureFolder() then
+        return false, "Storage no disponible"
+    end
+
+    local path = self.Storage.Folder .. "/" .. safeFileName(name) .. ".json"
+    local ok, result = pcall(function()
+        writefile(path, HttpService:JSONEncode(data))
+    end)
+    return ok, result
+end
+
+function NX:LoadConfig(name)
+    if not storageAvailable() then return nil, "Storage no disponible" end
+
+    local path = self.Storage.Folder .. "/" .. safeFileName(name) .. ".json"
+    if not isfile(path) then return nil, "No existe" end
+
+    local ok, result = pcall(function()
+        return HttpService:JSONDecode(readfile(path))
+    end)
+    if ok then return result end
+    return nil, result
+end
+
+function NX:DeleteConfig(name)
+    if type(delfile) ~= "function" or not storageAvailable() then
+        return false, "Storage no disponible"
+    end
+
+    local path = self.Storage.Folder .. "/" .. safeFileName(name) .. ".json"
+    if not isfile(path) then return false, "No existe" end
+    local ok, result = pcall(function() delfile(path) end)
+    return ok, result
+end
 
 -- [[ 03. UTILIDADES VISUALES ]]
 local Util = {}
