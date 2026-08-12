@@ -483,6 +483,43 @@ NX:Dropdown(LabCard, {
         LabStatus:Set("Juego: " .. tostring(value))
     end
 })
+local DialogCard = LabTab:Card("DIÁLOGOS")
+
+NX:Button(DialogCard, {
+    Name = "Probar confirmación",
+    Callback = function()
+        NX:Confirm({
+            Title = "Prueba de NEXUS NC",
+            Content = "Este diálogo se creó con la nueva librería. ¿Funciona bien?",
+            ConfirmText = "Sí, funciona",
+            CancelText = "Cerrar",
+            Callback = function(answer)
+                if answer then
+                    LabStatus:Set("Confirmación: todo funciona")
+                else
+                    LabStatus:Set("Confirmación: cerrada")
+                end
+            end
+        })
+    end
+})
+
+NX:Button(DialogCard, {
+    Name = "Probar diálogo informativo",
+    Callback = function()
+        NX:Dialog({
+            Title = "NEXUS NC v0.4",
+            Content = "Los diálogos ahora son propios, móviles y se cierran limpiamente.",
+            Buttons = {
+                {
+                    Name = "Entendido",
+                    Variant = "primary",
+                    Result = true
+                }
+            }
+        })
+    end
+})
 
 FinishLoading("NC HUB listo")
 NX:Notify("NC HUB", "Módulo universal cargado")
