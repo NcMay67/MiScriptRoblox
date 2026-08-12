@@ -1013,11 +1013,17 @@ local LoopCount = 0
 NX:Button(LoopCard, {
     Name = "Iniciar contador",
     Callback = function()
-        NX:StartLoop("nexus_lab_counter", 1, function(token)
-            LoopCount = LoopCount + 1
-            LoopStatus:Set("Contador: " .. tostring(LoopCount) .. " | ejecuciones: " .. tostring(token.Runs + 1))
-        end, true)
+    if NX:IsLoopRunning("nexus_lab_counter") then
+        LoopStatus:Set("Contador: ya está activo")
+        return
     end
+
+    NX:StartLoop("nexus_lab_counter", 1, function(token)
+        LoopCount = LoopCount + 1
+        LoopStatus:Set("Contador: " .. tostring(LoopCount) .. " | ejecuciones: " .. tostring(token.Runs + 1))
+    end, true)
+end
+
 })
 
 NX:Button(LoopCard, {
@@ -1031,17 +1037,10 @@ NX:Button(LoopCard, {
 NX:Button(LoopCard, {
     Name = "Reiniciar contador",
     Callback = function()
-    if NX:IsLoopRunning("nexus_lab_counter") then
-        LoopStatus:Set("Contador: ya está activo")
-        return
+        NX:StopLoop("nexus_lab_counter")
+        LoopCount = 0
+        LoopStatus:Set("Contador: reiniciado")
     end
-
-    NX:StartLoop("nexus_lab_counter", 1, function(token)
-        LoopCount = LoopCount + 1
-        LoopStatus:Set("Contador: " .. tostring(LoopCount) .. " | ejecuciones: " .. tostring(token.Runs + 1))
-    end, true)
-end
-
 })
 
 FinishLoading("NC HUB listo")
