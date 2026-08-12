@@ -413,6 +413,91 @@ function NX:HasProfile(name)
     local _, found = findProfile(index, name)
     return found ~= nil
 end
+-- [[ 02.95. ALMACENES DE PERFILES POR MÓDULO ]]
+function NX:ProfileStore(namespace)
+    namespace = safeFileName(namespace or "default")
+
+    local store = {
+        Namespace = namespace,
+        IndexName = "__nexus_profiles_" .. namespace,
+        Prefix = "profile_" .. namespace .. "_"
+    }
+
+    local function readIndex()
+        local data = NX:LoadConfig(store.IndexName)
+        if type(data) ~= "table" or type(data.Profiles) ~= "table" then
+            return { Profiles = {} }
+        end
+        return data
+    end
+
+    local function saveIndex(index)
+        return NX:SaveConfig(store.IndexName, index)
+    end
+
+    local function normalize(name)
+        return profileName(name)
+    end
+
+    local function find(index, name)
+        for position, item in ipairs(index.Profiles) do
+            if item:lower() == name:lower() then return position, item end
+        end
+        return nil, nil
+    end
+
+    function store:List()
+        local index = readIndex()
+        table.sort(index.Profiles, function(a, b) return a:lower() < b:lower() end)
+        return index.Profiles
+    end
+
+    function store:Save(name, extra)
+        name = normalize(name)
+        if name == "" then return false, "Nombre de perfil vacío" end
+
+        local ok, err = NX:SaveBindings(self.Prefix .. name, extra)
+        if not ok then return false, err end
+
+        local index = readIndex()
+        local _, found = find(index, name)
+        if not found then
+            table.insert(index.Profiles, name)
+            local saved, indexErr = saveIndex(index)
+            if not saved then return false, indexErr end
+        end
+        return true
+    end
+
+    function store:Load(name)
+        name = normalize(name)
+        if name == "" then return nil, "Nombre de perfil vacío" end
+        return NX:LoadBindings(self.Prefix .. name)
+    end
+
+    function store:Delete(name)
+        name = normalize(name)
+        if name == "" then return false, "Nombre de perfil vacío" end
+
+        local index = readIndex()
+        local position, storedName = find(index, name)
+        if not position then return false, "Perfil no existe" end
+
+        local deleted, err = NX:DeleteConfig(self.Prefix .. storedName)
+        if not deleted then return false, err end
+
+        table.remove(index.Profiles, position)
+        return saveIndex(index)
+    end
+
+    function store:Has(name)
+        local index = readIndex()
+        local _, found = find(index, normalize(name))
+        return found ~= nil
+    end
+
+    return store
+end
 
 -- [[ 03. UTILIDADES VISUALES ]]
 local Util = {}
