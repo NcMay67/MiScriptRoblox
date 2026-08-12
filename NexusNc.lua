@@ -3095,6 +3095,11 @@ function NX:RegisterBuiltins()
     self:RegisterComponent("Dropdown", function(lib, card, config)
         return lib:Dropdown(card, config)
     end)
+    
+    self:RegisterComponent("Segment", function(lib, card, config)
+    return lib:Segment(card, config)
+end)
+
 
     self:RegisterComponent("MultiDropdown", function(lib, card, config)
         return lib:MultiDropdown(card, config)
