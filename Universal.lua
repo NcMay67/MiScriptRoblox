@@ -588,6 +588,23 @@ NX:ColorPicker(ColorCard, {
         ))
     end
 })
+
+NX:Divider(ColorCard, "COLOR EXACTO")
+
+NX:ColorInput(ColorCard, {
+    Name = "Color hexadecimal",
+    Default = NX.Theme.Cian,
+    Callback = function(color)
+        ColorBadge:SetColor(color)
+        LabStatus:Set("Hex válido: " .. string.format(
+            "#%02X%02X%02X",
+            math.floor(color.R * 255 + 0.5),
+            math.floor(color.G * 255 + 0.5),
+            math.floor(color.B * 255 + 0.5)
+        ))
+    end
+})
+
 local StorageCard = LabTab:Card("CONFIGURACIÓN LOCAL")
 local StorageStatus = NX:Label(StorageCard, "Estado: sin probar")
 
