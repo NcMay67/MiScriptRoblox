@@ -664,6 +664,85 @@ function NX:ClearOverlays()
         pcall(function() maid:Destroy() end)
     end
 end
+-- [[ 04.5. TASK RUNNER ]]
+NX.Loops = Runtime.NEXUS_NC_LOOPS or {}
+Runtime.NEXUS_NC_LOOPS = NX.Loops
+
+function NX:StartLoop(id, interval, callback, runImmediately)
+    id = tostring(id or "")
+    if id == "" then return nil, "Loop necesita un identificador" end
+    if type(callback) ~= "function" then return nil, "Callback inválido" end
+
+    interval = math.max(tonumber(interval) or 0.5, 0.03)
+    self:StopLoop(id)
+
+    local token = {
+        Id = id,
+        Active = true,
+        Interval = interval,
+        Runs = 0,
+        Failures = 0
+    }
+    self.Loops[id] = token
+
+    task.spawn(function()
+        local function run()
+            if not token.Active then return false end
+
+            local ok, result = pcall(callback, token)
+            if ok then
+                token.Runs = token.Runs + 1
+                if result == false then
+                    token.Active = false
+                    return false
+                end
+            else
+                token.Failures = token.Failures + 1
+                self:Log("Error en loop", id, result)
+            end
+            return token.Active
+        end
+
+        if runImmediately and not run() then
+            self.Loops[id] = nil
+            return
+        end
+
+        while token.Active do
+            task.wait(interval)
+            if not run() then break end
+        end
+
+        if self.Loops[id] == token then
+            self.Loops[id] = nil
+        end
+    end)
+
+    return token
+end
+
+function NX:StopLoop(id)
+    local token = self.Loops[tostring(id)]
+    if not token then return false end
+    token.Active = false
+    self.Loops[tostring(id)] = nil
+    return true
+end
+
+function NX:IsLoopRunning(id)
+    local token = self.Loops[tostring(id)]
+    return token ~= nil and token.Active == true
+end
+
+function NX:GetLoop(id)
+    return self.Loops[tostring(id)]
+end
+
+function NX:StopAllLoops()
+    local active = {}
+    for id in pairs(self.Loops) do table.insert(active, id) end
+    for _, id in ipairs(active) do self:StopLoop(id) end
+end
 
 -- [[ 05. ENTRADA MÓVIL ]]
 local Input = {}
