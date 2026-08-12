@@ -1175,7 +1175,7 @@ Util.Round(sectionMarker, 99)
     BackgroundColor3 = NX.Theme.Cian,
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
-    Position = UDim2.new(0, -20, 0.5, 0),
+    Position = UDim2.new(0, -30, 0.5, 0),
     Size = UDim2.fromOffset(0, 20),
     Parent = button
 })
