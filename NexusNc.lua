@@ -1730,7 +1730,7 @@ function NX:Badge(card, config)
     })
     Util.Round(badge, 8)
     Util.Make("UIPadding", {
-        PaddingLeft = UDim.new(0, 14),
+        PaddingLeft = UDim.new(0, 8),
         PaddingRight = UDim.new(0, 9),
         Parent = badge
     })
