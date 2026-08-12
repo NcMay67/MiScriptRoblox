@@ -1394,6 +1394,119 @@ function NX:Badge(card, config)
         SetVisible = function(_, visible) badge.Visible = visible end
     }
 end
+-- [[ 07.3. CONTENEDORES COLAPSABLES ]]
+function NX:Accordion(card, config)
+    config = config or {}
+
+    local state = NX:Value(config.Default == true)
+    local disabled = config.Disabled == true
+
+    local holder = Util.Make("Frame", {
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundColor3 = NX.Theme.Surface2,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 0),
+        Parent = card.Frame
+    })
+    Util.Round(holder, 11)
+    Util.Stroke(holder, NX.Theme.Stroke, 0.48)
+    Util.Make("UIListLayout", {
+        Padding = UDim.new(0, 0),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = holder
+    })
+
+    local header = Util.Make("TextButton", {
+        AutoButtonColor = false,
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 39),
+        Text = "",
+        Parent = holder
+    })
+
+    local title = Util.Text(header, config.Name or "Sección", 13, Enum.Font.GothamMedium)
+    title.Position = UDim2.fromOffset(12, 0)
+    title.Size = UDim2.new(1, -58, 1, 0)
+
+    local arrow = Util.Text(header, "⌄", 18, Enum.Font.GothamBold, NX.Theme.Cian)
+    arrow.AnchorPoint = Vector2.new(1, 0.5)
+    arrow.Position = UDim2.new(1, -12, 0.5, -1)
+    arrow.Size = UDim2.fromOffset(18, 20)
+    arrow.TextXAlignment = Enum.TextXAlignment.Center
+
+    local content = Util.Make("Frame", {
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1, 0, 0, 0),
+        Visible = false,
+        Parent = holder
+    })
+    Util.Make("UIPadding", {
+        PaddingLeft = UDim.new(0, 10),
+        PaddingRight = UDim.new(0, 10),
+        PaddingTop = UDim.new(0, 1),
+        PaddingBottom = UDim.new(0, 10),
+        Parent = content
+    })
+    Util.Make("UIListLayout", {
+        Padding = UDim.new(0, 8),
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Parent = content
+    })
+
+    local function set(value, notify)
+        value = value == true
+        content.Visible = value
+        arrow.Text = value and "⌃" or "⌄"
+        state:Set(value)
+        if notify and config.Callback then config.Callback(value) end
+    end
+
+    local maid = componentMaid(card)
+    if maid then
+        maid:Give(state)
+        maid:Give(header.MouseButton1Click:Connect(function()
+            if not disabled then set(not state:Get(), true) end
+        end))
+    end
+
+    set(state:Get(), false)
+
+    local accordion = {
+        Frame = content,
+        Maid = maid
+    }
+
+    function accordion:Set(value)
+        set(value, true)
+    end
+
+    function accordion:Get()
+        return state:Get()
+    end
+
+    function accordion:OnChanged(callback)
+        return state:OnChanged(callback)
+    end
+
+    function accordion:SetTitle(value)
+        title.Text = tostring(value)
+    end
+
+    function accordion:SetVisible(value)
+        holder.Visible = value
+    end
+
+    function accordion:SetDisabled(value)
+        disabled = value == true
+        title.TextTransparency = disabled and 0.45 or 0
+        arrow.TextTransparency = disabled and 0.45 or 0
+    end
+
+    return accordion
+end
 
 -- [[ 07.5. CONTROLES DE FORMULARIO ]]
 function NX:Input(card, config)
