@@ -2079,6 +2079,7 @@ function NX:Input(card, config)
         Parent = holder
     })
     Util.Round(box, 9)
+    local boxStroke = Util.Stroke(box, NX.Theme.Stroke, 0.52)
     Util.Make("UIPadding", {
         PaddingLeft = UDim.new(0, 10),
         PaddingRight = UDim.new(0, 10),
