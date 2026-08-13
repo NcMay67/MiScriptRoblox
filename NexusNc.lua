@@ -2119,9 +2119,25 @@ function NX:Input(card, config)
         maid:Give(box:GetPropertyChangedSignal("Text"):Connect(function()
             if not disabled and not finishedOnly then set(box.Text, true) end
         end))
-        maid:Give(box.FocusLost:Connect(function()
-            if not disabled then set(box.Text, true) end
-        end))
+        maid:Give(box.Focused:Connect(function()
+    if not disabled then
+        Util.Tween(boxStroke, 0.12, {
+            Color = NX.Theme.Cian,
+            Transparency = 0.08
+        }):Play()
+    end
+end))
+
+maid:Give(box.FocusLost:Connect(function()
+    Util.Tween(boxStroke, 0.12, {
+        Color = NX.Theme.Stroke,
+        Transparency = 0.52
+    }):Play()
+
+    if not disabled then
+        set(box.Text, true)
+    end
+end))
     end
 
     set(config.Default or "", false)
