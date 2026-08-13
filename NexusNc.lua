@@ -2549,7 +2549,7 @@ function NX:MultiDropdown(card, config)
         Parent = holder
     })
     Util.Round(selectButton, 9)
-
+    local selectStroke = Util.Stroke(selectButton, NX.Theme.Stroke, 0.52)
     local summary = Util.Text(selectButton, config.Placeholder or "Seleccionar opciones", 13, Enum.Font.Gotham, NX.Theme.Muted)
     summary.Position = UDim2.fromOffset(10, 0)
     summary.Size = UDim2.new(1, -40, 1, 0)
@@ -2722,11 +2722,14 @@ function NX:MultiDropdown(card, config)
         open = value == true
         list.Visible = open
         arrow.Text = open and "⌃" or "⌄"
-        if open then
-            rebuild()
-        else
-            list.Size = UDim2.new(1, 0, 0, 0)
-        end
+        Util.Tween(selectStroke, 0.12, {
+        Color = open and NX.Theme.Cian or NX.Theme.Stroke,
+        Transparency = open and 0.10 or 0.52
+    }):Play()
+
+    Util.Tween(selectButton, 0.12, {
+        BackgroundColor3 = open and NX.Theme.Surface or NX.Theme.Surface2
+    }):Play()
     end
 
     local function set(valuesToSelect, notify)
