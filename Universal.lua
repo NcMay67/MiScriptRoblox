@@ -164,6 +164,8 @@ end)
 
 -- =========================================================
 -- FLY PRO
+-- El joystick usa la dirección de la cámara: mirar arriba y
+-- avanzar sube; mirar abajo y avanzar baja. Sin botones extra.
 -- =========================================================
 local FlyCard = MovementTab:Card("FLY PRO")
 local FlyEnabled = false
@@ -171,14 +173,22 @@ local FlySpeed = 60
 local FlyVelocity
 local FlyGyro
 local FlyConnection
+local FlyControls
 local LiftUntil = 0
 
--- El botón de salto del móvil también sube durante el Fly.
-UserInputService.JumpRequest:Connect(function()
-    if FlyEnabled then
-        LiftUntil = os.clock() + 0.20
+local function getFlyControls()
+    if FlyControls then
+        return FlyControls
     end
-end)
+
+    pcall(function()
+        local PlayerModule = LocalPlayer:WaitForChild("PlayerScripts")
+            :WaitForChild("PlayerModule")
+        FlyControls = require(PlayerModule):GetControls()
+    end)
+
+    return FlyControls
+end
 
 local function stopFly()
     FlyEnabled = false
@@ -204,6 +214,7 @@ local function stopFly()
     if Humanoid then
         Humanoid.AutoRotate = true
         Humanoid.PlatformStand = false
+        Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
     end
 end
 
@@ -213,15 +224,16 @@ local function startFly()
 
     local Humanoid = getHumanoid()
     local Root = getRoot()
+    local Controls = getFlyControls()
 
     Humanoid.AutoRotate = false
-    Humanoid.PlatformStand = false
+    Humanoid.PlatformStand = true
 
     FlyVelocity = Instance.new("BodyVelocity")
     FlyVelocity.Name = "NC_FlyVelocity"
     FlyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)
     FlyVelocity.P = 18000
-    FlyVelocity.Velocity = Vector3.new(0, 45, 0)
+    FlyVelocity.Velocity = Vector3.new(0, 0, 0)
     FlyVelocity.Parent = Root
 
     FlyGyro = Instance.new("BodyGyro")
@@ -229,10 +241,11 @@ local function startFly()
     FlyGyro.MaxTorque = Vector3.new(100000, 100000, 100000)
     FlyGyro.P = 35000
     FlyGyro.D = 900
+    FlyGyro.CFrame = Root.CFrame
     FlyGyro.Parent = Root
 
-    -- Impulso inicial: evita que quede pegado al suelo.
-    LiftUntil = os.clock() + 0.24
+    -- Despegue único. Después no vuelve a subir solo.
+    LiftUntil = os.clock() + 0.18
 
     FlyConnection = RunService.RenderStepped:Connect(function()
         if not FlyEnabled or not Root.Parent or not Humanoid.Parent then
@@ -240,24 +253,36 @@ local function startFly()
         end
 
         local Camera = workspace.CurrentCamera
-        local Direction = Humanoid.MoveDirection
-        local Vertical = 0
+        if not Camera then
+            return
+        end
+
+        Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
+        local MoveVector = Vector3.new(0, 0, 0)
+        if Controls then
+            MoveVector = Controls:GetMoveVector()
+        else
+            local MoveDirection = Humanoid.MoveDirection
+            MoveVector = Vector3.new(MoveDirection.X, 0, -MoveDirection.Z)
+        end
+
+        local CameraFrame = Camera.CFrame
+        local Direction = CameraFrame.RightVector * MoveVector.X
+            + CameraFrame.LookVector * -MoveVector.Z
+
+        if Direction.Magnitude > 0.05 then
+            Direction = Direction.Unit * FlySpeed
+        else
+            Direction = Vector3.new(0, 0, 0)
+        end
 
         if os.clock() < LiftUntil then
-            Vertical = 45
-        elseif UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-            Vertical = FlySpeed
-        elseif UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
-            Vertical = -FlySpeed
+            Direction = Direction + Vector3.new(0, math.max(35, FlySpeed * 0.70), 0)
         end
 
-        FlyVelocity.Velocity = Direction * FlySpeed + Vector3.new(0, Vertical, 0)
-
-        local Look = Camera.CFrame.LookVector
-        local FlatLook = Vector3.new(Look.X, 0, Look.Z)
-        if FlatLook.Magnitude > 0.05 then
-            FlyGyro.CFrame = CFrame.lookAt(Root.Position, Root.Position + FlatLook)
-        end
+        FlyVelocity.Velocity = Direction
+        FlyGyro.CFrame = CameraFrame
     end)
 end
 
@@ -289,6 +314,7 @@ LocalPlayer.CharacterAdded:Connect(function()
         startFly()
     end
 end)
+
 -- =========================================================
 -- VISUALES
 -- =========================================================
