@@ -368,7 +368,7 @@ NX:Toggle(ESPCard, {
 })
 
 -- =========================================================
--- SISTEMA
+-- SISTEMA Y PERFILES
 -- =========================================================
 local SystemSection = Window:Section("SISTEMA")
 local SystemTab = SystemSection:Tab("Sistema")
@@ -382,8 +382,282 @@ NX:Toggle(SystemCard, {
     end
 })
 
-NX:Button(SystemCard, {
+local ProfilesTab = SystemSection:Tab("Perfiles")
+local ProfilesCard = ProfilesTab:Card("PERFILES UNIVERSAL")
+
+NX:ProfilePanel(ProfilesCard, {
+    Namespace = "Universal",
+    StatusText = "Perfil Universal: ninguno",
+    Placeholder = "Ejemplo: Movimiento rápido",
+    Extra = {
+        Module = "Universal",
+        PlaceId = game.PlaceId
+    }
+})
+
+-- =========================================================
+-- UBICACIONES GUARDADAS
+-- Cada juego conserva su propia lista de ubicaciones.
+-- =========================================================
+local LocationsTab = SystemSection:Tab("Ubicaciones")
+local LocationsCard = LocationsTab:Card("TELETRANSPORTE")
+local LocationsStorageName = "UniversalLocations_" .. tostring(game.PlaceId)
+local SavedLocations = {}
+local SelectedLocationName = nil
+local LocationDropdown
+local LocationStatus = NX:Label(LocationsCard, "Ubicaciones: cargando...")
+
+local function trimText(Value)
+    return tostring(Value or ""):match("^%s*(.-)%s*$")
+end
+
+local function packCFrame(Value)
+    local X, Y, Z, R00, R01, R02, R10, R11, R12, R20, R21, R22 = Value:GetComponents()
+
+    return {
+        X = X,
+        Y = Y,
+        Z = Z,
+        R00 = R00,
+        R01 = R01,
+        R02 = R02,
+        R10 = R10,
+        R11 = R11,
+        R12 = R12,
+        R20 = R20,
+        R21 = R21,
+        R22 = R22
+    }
+end
+
+local function unpackCFrame(Data)
+    if type(Data) ~= "table" then
+        return nil
+    end
+
+    local Numbers = {
+        Data.X, Data.Y, Data.Z,
+        Data.R00, Data.R01, Data.R02,
+        Data.R10, Data.R11, Data.R12,
+        Data.R20, Data.R21, Data.R22
+    }
+
+    for _, Value in ipairs(Numbers) do
+        if type(Value) ~= "number" then
+            return nil
+        end
+    end
+
+    return CFrame.new(
+        Data.X, Data.Y, Data.Z,
+        Data.R00, Data.R01, Data.R02,
+        Data.R10, Data.R11, Data.R12,
+        Data.R20, Data.R21, Data.R22
+    )
+end
+
+local function findSavedLocation(Name)
+    for Index, Entry in ipairs(SavedLocations) do
+        if Entry.Name == Name then
+            return Entry, Index
+        end
+    end
+
+    return nil, nil
+end
+
+local function getLocationNames()
+    local Names = {}
+
+    for _, Entry in ipairs(SavedLocations) do
+        table.insert(Names, Entry.Name)
+    end
+
+    table.sort(Names, function(A, B)
+        return A:lower() < B:lower()
+    end)
+
+    return Names
+end
+
+local function saveLocations()
+    local Success, Reason = NX:SaveConfig(LocationsStorageName, {
+        Version = 1,
+        PlaceId = game.PlaceId,
+        Locations = SavedLocations
+    })
+
+    if not Success then
+        NX:Notify("Ubicaciones", "No se pudo guardar: " .. tostring(Reason))
+        return false
+    end
+
+    return true
+end
+
+local function updateLocationStatus()
+    if #SavedLocations == 0 then
+        LocationStatus:Set("Ubicaciones: ninguna guardada")
+    else
+        LocationStatus:Set("Ubicaciones guardadas: " .. tostring(#SavedLocations))
+    end
+end
+
+local function refreshLocationList(PreferredName)
+    local Names = getLocationNames()
+
+    if LocationDropdown then
+        LocationDropdown:Refresh(Names)
+
+        if PreferredName and table.find(Names, PreferredName) then
+            LocationDropdown:Set(PreferredName)
+        elseif SelectedLocationName and table.find(Names, SelectedLocationName) then
+            LocationDropdown:Set(SelectedLocationName)
+        else
+            SelectedLocationName = nil
+            LocationDropdown:Set(nil)
+        end
+    end
+
+    updateLocationStatus()
+end
+
+local LoadedLocationData = NX:LoadConfig(LocationsStorageName)
+
+if type(LoadedLocationData) == "table" and type(LoadedLocationData.Locations) == "table" then
+    for _, Entry in ipairs(LoadedLocationData.Locations) do
+        if type(Entry) == "table"
+            and type(Entry.Name) == "string"
+            and unpackCFrame(Entry.CFrame) then
+            table.insert(SavedLocations, {
+                Name = Entry.Name,
+                CFrame = Entry.CFrame
+            })
+        end
+    end
+end
+
+local LocationNameInput = NX:Input(LocationsCard, {
+    Name = "Nombre de ubicación",
+    Placeholder = "Ejemplo: Mina, tienda o casa",
+    ClearOnFocus = false,
+    Finished = true
+})
+
+LocationDropdown = NX:Dropdown(LocationsCard, {
+    Name = "Ubicación guardada",
+    Placeholder = "Elige una ubicación",
+    Values = getLocationNames(),
+    Callback = function(Name)
+        SelectedLocationName = Name
+    end
+})
+
+NX:Button(LocationsCard, {
+    Name = "Guardar mi ubicación actual",
+    Variant = "success",
+    Callback = function()
+        local Name = trimText(LocationNameInput:Get())
+
+        if Name == "" then
+            NX:Notify("Ubicaciones", "Primero escribe un nombre para la ubicación")
+            return
+        end
+
+        local Root = getRoot()
+        local Existing, Index = findSavedLocation(Name)
+        local Entry = {
+            Name = Name,
+            CFrame = packCFrame(Root.CFrame)
+        }
+
+        if Existing then
+            SavedLocations[Index] = Entry
+        else
+            table.insert(SavedLocations, Entry)
+        end
+
+        if saveLocations() then
+            refreshLocationList(Name)
+            NX:Notify("Ubicaciones", "Guardada: " .. Name)
+        end
+    end
+})
+
+NX:Button(LocationsCard, {
+    Name = "Teletransportarme a la seleccionada",
+    Callback = function()
+        if not SelectedLocationName then
+            NX:Notify("Ubicaciones", "Elige una ubicación de la lista")
+            return
+        end
+
+        local Entry = findSavedLocation(SelectedLocationName)
+        local TargetCFrame = Entry and unpackCFrame(Entry.CFrame)
+
+        if not TargetCFrame then
+            NX:Notify("Ubicaciones", "La ubicación seleccionada no es válida")
+            return
+        end
+
+        local Root = getRoot()
+        Root.CFrame = TargetCFrame + Vector3.new(0, 3, 0)
+        NX:Notify("Ubicaciones", "Teletransportado a: " .. SelectedLocationName)
+    end
+})
+
+NX:Button(LocationsCard, {
+    Name = "Borrar ubicación seleccionada",
+    Variant = "danger",
+    Callback = function()
+        if not SelectedLocationName then
+            NX:Notify("Ubicaciones", "Elige una ubicación para borrarla")
+            return
+        end
+
+        local _, Index = findSavedLocation(SelectedLocationName)
+
+        if not Index then
+            NX:Notify("Ubicaciones", "No encontré esa ubicación")
+            return
+        end
+
+        local RemovedName = SelectedLocationName
+        table.remove(SavedLocations, Index)
+        SelectedLocationName = nil
+
+        if saveLocations() then
+            refreshLocationList()
+            NX:Notify("Ubicaciones", "Borrada: " .. RemovedName)
+        end
+    end
+})
+
+refreshLocationList()
+
+-- =========================================================
+-- HERRAMIENTAS
+-- =========================================================
+local ToolsTab = SystemSection:Tab("Herramientas")
+local ToolsCard = ToolsTab:Card("UTILIDADES")
+
+NX:Button(ToolsCard, {
+    Name = "Abrir Dark Dex",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+    end
+})
+
+NX:Button(ToolsCard, {
+    Name = "Abrir SimpleSpy",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpySource.lua"))()
+    end
+})
+
+NX:Button(ToolsCard, {
     Name = "Cerrar NC HUB",
+    Variant = "danger",
     Callback = function()
         stopFly()
         restoreCollision()
