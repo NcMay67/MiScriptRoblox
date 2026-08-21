@@ -744,6 +744,116 @@ function NX:StopAllLoops()
     for _, id in ipairs(active) do self:StopLoop(id) end
 end
 
+-- [[ 04.5. CONTROL CENTER: ACTIVIDADES ]]
+-- Registro ligero y opcional. No crea loops ni altera los existentes.
+NX.Activities = Runtime.NEXUS_NC_ACTIVITIES or {}
+Runtime.NEXUS_NC_ACTIVITIES = NX.Activities
+
+function NX:ReportActivity(id, config)
+    id = tostring(id or "")
+    if id == "" then
+        return nil, "Actividad necesita un identificador"
+    end
+
+    config = config or {}
+    local entry = self.Activities[id] or {Id = id}
+
+    entry.Name = tostring(config.Name or entry.Name or id)
+    entry.Category = tostring(config.Category or entry.Category or "General")
+    entry.Module = tostring(config.Module or entry.Module or "NC HUB")
+    entry.Description = tostring(config.Description or entry.Description or "")
+    entry.Active = config.Active ~= false
+    entry.Stop = type(config.Stop) == "function" and config.Stop or entry.Stop
+    entry.UpdatedAt = os.clock()
+
+    self.Activities[id] = entry
+    return entry
+end
+
+function NX:SetActivityState(id, active)
+    local entry = self.Activities[tostring(id)]
+    if not entry then
+        return false
+    end
+
+    entry.Active = active == true
+    entry.UpdatedAt = os.clock()
+    return true
+end
+
+function NX:RemoveActivity(id)
+    id = tostring(id or "")
+    if self.Activities[id] == nil then
+        return false
+    end
+
+    self.Activities[id] = nil
+    return true
+end
+
+function NX:GetActivities(includeInactive)
+    local list = {}
+
+    for _, entry in pairs(self.Activities) do
+        if includeInactive or entry.Active then
+            table.insert(list, entry)
+        end
+    end
+
+    table.sort(list, function(a, b)
+        if a.Module == b.Module then
+            return a.Name:lower() < b.Name:lower()
+        end
+
+        return a.Module:lower() < b.Module:lower()
+    end)
+
+    return list
+end
+
+function NX:GetActiveLoops()
+    local list = {}
+
+    for id, token in pairs(self.Loops) do
+        if token.Active then
+            table.insert(list, {
+                Id = id,
+                Interval = token.Interval,
+                Runs = token.Runs,
+                Failures = token.Failures
+            })
+        end
+    end
+
+    table.sort(list, function(a, b)
+        return a.Id:lower() < b.Id:lower()
+    end)
+
+    return list
+end
+
+function NX:StopActivity(id)
+    local entry = self.Activities[tostring(id)]
+    if not entry then
+        return false, "Actividad no encontrada"
+    end
+
+    if type(entry.Stop) == "function" then
+        local ok, result = pcall(entry.Stop)
+        if not ok then
+            return false, result
+        end
+
+        if result == false then
+            return false, "No se pudo detener"
+        end
+    end
+
+    entry.Active = false
+    entry.UpdatedAt = os.clock()
+    return true
+end
+
 -- [[ 05. ENTRADA MÓVIL ]]
 local Input = {}
 
