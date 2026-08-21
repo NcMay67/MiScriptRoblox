@@ -402,25 +402,87 @@ local SystemCard = SystemTab:Card("NC HUB")
 local AntiAFK = false
 
 NX:Toggle(SystemCard, {
+NX:Toggle(SystemCard, {
     Name = "Anti-AFK",
     Callback = function(State)
         AntiAFK = State
     end
 })
 
-local ProfilesTab = SystemSection:Tab("Perfiles")
-local ProfilesCard = ProfilesTab:Card("PERFILES UNIVERSAL")
+-- =========================================================
+-- NEXUS NC 2.0: CONTROL CENTER
+-- =========================================================
+local ControlTab = SystemSection:Tab("Control")
+local HubStateCard = ControlTab:Card("ESTADO DEL HUB")
 
-NX:ProfilePanel(ProfilesCard, {
-    Namespace = "Universal",
-    StatusText = "Perfil Universal: ninguno",
-    Placeholder = "Ejemplo: Movimiento rápido",
-    Extra = {
-        Module = "Universal",
-        PlaceId = game.PlaceId
-    }
+local ControlModuleValue = NX:KeyValue(HubStateCard, {
+    Name = "Módulo activo",
+    Value = "Universal"
 })
 
+local ControlThemeValue = NX:KeyValue(HubStateCard, {
+    Name = "Tema activo",
+    Value = NX.ActiveTheme or "Void"
+})
+
+local ControlStorageValue = NX:KeyValue(HubStateCard, {
+    Name = "Guardado local",
+    Value = NX:HasStorage() and "Disponible" or "No disponible"
+})
+
+local ActivityCard = ControlTab:Card("ACTIVIDADES")
+
+local ActivityCount = NX:Stat(ActivityCard, {
+    Name = "Funciones activas",
+    Value = "0",
+    Color = NX.Theme.Cian
+})
+
+local LoopCount = NX:Stat(ActivityCard, {
+    Name = "Loops activos",
+    Value = "0",
+    Color = NX.Theme.Accent
+})
+
+local ActivitySummary = NX:Paragraph(ActivityCard, {
+    Title = "Sin actividades activas",
+    Content = "Las funciones que actives en NC HUB aparecerán aquí."
+})
+
+local function refreshControlCenter()
+    local Activities = NX:GetActivities()
+    local Loops = NX:GetActiveLoops()
+    local Lines = {}
+
+    for _, Activity in ipairs(Activities) do
+        table.insert(Lines, "• " .. Activity.Name .. " — " .. Activity.Category)
+    end
+
+    ActivityCount:Set(tostring(#Activities))
+    LoopCount:Set(tostring(#Loops))
+    ControlModuleValue:Set("Universal")
+    ControlThemeValue:Set(NX.ActiveTheme or "Void")
+    ControlStorageValue:Set(NX:HasStorage() and "Disponible" or "No disponible")
+
+    if #Lines == 0 then
+        ActivitySummary:SetTitle("Sin actividades activas")
+        ActivitySummary:SetContent("Las funciones que actives en NC HUB aparecerán aquí.")
+    else
+        ActivitySummary:SetTitle("Actividades en ejecución")
+        ActivitySummary:SetContent(table.concat(Lines, "\n"))
+    end
+end
+
+NX:Button(ActivityCard, {
+    Name = "Actualizar estado",
+    Variant = "secondary",
+    Callback = refreshControlCenter
+})
+
+refreshControlCenter()
+
+local ProfilesTab = SystemSection:Tab("Perfiles")
+        
 -- =========================================================
 -- UBICACIONES GUARDADAS
 -- Cada juego conserva su propia lista de ubicaciones.
