@@ -41,6 +41,16 @@ local function getRoot()
         or Character:WaitForChild("HumanoidRootPart")
 end
 
+local function setHubActivity(Id, Active, Config)
+    if Active then
+        Config = Config or {}
+        Config.Module = "Universal"
+        NX:ReportActivity(Id, Config)
+    else
+        NX:RemoveActivity(Id)
+    end
+end
+
 -- =========================================================
 -- INICIO
 -- =========================================================
