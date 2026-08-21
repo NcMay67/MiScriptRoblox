@@ -402,7 +402,6 @@ local SystemCard = SystemTab:Card("NC HUB")
 local AntiAFK = false
 
 NX:Toggle(SystemCard, {
-NX:Toggle(SystemCard, {
     Name = "Anti-AFK",
     Callback = function(State)
         AntiAFK = State
