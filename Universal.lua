@@ -127,15 +127,27 @@ NX:Toggle(UtilityCard, {
     Name = "Salto infinito",
     Callback = function(State)
         InfiniteJump = State
+        setHubActivity("universal_infinite_jump", State, {
+            Name = "Salto infinito",
+            Category = "Movimiento",
+            Description = "Salto extra activado"
+        })
     end
 })
+
 
 NX:Toggle(UtilityCard, {
     Name = "Noclip",
     Callback = function(State)
         Noclip = State
+        setHubActivity("universal_noclip", State, {
+            Name = "Noclip",
+            Category = "Movimiento",
+            Description = "Colisiones desactivadas"
+        })
     end
 })
+
 
 UserInputService.JumpRequest:Connect(function()
     if InfiniteJump then
