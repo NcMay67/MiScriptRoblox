@@ -968,8 +968,23 @@ function NX:Window(config)
         Parent = gui
     })
     Util.Round(main, 20)
-    Util.Stroke(main, NX.Theme.Accent, 0.15)
-    app.Main = main
+Util.Stroke(main, NX.Theme.Accent, 0.15)
+
+local introScale = Util.Make("UIScale", {
+    Scale = 0.92,
+    Parent = main
+})
+
+app.Main = main
+
+task.defer(function()
+    if not app.Destroyed and main.Parent then
+        Util.Tween(introScale, 0.30, {
+            Scale = 1
+        }):Play()
+    end
+end)
+
 
     local topbar = Util.Make("Frame", {
         BackgroundColor3 = NX.Theme.Surface,
