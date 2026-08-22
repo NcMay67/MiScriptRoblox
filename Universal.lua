@@ -420,8 +420,15 @@ NX:Toggle(ESPCard, {
                 removeESP(Player)
             end
         end
+
+        setHubActivity("universal_esp", State, {
+            Name = "ESP de jugadores",
+            Category = "Visuales",
+            Description = "Resaltado de jugadores activo"
+        })
     end
 })
+
 
 -- =========================================================
 -- SISTEMA Y PERFILES
