@@ -316,8 +316,16 @@ NX:Toggle(FlyCard, {
         else
             stopFly()
         end
+
+        setHubActivity("universal_fly", State, {
+            Name = "Fly Pro",
+            Category = "Movimiento",
+            Description = "Vuelo relativo a cámara",
+            Stop = stopFly
+        })
     end
 })
+
 
 NX:Slider(FlyCard, {
     Name = "Velocidad de vuelo",
