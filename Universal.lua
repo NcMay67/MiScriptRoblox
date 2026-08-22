@@ -442,8 +442,14 @@ NX:Toggle(SystemCard, {
     Name = "Anti-AFK",
     Callback = function(State)
         AntiAFK = State
+        setHubActivity("universal_antiafk", State, {
+            Name = "Anti-AFK",
+            Category = "Sistema",
+            Description = "Prevención de inactividad activa"
+        })
     end
 })
+
 
 -- =========================================================
 -- NEXUS NC 2.0: CONTROL CENTER
