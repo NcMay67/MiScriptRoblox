@@ -524,7 +524,18 @@ NX:Button(ActivityCard, {
 refreshControlCenter()
 
 local ProfilesTab = SystemSection:Tab("Perfiles")
-        
+local ProfilesCard = ProfilesTab:Card("PERFILES UNIVERSAL")
+
+NX:ProfilePanel(ProfilesCard, {
+    Namespace = "Universal",
+    StatusText = "Perfil Universal: ninguno",
+    Placeholder = "Ejemplo: Movimiento rápido",
+    Extra = {
+        Module = "Universal",
+        PlaceId = game.PlaceId
+    }
+})
+
 -- =========================================================
 -- UBICACIONES GUARDADAS
 -- Cada juego conserva su propia lista de ubicaciones.
