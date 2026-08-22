@@ -1395,8 +1395,19 @@ end
         end
     end
 
+        if tab.PageScale then
+        tab.PageScale.Scale = 0.975
+    end
+
     page.Visible = true
     button.TextColor3 = NX.Theme.Text
+
+    if tab.PageScale then
+        Util.Tween(tab.PageScale, 0.18, {
+            Scale = 1
+        }):Play()
+    end
+
     Util.Tween(button, 0.16, {
         BackgroundColor3 = NX.Theme.Purple
     }):Play()
