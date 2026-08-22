@@ -1326,15 +1326,22 @@ Util.Round(activeMarker, 99)
                 PaddingBottom = UDim.new(0, 11),
                 Parent = page
             })
-            Util.Make("UIListLayout", {
+                        Util.Make("UIListLayout", {
                 Padding = UDim.new(0, 10),
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 Parent = page
             })
 
+            local pageScale = Util.Make("UIScale", {
+                Scale = 1,
+                Parent = page
+            })
+
             tab.Button = button
             tab.Page = page
+            tab.PageScale = pageScale
             tab.ActiveMarker = activeMarker
+
             
             function tab:SetName(value)
     value = tostring(value)
