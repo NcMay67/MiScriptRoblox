@@ -106,24 +106,56 @@ do
         function wrapped:Tab(tabSettings)
             local tab = window:CreateTab({Name = tabSettings.Title or tabSettings.Name or "Tab", Icon = lunaIcon(tabSettings.Icon), ImageSource = "Material", ShowTitle = true})
             local out = {}
+            local currentSection = nil
+            local function parent()
+                return currentSection or tab
+            end
             function out:Section(sectionSettings)
                 local title = type(sectionSettings) == "table" and (sectionSettings.Title or sectionSettings.Name) or sectionSettings
-                return tab:CreateSection(title or "Section")
+                currentSection = tab:CreateSection(title or "Section")
+                return currentSection
             end
             function out:Divider() return tab:CreateDivider() end
-            function out:Button(s) return tab:CreateButton({Name = s.Title or s.Name or "Button", Description = s.Description or s.Desc, Callback = s.Callback}) end
+            function out:Button(s) return parent():CreateButton({Name = s.Title or s.Name or "Button", Description = s.Description or s.Desc, Callback = s.Callback}) end
             function out:Paragraph(s)
-                local p = tab:CreateParagraph({Title = s.Title or "Paragraph", Text = s.Desc or s.Text or ""})
+                local p = parent():CreateParagraph({Title = s.Title or "Paragraph", Text = s.Desc or s.Content or s.Text or ""})
                 function p:SetDesc(selfOrText, maybeText)
                     local text = maybeText == nil and selfOrText or maybeText
                     return p:Set({Text = text})
                 end
                 return p
             end
-            function out:Toggle(s) return tab:CreateToggle({Name = s.Title or s.Name or "Toggle", Description = s.Description or s.Desc, CurrentValue = s.CurrentValue ~= nil and s.CurrentValue or (s.Default or false), Callback = s.Callback}) end
-            function out:Slider(s) return tab:CreateSlider({Name = s.Title or s.Name or "Slider", Range = s.Range, Increment = s.Step or s.Increment, CurrentValue = s.CurrentValue, Callback = s.Callback}) end
-            function out:Dropdown(s) return tab:CreateDropdown({Name = s.Title or s.Name or "Dropdown", Description = s.Description, Options = s.Options or {}, CurrentOption = s.CurrentOption, MultipleOptions = s.MultipleOptions or false, Callback = s.Callback}) end
-            function out:Input(s) return tab:CreateInput({Name = s.Title or s.Name or "Input", Description = s.Description, PlaceholderText = s.PlaceholderText or s.Placeholder or "", CurrentValue = s.CurrentValue or "", Numeric = s.Numeric or false, MaxCharacters = s.MaxCharacters, Enter = s.Enter or false, Callback = s.Callback}) end
+            function out:Toggle(s) return parent():CreateToggle({Name = s.Title or s.Name or "Toggle", Description = s.Description or s.Desc, CurrentValue = s.CurrentValue ~= nil and s.CurrentValue or (s.Default or false), Callback = s.Callback}) end
+            function out:Slider(s)
+                local value = type(s.Value) == "table" and s.Value or {}
+                local range = s.Range or {value.Min or 0, value.Max or 200}
+                return parent():CreateSlider({
+                    Name = s.Title or s.Name or "Slider",
+                    Description = s.Description or s.Desc,
+                    Range = range,
+                    Increment = s.Step or s.Increment or 1,
+                    CurrentValue = s.CurrentValue or value.Default or range[1],
+                    Callback = s.Callback,
+                })
+            end
+            function out:Dropdown(s)
+                local options = s.Options or s.Values or {}
+                local multiple = s.MultipleOptions or s.Multi or false
+                local current = s.CurrentOption
+                if current == nil then current = s.Value end
+                if not multiple and (current == nil or (type(current) == "table" and #current == 0)) then
+                    current = options[1]
+                end
+                return parent():CreateDropdown({
+                    Name = s.Title or s.Name or "Dropdown",
+                    Description = s.Description or s.Desc,
+                    Options = options,
+                    CurrentOption = current,
+                    MultipleOptions = multiple,
+                    Callback = s.Callback,
+                })
+            end
+            function out:Input(s) return parent():CreateInput({Name = s.Title or s.Name or "Input", Description = s.Description or s.Desc, PlaceholderText = s.PlaceholderText or s.Placeholder or "", CurrentValue = s.CurrentValue or "", Numeric = s.Numeric or false, MaxCharacters = s.MaxCharacters, Enter = s.Enter or false, Callback = s.Callback}) end
             return out
         end
         function wrapped:Tag() end
