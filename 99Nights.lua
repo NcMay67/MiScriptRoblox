@@ -90,83 +90,16 @@ do
     function result:Notify(data)
         return Luna:Notification({Title = data.Title, Content = data.Content, Icon = data.Icon and lunaIcon(data.Icon), ImageSource = "Material"})
     end
-    function result:Gradient() return ColorSequence.new(Color3.fromRGB(174, 113, 255), Color3.fromRGB(152, 235, 255)) end
-    function result:SetTheme() end
-    function result:CreateWindow(settings)
-        local window = Luna:CreateWindow({
-            Name = settings.Title or "Luna Hub",
-            Subtitle = settings.Author or "Luna Interface Suite",
-            LogoID = "6031097225",
-            LoadingEnabled = true,
-            LoadingTitle = settings.Title or "Luna Interface Suite",
-            LoadingSubtitle = "Powered by Luna Interface Suite",
-            ConfigSettings = {ConfigFolder = "LunaHub"},
-        })
-        local wrapped = {}
-        function wrapped:Tab(tabSettings)
-            local tab = window:CreateTab({Name = tabSettings.Title or tabSettings.Name or "Tab", Icon = lunaIcon(tabSettings.Icon), ImageSource = "Material", ShowTitle = true})
-            local out = {}
-            local currentSection = nil
-            local function parent()
-                return currentSection or tab
-            end
-            function out:Section(sectionSettings)
-                local title = type(sectionSettings) == "table" and (sectionSettings.Title or sectionSettings.Name) or sectionSettings
-                currentSection = tab:CreateSection(title or "Section")
-                return currentSection
-            end
-            function out:Divider() return tab:CreateDivider() end
-            function out:Button(s) return parent():CreateButton({Name = s.Title or s.Name or "Button", Description = s.Description or s.Desc, Callback = s.Callback}) end
-            function out:Paragraph(s)
-                local p = parent():CreateParagraph({Title = s.Title or "Paragraph", Text = s.Desc or s.Content or s.Text or ""})
-                function p:SetDesc(selfOrText, maybeText)
-                    local text = maybeText == nil and selfOrText or maybeText
-                    return p:Set({Text = text})
-                end
-                return p
-            end
-            function out:Toggle(s) return parent():CreateToggle({Name = s.Title or s.Name or "Toggle", Description = s.Description or s.Desc, CurrentValue = s.CurrentValue ~= nil and s.CurrentValue or (s.Default or false), Callback = s.Callback}) end
-            function out:Slider(s)
-                local value = type(s.Value) == "table" and s.Value or {}
-                local range = s.Range or {value.Min or 0, value.Max or 200}
-                return parent():CreateSlider({
-                    Name = s.Title or s.Name or "Slider",
-                    Description = s.Description or s.Desc,
-                    Range = range,
-                    Increment = s.Step or s.Increment or 1,
-                    CurrentValue = s.CurrentValue or value.Default or range[1],
-                    Callback = s.Callback,
-                })
-            end
-            function out:Dropdown(s)
-                local options = s.Options or s.Values or {}
-                local multiple = s.MultipleOptions or s.Multi or false
-                local current = s.CurrentOption
-                if current == nil then current = s.Value end
-                if not multiple and (current == nil or (type(current) == "table" and #current == 0)) then
-                    current = options[1]
-                end
-                return parent():CreateDropdown({
-                    Name = s.Title or s.Name or "Dropdown",
-                    Description = s.Description or s.Desc,
-                    Options = options,
-                    CurrentOption = current,
-                    MultipleOptions = multiple,
-                    Callback = s.Callback,
-                })
-            end
-            function out:Input(s) return parent():CreateInput({Name = s.Title or s.Name or "Input", Description = s.Description or s.Desc, PlaceholderText = s.PlaceholderText or s.Placeholder or "", CurrentValue = s.CurrentValue or "", Numeric = s.Numeric or false, MaxCharacters = s.MaxCharacters, Enter = s.Enter or false, Callback = s.Callback}) end
-            return out
-        end
-        function wrapped:Tag() end
-        function wrapped:SetBackground() end
-        function wrapped:EditOpenButton() end
-        function wrapped:CreateTopbarButton() end
-        function wrapped:Dialog() end
-        return wrapped
-    end
+    v = Luna:CreateWindow({
+        Name = "Luna Hub - 99 Nights",
+        Subtitle = "Luna Interface Suite",
+        LogoID = "6031097225",
+        LoadingEnabled = true,
+        LoadingTitle = "Luna Hub - 99 Nights",
+        LoadingSubtitle = "Powered by Luna Interface Suite",
+        ConfigSettings = {ConfigFolder = "LunaHub"},
+    })
 
-    v = result:CreateWindow({Title = "Luna Hub - 99 Nights", Author = "Luna Interface Suite"})
     fn3 = function(arg)
         result:Notify({Title = "Synvextia Hub", Content = arg, Duration = 3})
     end
@@ -213,18 +146,13 @@ do
         return {Success = false}
     end
 
-    local v4 = v:Tab({
-        Title = fn("Introduction"),
+    local v4 = v:CreateTab({
+        Name = fn("Introduction"),
         Icon = "house",
         Opened = false,
     })
 
-    v4:Section({
-        Title = "— Welcome to Synvextia Hub —",
-        Icon = "sparkles",
-        Opened = false,
-        Desc = "",
-    })
+    v4:CreateSection(("— Welcome to Synvextia Hub —"))
 
     local tbl2 = {
         serverParagraph = nil,
@@ -252,22 +180,22 @@ do
             tbl2.memberCount = tostring(result2.approximate_member_count)
             tbl2.onlineCount = tostring(result2.approximate_presence_count)
 
-            tbl2.serverParagraph = v4:Paragraph({
+            tbl2.serverParagraph = v4:CreateParagraph({
                 Title = result2.guild.name,
-                Desc = fn8(),
+                Text = fn8(),
                 Image = "https://cdn.discordapp.com/icons/" .. result2.guild.id .. "/" .. result2.guild.icon .. ".png?size=1024",
                 ImageSize = 52,
             })
         else
-            tbl2.serverParagraph = v4:Paragraph({
+            tbl2.serverParagraph = v4:CreateParagraph({
                 Title = "Synvextia",
-                Desc = "• Members: Unavailable\n• Online: Unavailable",
+                Text = "• Members: Unavailable\n• Online: Unavailable",
             })
         end
     end)()
 
-    v4:Button({
-        Title = "  Discord",
+    v4:CreateButton({
+        Name = "  Discord",
         Icon = "message-circle",
         Description = "Join our official Discord community",
         Callback = function()
@@ -283,8 +211,8 @@ do
         end,
     })
 
-    v4:Button({
-        Title = "  Youtube",
+    v4:CreateButton({
+        Name = "  Youtube",
         Icon = "youtube",
         Description = "Watch our official YouTube channel",
         Callback = function()
@@ -300,8 +228,8 @@ do
         end,
     })
 
-    v4:Button({
-        Title = "  TikTok",
+    v4:CreateButton({
+        Name = "  TikTok",
         Icon = "video",
         Description = "Follow us on TikTok for clips & shorts",
         Callback = function()
@@ -310,45 +238,30 @@ do
         end,
     })
 
-    v4:Divider()
+    v4:CreateDivider()
 
-    v4:Section({
-        Title = fn("Information"),
-        Icon = "info",
-        Opened = false,
-        Desc = "",
-    })
+    v4:CreateSection((fn("Information")))
 
-    v4:Paragraph({
+    v4:CreateParagraph({
         Title = "About Synvextia Hub",
-        Desc = "→ Synvextia Hub is a Keyless scripting assistant hub.\n→ Designed to help people with Grinding and more!\n→ Free to use and constantly updated.\n→ Version: 1.0.0",
+        Text = "→ Synvextia Hub is a Keyless scripting assistant hub.\n→ Designed to help people with Grinding and more!\n→ Free to use and constantly updated.\n→ Version: 1.0.0",
     })
 
-    v4:Divider()
+    v4:CreateDivider()
 
-    v4:Section({
-        Title = fn("Features"),
-        Icon = "list",
-        Opened = false,
-        Desc = "",
-    })
+    v4:CreateSection((fn("Features")))
 
-    v4:Paragraph({
+    v4:CreateParagraph({
         Title = "What's Included",
-        Desc = "→ Auto Farm Days\n→ Auto Fuel Campfire\n→ Auto Cook Food\n→ Auto Compress Items\n→ Auto Bring / Collect Items\n→ Tree Aura (Auto Chop)\n→ Landmarks Reveal (Full Map)\n→ Send to Volcano\n→ Godmode (Combat)\n→ Silent Aim + Revive Players\n→ Player & Mob ESP\n→ Detailed Game Stats\n→ And much MORE!!",
+        Text = "→ Auto Farm Days\n→ Auto Fuel Campfire\n→ Auto Cook Food\n→ Auto Compress Items\n→ Auto Bring / Collect Items\n→ Tree Aura (Auto Chop)\n→ Landmarks Reveal (Full Map)\n→ Send to Volcano\n→ Godmode (Combat)\n→ Silent Aim + Revive Players\n→ Player & Mob ESP\n→ Detailed Game Stats\n→ And much MORE!!",
     })
 
-    v4:Divider()
+    v4:CreateDivider()
 
-    v4:Section({
-        Title = fn("Refresh"),
-        Icon = "refresh-cw",
-        Opened = false,
-        Desc = "",
-    })
+    v4:CreateSection((fn("Refresh")))
 
-    v4:Button({
-        Title = "Refresh Server Info",
+    v4:CreateButton({
+        Name = "Refresh Server Info",
         Description = "Re-fetch live Discord member and online counts",
         Callback = function()
             local ok2, result2 = pcall(function()
@@ -364,7 +277,7 @@ do
 
                 if tbl2.serverParagraph then
                     pcall(function()
-                        tbl2.serverParagraph:SetDesc(fn8())
+                        tbl2.serverParagraph:Set({Text = fn8()})
                     end)
                 end
 
@@ -376,21 +289,21 @@ do
     })
 
     tbl = {
-        Main = v:Tab({Title = fn("Main"), Icon = "star", Opened = false}),
-        Teleport = v:Tab({Title = fn("Teleport"), Icon = "rocket", Opened = false}),
-        Bring = v:Tab({
-            Title = fn("Bring Items"),
+        Main = v:CreateTab({Name = fn("Main"), Icon = "star", Opened = false}),
+        Teleport = v:CreateTab({Name = fn("Teleport"), Icon = "rocket", Opened = false}),
+        Bring = v:CreateTab({
+            Name = fn("Bring Items"),
             Icon = "package",
             Opened = false,
         }),
-        Scanner = v:Tab({Title = fn("Scanner"), Icon = "scan", Opened = false}),
-        AutoDays = v:Tab({Title = fn("Auto Farm"), Icon = "sun", Opened = false}),
-        Combat = v:Tab({Title = fn("Combat"), Icon = "swords", Opened = false}),
-        Esp = v:Tab({Title = fn("ESP"), Icon = "eye", Opened = false}),
-        Stats = v:Tab({Title = fn("Stats"), Icon = "bar-chart-2", Opened = false}),
-        Misc = v:Tab({Title = fn("Misc"), Icon = "gift", Opened = false}),
-        Settings = v:Tab({Title = fn("Settings"), Icon = "settings"}),
-        Credits = v:Tab({Title = fn("Credits"), Icon = "award", Opened = false}),
+        Scanner = v:CreateTab({Name = fn("Scanner"), Icon = "scan", Opened = false}),
+        AutoDays = v:CreateTab({Name = fn("Auto Farm"), Icon = "sun", Opened = false}),
+        Combat = v:CreateTab({Name = fn("Combat"), Icon = "swords", Opened = false}),
+        Esp = v:CreateTab({Name = fn("ESP"), Icon = "eye", Opened = false}),
+        Stats = v:CreateTab({Name = fn("Stats"), Icon = "bar-chart-2", Opened = false}),
+        Misc = v:CreateTab({Name = fn("Misc"), Icon = "gift", Opened = false}),
+        Settings = v:CreateTab({Name = fn("Settings"), Icon = "settings"}),
+        Credits = v:CreateTab({Name = fn("Credits"), Icon = "award", Opened = false}),
     }
 
     credits = tbl.Credits
@@ -655,23 +568,18 @@ do
         end
     end)
 
-    tbl.Main:Divider()
+    tbl.Main:CreateDivider()
 
-    tbl.Main:Section({
-        Title = fn("Infinite Dupe Saplings"),
-        Icon = "leaf",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Main:CreateSection((fn("Infinite Dupe Saplings")))
 
-    tbl.Main:Paragraph({
+    tbl.Main:CreateParagraph({
         Title = "INFINITE Saplings Dupe & Circle Plant",
-        Content = "In order for the feature to work, you must plant first and enable the feature that you want to be enabled (Infinite Saplings Dupe/Circle plant)",
+        Text = "In order for the feature to work, you must plant first and enable the feature that you want to be enabled (Infinite Saplings Dupe/Circle plant)",
     })
 
-    tbl.Main:Toggle({
-        Title = "Auto Dupe Saplings (Plant @ your position)",
-        Desc = "Continuously plants saplings at your location at the speed you choose.",
+    tbl.Main:CreateToggle({
+        Name = "Auto Dupe Saplings (Plant @ your position)",
+        Description = "Continuously plants saplings at your location at the speed you choose.",
         Default = false,
         Callback = function(infDupeSaplingsAutoPlant)
             genv.InfDupeSaplingsAutoPlant = infDupeSaplingsAutoPlant
@@ -683,20 +591,21 @@ do
         end,
     })
 
-    tbl.Main:Slider({
-        Title = "Auto Plant Delay (seconds)",
-        Value = {Min = 0.05, Max = 3, Default = 0.1},
-        Step = 0.05,
+    tbl.Main:CreateSlider({
+        Name = "Auto Plant Delay (seconds)",
+        Range = {0.05, 3},
+        CurrentValue = 0.1,
+        Increment = 0.05,
         Callback = function(infDupeSaplingsAutoDelay)
             genv.InfDupeSaplingsAutoDelay = infDupeSaplingsAutoDelay
         end,
     })
 
-    tbl.Main:Divider()
+    tbl.Main:CreateDivider()
 
-    tbl.Main:Button({
-        Title = "Plant Skybase Dupe Saplings",
-        Desc = "Creates a skybase spiral with saplings using your settings",
+    tbl.Main:CreateButton({
+        Name = "Plant Skybase Dupe Saplings",
+        Description = "Creates a skybase spiral with saplings using your settings",
         Callback = function()
             local character = localPlayer.Character
             local humanoidRootPart = character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -718,29 +627,31 @@ do
         end,
     })
 
-    tbl.Main:Slider({
-        Title = "Skybase: Total Saplings",
-        Value = {Min = 10, Max = 500, Default = 200},
-        Step = 10,
+    tbl.Main:CreateSlider({
+        Name = "Skybase: Total Saplings",
+        Range = {10, 500},
+        CurrentValue = 200,
+        Increment = 10,
         Callback = function(infDupeSaplingsSkybaseCount)
             genv.InfDupeSaplingsSkybaseCount = infDupeSaplingsSkybaseCount
         end,
     })
 
-    tbl.Main:Slider({
-        Title = "Skybase: Spiral Height",
-        Value = {Min = 1, Max = 200, Default = 20},
-        Step = 1,
+    tbl.Main:CreateSlider({
+        Name = "Skybase: Spiral Height",
+        Range = {1, 200},
+        CurrentValue = 20,
+        Increment = 1,
         Callback = function(infDupeSaplingsSkybaseHeight)
             genv.InfDupeSaplingsSkybaseHeight = infDupeSaplingsSkybaseHeight
         end,
     })
 
-    tbl.Main:Divider()
+    tbl.Main:CreateDivider()
 
-    tbl.Main:Button({
-        Title = "Plant Saplings in Circle",
-        Desc = "Plants saplings at all previewed positions.",
+    tbl.Main:CreateButton({
+        Name = "Plant Saplings in Circle",
+        Description = "Plants saplings at all previewed positions.",
         Callback = function()
             local character = localPlayer.Character
             local humanoidRootPart = character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -761,28 +672,30 @@ do
         end,
     })
 
-    tbl.Main:Slider({
-        Title = "Circle Planting: Radius",
-        Value = {Min = 5, Max = 200, Default = 50},
-        Step = 1,
+    tbl.Main:CreateSlider({
+        Name = "Circle Planting: Radius",
+        Range = {5, 200},
+        CurrentValue = 50,
+        Increment = 1,
         Callback = function(infDupeSaplingsCircleRadius)
             genv.InfDupeSaplingsCircleRadius = infDupeSaplingsCircleRadius
             fn14()
         end,
     })
 
-    tbl.Main:Slider({
-        Title = "Circle Planting: Saplings Count",
-        Value = {Min = 1, Max = 100, Default = 30},
-        Step = 1,
+    tbl.Main:CreateSlider({
+        Name = "Circle Planting: Saplings Count",
+        Range = {1, 100},
+        CurrentValue = 30,
+        Increment = 1,
         Callback = function(infDupeSaplingsCircleCount)
             genv.InfDupeSaplingsCircleCount = infDupeSaplingsCircleCount
             fn14()
         end,
     })
 
-    tbl.Main:Toggle({
-        Title = "Show Hologram Preview",
+    tbl.Main:CreateToggle({
+        Name = "Show Hologram Preview",
         Default = false,
         Callback = function(infDupeSaplingsShowHologram)
             genv.InfDupeSaplingsShowHologram = infDupeSaplingsShowHologram
@@ -795,20 +708,15 @@ do
         end,
     })
 
-    tbl.Main:Divider()
+    tbl.Main:CreateDivider()
 
-    tbl.Main:Section({
-        Title = fn("Auto Plant"),
-        Icon = "sprout",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Main:CreateSection((fn("Auto Plant")))
 
     genv.AutoPlantSaplings = false
 
-    tbl.Main:Toggle({
-        Title = "Auto Plant Saplings",
-        Desc = "Do NOT use this feature, if your using Infinite Dupe Saplings",
+    tbl.Main:CreateToggle({
+        Name = "Auto Plant Saplings",
+        Description = "Do NOT use this feature, if your using Infinite Dupe Saplings",
         Default = false,
         Callback = function(autoPlantSaplings)
             genv.AutoPlantSaplings = autoPlantSaplings
@@ -841,14 +749,9 @@ do
         end
     end)
 
-    tbl.Main:Divider()
+    tbl.Main:CreateDivider()
 
-    tbl.Main:Section({
-        Title = fn("Auto Fuel Campfire"),
-        Icon = "flame",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Main:CreateSection((fn("Auto Fuel Campfire")))
 
     local tbl4 = {
         "Log",
@@ -946,10 +849,10 @@ do
         return tbl5
     end
 
-    tbl.Main:Dropdown({
-        Title = "Select Fuel Items",
-        Desc = "Choose which items to throw into the campfire.",
-        Values = (function()
+    tbl.Main:CreateDropdown({
+        Name = "Select Fuel Items",
+        Description = "Choose which items to throw into the campfire.",
+        Options = (function()
             local tbl5 = {"All"}
 
             for i, v5 in ipairs(tbl4) do
@@ -958,8 +861,8 @@ do
 
             return tbl5
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             genv.AutoFuelCampfireList = {}
@@ -989,9 +892,9 @@ do
         end,
     })
 
-    tbl.Main:Button({
-        Title = "⚡ Fuel Campfire Now",
-        Desc = "Instantly drops all selected fuel items into the campfire, one by one, FAST.",
+    tbl.Main:CreateButton({
+        Name = "⚡ Fuel Campfire Now",
+        Description = "Instantly drops all selected fuel items into the campfire, one by one, FAST.",
         Callback = function()
             task.spawn(function()
                 local v5 = fn17(genv.AutoFuelCampfireList)
@@ -1001,9 +904,9 @@ do
         end,
     })
 
-    tbl.Main:Toggle({
-        Title = "Auto Fuel Campfire",
-        Desc = "Continuously drops selected fuel items into campfire, one by one, FAST.",
+    tbl.Main:CreateToggle({
+        Name = "Auto Fuel Campfire",
+        Description = "Continuously drops selected fuel items into campfire, one by one, FAST.",
         Default = false,
         Callback = function(autoFuelCampfireOn)
             genv.AutoFuelCampfireOn = autoFuelCampfireOn
@@ -1020,14 +923,9 @@ do
         end
     end)
 
-    tbl.Main:Divider()
+    tbl.Main:CreateDivider()
 
-    tbl.Main:Section({
-        Title = fn("Auto Compress"),
-        Icon = "cog",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Main:CreateSection((fn("Auto Compress")))
 
     local tbl5 = {
         "Bolt",
@@ -1053,10 +951,10 @@ do
     genv.AutoWoodCompressOn = false
     local vector2 = Vector3.new(21.15, 19, -6.12)
 
-    tbl.Main:Dropdown({
-        Title = "Items to Compress",
-        Desc = "Select which items to drop into the compressor.",
-        Values = (function()
+    tbl.Main:CreateDropdown({
+        Name = "Items to Compress",
+        Description = "Select which items to drop into the compressor.",
+        Options = (function()
             local tbl6 = {"All"}
 
             for i, v5 in ipairs(tbl5) do
@@ -1065,8 +963,8 @@ do
 
             return tbl6
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             genv.AutoWoodCompressList = {}
@@ -1096,9 +994,9 @@ do
         end,
     })
 
-    tbl.Main:Button({
-        Title = "⚡ Compress Items Now",
-        Desc = "Instantly sends all selected items to the compressor, one by one, FAST.",
+    tbl.Main:CreateButton({
+        Name = "⚡ Compress Items Now",
+        Description = "Instantly sends all selected items to the compressor, one by one, FAST.",
         Callback = function()
             task.spawn(function()
                 local v5 = fn17(genv.AutoWoodCompressList)
@@ -1108,9 +1006,9 @@ do
         end,
     })
 
-    tbl.Main:Toggle({
-        Title = "Auto Compress Items",
-        Desc = "Continuously compresses selected items from the whole map, one by one, FAST.",
+    tbl.Main:CreateToggle({
+        Name = "Auto Compress Items",
+        Description = "Continuously compresses selected items from the whole map, one by one, FAST.",
         Default = false,
         Callback = function(autoWoodCompressOn)
             genv.AutoWoodCompressOn = autoWoodCompressOn
@@ -1127,14 +1025,9 @@ do
         end
     end)
 
-    tbl.Main:Divider()
+    tbl.Main:CreateDivider()
 
-    tbl.Main:Section({
-        Title = fn("Auto Consume"),
-        Icon = "apple",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Main:CreateSection((fn("Auto Consume")))
 
     local tbl6 = {
         Food = {
@@ -1173,9 +1066,9 @@ do
         flag2 = arg
     end
 
-    tbl.Main:Dropdown({
-        Title = "Food Items to Consume",
-        Values = (function()
+    tbl.Main:CreateDropdown({
+        Name = "Food Items to Consume",
+        Options = (function()
             local tbl7 = {"All"}
 
             for i, v5 in ipairs(tbl6.Food) do
@@ -1184,8 +1077,8 @@ do
 
             return tbl7
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             genv.autoConsumeList = {}
@@ -1215,8 +1108,8 @@ do
         end,
     })
 
-    tbl.Main:Toggle({
-        Title = "Auto Consume",
+    tbl.Main:CreateToggle({
+        Name = "Auto Consume",
         Default = false,
         Callback = function(arg)
             fn18(arg)
@@ -1292,18 +1185,13 @@ do
         end
     end)
 
-    tbl.Combat:Divider()
+    tbl.Combat:CreateDivider()
 
-    tbl.Combat:Section({
-        Title = fn("Godmode"),
-        Icon = "shield",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Combat:CreateSection((fn("Godmode")))
 
-    tbl.Combat:Paragraph({
+    tbl.Combat:CreateParagraph({
         Title = "GODMODE OP",
-        Desc = "Keeps Health and Hunger maxed out at all times. NOTE: Mob/combat damage is server-sided in this game, so this will NOT protect you from wolf/beast attacks — only from hunger and client-side damage like fall damage.",
+        Text = "Keeps Health and Hunger maxed out at all times. NOTE: Mob/combat damage is server-sided in this game, so this will NOT protect you from wolf/beast attacks — only from hunger and client-side damage like fall damage.",
     })
 
     genv.GodModeEnabled = false
@@ -1311,9 +1199,9 @@ do
     local v5 = nil
     local v6 = nil
 
-    tbl.Combat:Toggle({
-        Title = "GODMODE OP",
-        Desc = "MaxHealth + frame-rate HP restore. Cannot die from normal damage.",
+    tbl.Combat:CreateToggle({
+        Name = "GODMODE OP",
+        Description = "MaxHealth + frame-rate HP restore. Cannot die from normal damage.",
         Default = false,
         Locked = false,
         Callback = function(godModeEnabled)
@@ -1386,14 +1274,9 @@ do
         end,
     })
 
-    tbl.Combat:Divider()
+    tbl.Combat:CreateDivider()
 
-    tbl.Combat:Section({
-        Title = fn("Kill Aura"),
-        Icon = "swords",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Combat:CreateSection((fn("Kill Aura")))
 
     local tbl7 = {
         ["Old Axe"] = "1_8982038982",
@@ -1437,18 +1320,19 @@ do
     genv.KillAuraActive = false
     genv.KillAuraRadius = 100
 
-    tbl.Combat:Toggle({
-        Title = "Kill Aura",
+    tbl.Combat:CreateToggle({
+        Name = "Kill Aura",
         Default = false,
         Callback = function(killAuraActive)
             genv.KillAuraActive = killAuraActive
         end,
     })
 
-    tbl.Combat:Slider({
-        Title = "Kill Aura Radius",
-        Step = 1,
-        Value = {Min = 10, Max = 150, Default = 100},
+    tbl.Combat:CreateSlider({
+        Name = "Kill Aura Radius",
+        Increment = 1,
+        Range = {10, 150},
+        CurrentValue = 100,
         Callback = function(arg)
             local killAuraRadius = tonumber(arg)
             genv.KillAuraRadius = killAuraRadius
@@ -1490,18 +1374,13 @@ do
         end
     end)
 
-    tbl.Combat:Divider()
+    tbl.Combat:CreateDivider()
 
-    tbl.Combat:Section({
-        Title = fn("Auto Escape"),
-        Icon = "zap",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Combat:CreateSection((fn("Auto Escape")))
 
-    tbl.Combat:Paragraph({
+    tbl.Combat:CreateParagraph({
         Title = "Auto Escape",
-        Desc = "Automatically teleports you to the campfire when you take damage. Select which enemies should trigger the escape.",
+        Text = "Automatically teleports you to the campfire when you take damage. Select which enemies should trigger the escape.",
     })
 
     local flag3 = false
@@ -1509,12 +1388,12 @@ do
     local vector3 = Vector3.new(1.87, 5, -3.67)
     local tbl9 = {conn = nil, lastHP = math.huge}
 
-    tbl.Combat:Dropdown({
-        Title = "Escape Trigger (Enemy Type)",
-        Desc = "Teleport to campfire when hit by these enemies.",
-        Values = {"Cat", "Deer", "Rambo", "Owl"},
-        Value = {},
-        Multi = true,
+    tbl.Combat:CreateDropdown({
+        Name = "Escape Trigger (Enemy Type)",
+        Description = "Teleport to campfire when hit by these enemies.",
+        Options = {"Cat", "Deer", "Rambo", "Owl"},
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl8 = {}
@@ -1598,8 +1477,8 @@ do
         fn3("Auto Escape: Teleported to campfire!")
     end
 
-    tbl.Combat:Toggle({
-        Title = "Auto Escape",
+    tbl.Combat:CreateToggle({
+        Name = "Auto Escape",
         Default = false,
         Callback = function(arg)
             flag3 = arg
@@ -1665,16 +1544,17 @@ do
     tbl9.hpConn = nil
     tbl9.hpRespawnConn = nil
 
-    tbl.Combat:Paragraph({
+    tbl.Combat:CreateParagraph({
         Title = "Auto Escape (Health)",
-        Desc = "Automatically teleports you to the campfire when your HP drops below the set threshold.",
+        Text = "Automatically teleports you to the campfire when your HP drops below the set threshold.",
     })
 
-    tbl.Combat:Slider({
-        Title = "Escape HP Threshold",
-        Desc = "Teleport to campfire when HP falls below this value. Range: 30–100.",
-        Value = {Min = 30, Max = 100, Default = 50},
-        Step = 1,
+    tbl.Combat:CreateSlider({
+        Name = "Escape HP Threshold",
+        Description = "Teleport to campfire when HP falls below this value. Range: 30–100.",
+        Range = {30, 100},
+        CurrentValue = 50,
+        Increment = 1,
         Callback = function(arg)
             n7 = arg
         end,
@@ -1705,8 +1585,8 @@ do
         end)
     end
 
-    tbl.Combat:Toggle({
-        Title = "Auto Escape (Health)",
+    tbl.Combat:CreateToggle({
+        Name = "Auto Escape (Health)",
         Default = false,
         Callback = function(arg)
             flag4 = arg
@@ -1751,18 +1631,13 @@ do
         end,
     })
 
-    tbl.Combat:Divider()
+    tbl.Combat:CreateDivider()
 
-    tbl.Combat:Section({
-        Title = fn("Auto Bandage"),
-        Icon = "heart",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Combat:CreateSection((fn("Auto Bandage")))
 
-    tbl.Combat:Paragraph({
+    tbl.Combat:CreateParagraph({
         Title = "Auto Bandage",
-        Desc = "When your HP drops below the threshold, automatically finds bandages in workspace.Items, brings them to you and uses them.",
+        Text = "When your HP drops below the threshold, automatically finds bandages in workspace.Items, brings them to you and uses them.",
     })
 
     local function fn27()
@@ -1779,19 +1654,20 @@ do
 
     local tbl10 = {enabled = false, threshold = 60}
 
-    tbl.Combat:Slider({
-        Title = "Bandage HP Threshold",
-        Desc = "Auto-use a bandage when HP falls below this value.",
-        Value = {Min = 10, Max = 100, Default = 60},
-        Step = 5,
+    tbl.Combat:CreateSlider({
+        Name = "Bandage HP Threshold",
+        Description = "Auto-use a bandage when HP falls below this value.",
+        Range = {10, 100},
+        CurrentValue = 60,
+        Increment = 5,
         Callback = function(threshold)
             tbl10.threshold = threshold
         end,
     })
 
-    tbl.Combat:Toggle({
-        Title = "Auto Bandage",
-        Desc = "Automatically brings and uses bandages when HP is low.",
+    tbl.Combat:CreateToggle({
+        Name = "Auto Bandage",
+        Description = "Automatically brings and uses bandages when HP is low.",
         Default = false,
         Callback = function(enabled)
             tbl10.enabled = enabled
@@ -1938,22 +1814,17 @@ do
         end
     end)
 
-    tbl.Main:Divider()
+    tbl.Main:CreateDivider()
 
-    tbl.Main:Section({
-        Title = fn("Landmarks"),
-        Icon = "map-pin",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Main:CreateSection((fn("Landmarks")))
 
-    tbl.Main:Paragraph({
+    tbl.Main:CreateParagraph({
         Title = "Reveal Landmarks (Full Map)",
-        Desc = "Tries to find landmarks. Re-press to catch any new ones.",
+        Text = "Tries to find landmarks. Re-press to catch any new ones.",
     })
 
-    tbl.Main:Button({
-        Title = "  Reveal Landmarks (Full Map)",
+    tbl.Main:CreateButton({
+        Name = "  Reveal Landmarks (Full Map)",
         Icon = "map-pin",
         Description = "Reveals all landmarks on the full map.",
         Callback = function()
@@ -2076,14 +1947,9 @@ do
         end,
     })
 
-    tbl.Main:Divider()
+    tbl.Main:CreateDivider()
 
-    tbl.Main:Section({
-        Title = fn("Send to Volcano"),
-        Icon = "flame",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Main:CreateSection((fn("Send to Volcano")))
 
     local tbl11 = {
         "Cultist Corpse",
@@ -2106,10 +1972,10 @@ do
         return Vector3.new(0, 50, 0)
     end
 
-    tbl.Main:Dropdown({
-        Title = "Volcano Items",
-        Desc = "Choose what to throw into the volcano.",
-        Values = (function()
+    tbl.Main:CreateDropdown({
+        Name = "Volcano Items",
+        Description = "Choose what to throw into the volcano.",
+        Options = (function()
             local tbl13 = {"All"}
 
             for i, v7 in ipairs(tbl11) do
@@ -2118,8 +1984,8 @@ do
 
             return tbl13
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl12 = {}
@@ -2147,8 +2013,8 @@ do
         end,
     })
 
-    tbl.Main:Button({
-        Title = "  Send to Volcano",
+    tbl.Main:CreateButton({
+        Name = "  Send to Volcano",
         Icon = "flame",
         Description = "Drags all selected items into the volcano lava, one by one, FAST.",
         Callback = function()
@@ -2171,9 +2037,9 @@ do
         end,
     })
 
-    tbl.Main:Toggle({
-        Title = "Auto Send to Volcano (Loop)",
-        Desc = "Continuously sends selected items to the volcano, one by one, FAST.",
+    tbl.Main:CreateToggle({
+        Name = "Auto Send to Volcano (Loop)",
+        Description = "Continuously sends selected items to the volcano, one by one, FAST.",
         Default = false,
         Callback = function(arg)
             flag5 = arg
@@ -2202,16 +2068,11 @@ do
         end
     end)
 
-    tbl.Main:Divider()
+    tbl.Main:CreateDivider()
 
-    tbl.Main:Section({
-        Title = fn("Auto Tree Chop"),
-        Icon = "axe",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Main:CreateSection((fn("Auto Tree Chop")))
 
-    tbl.Main:Paragraph({Title = "Tree Aura", Desc = "Tree Aura Chop Trees Reach"})
+    tbl.Main:CreateParagraph({Title = "Tree Aura", Text = "Tree Aura Chop Trees Reach"})
     genv.AutoTreeChopRadius = 50
     local autoTreeChopOn = genv.AutoTreeChopOn
     local autoTreeChopOn2 = autoTreeChopOn or false
@@ -2283,9 +2144,9 @@ do
         game:GetService("ReplicatedStorage").RemoteEvents:WaitForChild("ToolDamageObject", 10)
     end
 
-    tbl.Main:Toggle({
-        Title = "Chop Trees Aura",
-        Desc = "Automatically chops trees within the aura radius.",
+    tbl.Main:CreateToggle({
+        Name = "Chop Trees Aura",
+        Description = "Automatically chops trees within the aura radius.",
         Default = false,
         Callback = function(autoTreeChopOn3)
             genv.AutoTreeChopOn = autoTreeChopOn3
@@ -2296,22 +2157,23 @@ do
         end,
     })
 
-    tbl.Main:Slider({
-        Title = "Max Targets (Simultaneous)",
-        Desc = "Number of trees chopped at the same time per cycle.",
-        Value = {Min = 1, Max = 10, Default = 5},
-        Step = 1,
+    tbl.Main:CreateSlider({
+        Name = "Max Targets (Simultaneous)",
+        Description = "Number of trees chopped at the same time per cycle.",
+        Range = {1, 10},
+        CurrentValue = 5,
+        Increment = 1,
         Callback = function(maxTargets3)
             genv.MaxTargets = maxTargets3
         end,
     })
 
-    tbl.Main:Dropdown({
-        Title = "Tree Types",
-        Desc = "Select which tree type the aura targets.",
-        Values = {"All Trees", "Small Tree", "Large Tree", "Pine Tree"},
+    tbl.Main:CreateDropdown({
+        Name = "Tree Types",
+        Description = "Select which tree type the aura targets.",
+        Options = {"All Trees", "Small Tree", "Large Tree", "Pine Tree"},
         Default = "All Trees",
-        Multi = false,
+        MultipleOptions = false,
         Callback = function(typeFilter)
             tbl13.typeFilter = typeFilter
         end,
@@ -2325,12 +2187,12 @@ do
 
     genv.TreeAuraSelectedAxe = "Old Axe"
 
-    tbl.Main:Dropdown({
-        Title = "Tree Aura Axe",
-        Desc = "Choose which axe Tree Aura uses to chop trees.",
-        Values = {"Old Axe", "Good Axe", "Strong Axe"},
+    tbl.Main:CreateDropdown({
+        Name = "Tree Aura Axe",
+        Description = "Choose which axe Tree Aura uses to chop trees.",
+        Options = {"Old Axe", "Good Axe", "Strong Axe"},
         Default = "Old Axe",
-        Multi = false,
+        MultipleOptions = false,
         Callback = function(arg)
             local treeAuraSelectedAxe = arg or "Old Axe"
             genv.TreeAuraSelectedAxe = treeAuraSelectedAxe
@@ -2471,9 +2333,9 @@ do
         end
     end
 
-    tbl.Main:Toggle({
-        Title = "Tree Health ESP",
-        Desc = "Shows a health bar above each tree. Green = healthy, Yellow = damaged, Red = almost chopped.",
+    tbl.Main:CreateToggle({
+        Name = "Tree Health ESP",
+        Description = "Shows a health bar above each tree. Green = healthy, Yellow = damaged, Red = almost chopped.",
         Default = false,
         Callback = function(treeHealthESPOn)
             genv.TreeHealthESPOn = treeHealthESPOn
@@ -2611,14 +2473,9 @@ do
         end
     end)
 
-    tbl.Teleport:Divider()
+    tbl.Teleport:CreateDivider()
 
-    tbl.Teleport:Section({
-        Title = fn("Teleport Locations"),
-        Icon = "map-pin",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Teleport:CreateSection((fn("Teleport Locations")))
 
     local function fn36(arg, cFrame)
         arg.CFrame = cFrame
@@ -2861,10 +2718,10 @@ do
 
     local str2 = "Camp"
 
-    tbl.Teleport:Dropdown({
-        Title = "Select Destination",
-        Desc = "Choose a location to teleport to.",
-        Values = {
+    tbl.Teleport:CreateDropdown({
+        Name = "Select Destination",
+        Description = "Choose a location to teleport to.",
+        Options = {
             "Camp",
             "Trader",
             "Campfire",
@@ -2875,15 +2732,15 @@ do
             "Volcano",
         },
         Default = "Camp",
-        Multi = false,
+        MultipleOptions = false,
         Callback = function(arg)
             str2 = arg
         end,
     })
 
-    tbl.Teleport:Button({
-        Title = "⚡ Teleport Now",
-        Desc = "Teleports you to the selected destination.",
+    tbl.Teleport:CreateButton({
+        Name = "⚡ Teleport Now",
+        Description = "Teleports you to the selected destination.",
         Callback = function()
             local character = localPlayer.Character
             local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
@@ -2902,14 +2759,9 @@ do
         end,
     })
 
-    tbl.Teleport:Divider()
+    tbl.Teleport:CreateDivider()
 
-    tbl.Teleport:Section({
-        Title = fn("TP to Caves"),
-        Icon = "landmark",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Teleport:CreateSection((fn("TP to Caves")))
 
     local tbl17 = {
         CaveLevel1 = function(arg)
@@ -3036,10 +2888,10 @@ do
 
     local str3 = "CaveLevel1"
 
-    tbl.Teleport:Dropdown({
-        Title = "Select Cave",
-        Desc = "Choose a cave level to teleport to.",
-        Values = {
+    tbl.Teleport:CreateDropdown({
+        Name = "Select Cave",
+        Description = "Choose a cave level to teleport to.",
+        Options = {
             "CaveLevel1",
             "CaveLevel2",
             "CaveLevel3",
@@ -3048,15 +2900,15 @@ do
             "CaveOuter",
         },
         Default = "CaveLevel1",
-        Multi = false,
+        MultipleOptions = false,
         Callback = function(arg)
             str3 = arg
         end,
     })
 
-    tbl.Teleport:Button({
-        Title = "⚡ TP to Cave",
-        Desc = "Teleports you to the selected cave level.",
+    tbl.Teleport:CreateButton({
+        Name = "⚡ TP to Cave",
+        Description = "Teleports you to the selected cave level.",
         Callback = function()
             local character = localPlayer.Character
             local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
@@ -3075,14 +2927,9 @@ do
         end,
     })
 
-    tbl.Teleport:Divider()
+    tbl.Teleport:CreateDivider()
 
-    tbl.Teleport:Section({
-        Title = fn("TP to Lost Children"),
-        Icon = "user",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Teleport:CreateSection((fn("TP to Lost Children")))
 
     local tbl18 = {"Lost Child", "Lost Child2", "Lost Child3", "Lost Child4"}
 
@@ -3212,17 +3059,17 @@ do
 
     local n8 = 1
 
-    tbl.Teleport:Dropdown({
-        Title = "Select Lost Child",
-        Desc = "Choose which lost child to teleport to.",
-        Values = {
+    tbl.Teleport:CreateDropdown({
+        Name = "Select Lost Child",
+        Description = "Choose which lost child to teleport to.",
+        Options = {
             "Lost Child #1",
             "Lost Child #2",
             "Lost Child #3",
             "Lost Child #4",
         },
         Default = "Lost Child #1",
-        Multi = false,
+        MultipleOptions = false,
         Callback = function(arg)
             if arg == "Lost Child #1" then
                 n8 = 1
@@ -3236,26 +3083,21 @@ do
         end,
     })
 
-    tbl.Teleport:Button({
-        Title = "⚡ TP to Lost Child",
-        Desc = "Teleports you to the selected lost child.",
+    tbl.Teleport:CreateButton({
+        Name = "⚡ TP to Lost Child",
+        Description = "Teleports you to the selected lost child.",
         Callback = function()
             fn39(n8)
         end,
     })
 
-    tbl.Teleport:Divider()
+    tbl.Teleport:CreateDivider()
 
-    tbl.Teleport:Section({
-        Title = fn("Teleport to Chest"),
-        Icon = "package",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Teleport:CreateSection((fn("Teleport to Chest")))
 
-    tbl.Teleport:Paragraph({
+    tbl.Teleport:CreateParagraph({
         Title = "Teleport to Chest",
-        Desc = "Select a chest from the dropdown then press Teleport to go to it.",
+        Text = "Select a chest from the dropdown then press Teleport to go to it.",
     })
 
     local function fn40()
@@ -3292,40 +3134,30 @@ do
     local v7 = nil
     local v8 = fn41()
     local teleport = tbl.Teleport
-    local dropdown = teleport.Dropdown
-
-    local tbl19 = {
-        Title = "Select Chest",
-        Desc = "Lists all chests as 'Item Chest 1', 'Item Chest 2', etc. Refreshes automatically when new chests appear.",
-        Values = v8,
-    }
-
     local v9 = v8[1]
-    local v10 = v9 or nil
-    tbl19.Value = v10
-    tbl19.Multi = false
-    tbl19.AllowNone = true
-
-    tbl19.Callback = function(arg)
-        v7 = arg
-    end
-
-    local v11 = dropdown(teleport, tbl19)
-
+    local v11 = teleport:CreateDropdown({
+        Name = "Select Chest",
+        Description = "Lists all chests as 'Item Chest 1', 'Item Chest 2', etc. Refreshes automatically when new chests appear.",
+        Options = v8,
+        CurrentOption = v9,
+        MultipleOptions = false,
+        Callback = function(arg)
+            v7 = type(arg) == "table" and arg[1] or arg
+        end,
+    })
     task.spawn(function()
         while true do
             task.wait(5)
             local v12 = fn41()
-
             pcall(function()
-                v11:SetValues(v12)
+                v11:Set({Options = v12, CurrentOption = v12[1]})
             end)
         end
     end)
 
-    tbl.Teleport:Button({
-        Title = "⚡ Teleport to Chest",
-        Desc = "Teleports you to the selected chest.",
+    tbl.Teleport:CreateButton({
+        Name = "⚡ Teleport to Chest",
+        Description = "Teleports you to the selected chest.",
         Callback = function()
             local character = localPlayer.Character
             local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
@@ -3790,14 +3622,9 @@ do
         end
     end)
 
-    tbl.Bring:Divider()
+    tbl.Bring:CreateDivider()
 
-    tbl.Bring:Section({
-        Title = fn("Quick Actions"),
-        Icon = "zap",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Bring:CreateSection((fn("Quick Actions")))
 
     local tbl23 = {
         "item chest",
@@ -3893,8 +3720,8 @@ do
         return n9
     end
 
-    tbl.Bring:Button({
-        Title = "Bring Everything",
+    tbl.Bring:CreateButton({
+        Name = "Bring Everything",
         Callback = function()
             local character = localPlayer.Character
             local humanoidRootPart = character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -3963,9 +3790,9 @@ do
         end,
     })
 
-    tbl.Bring:Button({
-        Title = "Bring All (No Chests)",
-        Desc = "Instantly brings every item from the entire map to you. Skips chests.",
+    tbl.Bring:CreateButton({
+        Name = "Bring All (No Chests)",
+        Description = "Instantly brings every item from the entire map to you. Skips chests.",
         Callback = function()
             local character = localPlayer.Character
             local humanoidRootPart = character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -3977,9 +3804,9 @@ do
         end,
     })
 
-    tbl.Bring:Button({
-        Title = "Open Chests",
-        Desc = "Continuously fires proximity prompts on all Item Chests in the map.",
+    tbl.Bring:CreateButton({
+        Name = "Open Chests",
+        Description = "Continuously fires proximity prompts on all Item Chests in the map.",
         Callback = function()
             task.spawn(function()
                 while true do
@@ -4003,19 +3830,14 @@ do
         end,
     })
 
-    tbl.Bring:Divider()
+    tbl.Bring:CreateDivider()
 
-    tbl.Bring:Section({
-        Title = fn("Bring Items"),
-        Icon = "inbox",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Bring:CreateSection((fn("Bring Items")))
 
-    tbl.Bring:Dropdown({
-        Title = "Select Items to Bring",
-        Desc = "Choose items. Use 'Bring Selected Now' or enable Auto Bring.",
-        Values = (function()
+    tbl.Bring:CreateDropdown({
+        Name = "Select Items to Bring",
+        Description = "Choose items. Use 'Bring Selected Now' or enable Auto Bring.",
+        Options = (function()
             local tbl24 = {"All"}
 
             for i, v12 in ipairs(tbl22) do
@@ -4024,8 +3846,8 @@ do
 
             return tbl24
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             genv.autoBringSelectedItems = {}
@@ -4055,9 +3877,9 @@ do
         end,
     })
 
-    tbl.Bring:Button({
-        Title = "⚡ Bring Selected Now",
-        Desc = "Instantly brings all selected items to you once.",
+    tbl.Bring:CreateButton({
+        Name = "⚡ Bring Selected Now",
+        Description = "Instantly brings all selected items to you once.",
         Callback = function()
             local character = localPlayer.Character
             local humanoidRootPart = character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -4109,9 +3931,9 @@ do
         end,
     })
 
-    tbl.Bring:Toggle({
-        Title = "🔄 Auto Bring Items",
-        Desc = "Continuously brings all selected items to you every second.",
+    tbl.Bring:CreateToggle({
+        Name = "🔄 Auto Bring Items",
+        Description = "Continuously brings all selected items to you every second.",
         Default = false,
         Callback = function(autoBringEnabled)
             genv.autoBringEnabled = autoBringEnabled
@@ -4211,14 +4033,9 @@ do
         containers = {},
     }
 
-    tbl.Bring:Divider()
+    tbl.Bring:CreateDivider()
 
-    tbl.Bring:Section({
-        Title = fn("Armor"),
-        Icon = "shield",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Bring:CreateSection((fn("Armor")))
 
     local tbl25 = {
         "Leather Armor",
@@ -4228,10 +4045,10 @@ do
         "Iron Body",
     }
 
-    tbl.Bring:Dropdown({
-        Title = "Select Armor",
-        Desc = "Choose armor pieces to bring.",
-        Values = (function()
+    tbl.Bring:CreateDropdown({
+        Name = "Select Armor",
+        Description = "Choose armor pieces to bring.",
+        Options = (function()
             local tbl26 = {"All"}
 
             for i, v12 in ipairs(tbl25) do
@@ -4240,8 +4057,8 @@ do
 
             return tbl26
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl24.armor = {}
@@ -4269,8 +4086,8 @@ do
         end,
     })
 
-    tbl.Bring:Button({
-        Title = "⚡ Bring Armor",
+    tbl.Bring:CreateButton({
+        Name = "⚡ Bring Armor",
         Callback = function()
             if #tbl24.armor == 0 then
                 fn3("Select armor items first!")
@@ -4280,14 +4097,9 @@ do
         end,
     })
 
-    tbl.Bring:Divider()
+    tbl.Bring:CreateDivider()
 
-    tbl.Bring:Section({
-        Title = fn("Weapons"),
-        Icon = "sword",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Bring:CreateSection((fn("Weapons")))
 
     local tbl26 = {
         "Katana",
@@ -4311,10 +4123,10 @@ do
         "Old Axe",
     }
 
-    tbl.Bring:Dropdown({
-        Title = "Select Weapons",
-        Desc = "Choose weapons to bring.",
-        Values = (function()
+    tbl.Bring:CreateDropdown({
+        Name = "Select Weapons",
+        Description = "Choose weapons to bring.",
+        Options = (function()
             local tbl27 = {"All"}
 
             for i, v12 in ipairs(tbl26) do
@@ -4323,8 +4135,8 @@ do
 
             return tbl27
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl24.weapon = {}
@@ -4352,8 +4164,8 @@ do
         end,
     })
 
-    tbl.Bring:Button({
-        Title = "⚡ Bring Weapons",
+    tbl.Bring:CreateButton({
+        Name = "⚡ Bring Weapons",
         Callback = function()
             if #tbl24.weapon == 0 then
                 fn3("Select weapon items first!")
@@ -4363,14 +4175,9 @@ do
         end,
     })
 
-    tbl.Bring:Divider()
+    tbl.Bring:CreateDivider()
 
-    tbl.Bring:Section({
-        Title = fn("Equipment"),
-        Icon = "backpack",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Bring:CreateSection((fn("Equipment")))
 
     local tbl27 = {
         "Rifle Ammo",
@@ -4385,10 +4192,10 @@ do
         "Coin Stack",
     }
 
-    tbl.Bring:Dropdown({
-        Title = "Select Equipment",
-        Desc = "Choose equipment / utility items to bring.",
-        Values = (function()
+    tbl.Bring:CreateDropdown({
+        Name = "Select Equipment",
+        Description = "Choose equipment / utility items to bring.",
+        Options = (function()
             local tbl28 = {"All"}
 
             for i, v12 in ipairs(tbl27) do
@@ -4397,8 +4204,8 @@ do
 
             return tbl28
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl24.equipment = {}
@@ -4426,8 +4233,8 @@ do
         end,
     })
 
-    tbl.Bring:Button({
-        Title = "⚡ Bring Equipment",
+    tbl.Bring:CreateButton({
+        Name = "⚡ Bring Equipment",
         Callback = function()
             if #tbl24.equipment == 0 then
                 fn3("Select equipment items first!")
@@ -4437,14 +4244,9 @@ do
         end,
     })
 
-    tbl.Bring:Divider()
+    tbl.Bring:CreateDivider()
 
-    tbl.Bring:Section({
-        Title = fn("Food"),
-        Icon = "utensils",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Bring:CreateSection((fn("Food")))
 
     local tbl28 = {
         "Morsel",
@@ -4463,10 +4265,10 @@ do
         "Hearty Stew",
     }
 
-    tbl.Bring:Dropdown({
-        Title = "Select Food",
-        Desc = "Choose cooked food items to bring.",
-        Values = (function()
+    tbl.Bring:CreateDropdown({
+        Name = "Select Food",
+        Description = "Choose cooked food items to bring.",
+        Options = (function()
             local tbl29 = {"All"}
 
             for i, v12 in ipairs(tbl28) do
@@ -4475,8 +4277,8 @@ do
 
             return tbl29
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl24.food = {}
@@ -4504,8 +4306,8 @@ do
         end,
     })
 
-    tbl.Bring:Button({
-        Title = "⚡ Bring Food",
+    tbl.Bring:CreateButton({
+        Name = "⚡ Bring Food",
         Callback = function()
             if #tbl24.food == 0 then
                 fn3("Select food items first!")
@@ -4515,14 +4317,9 @@ do
         end,
     })
 
-    tbl.Bring:Divider()
+    tbl.Bring:CreateDivider()
 
-    tbl.Bring:Section({
-        Title = fn("Vegetables"),
-        Icon = "leaf",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Bring:CreateSection((fn("Vegetables")))
 
     local tbl29 = {
         "Carrot",
@@ -4535,10 +4332,10 @@ do
         "Log",
     }
 
-    tbl.Bring:Dropdown({
-        Title = "Select Vegetables / Plants",
-        Desc = "Choose plant / raw food items to bring.",
-        Values = (function()
+    tbl.Bring:CreateDropdown({
+        Name = "Select Vegetables / Plants",
+        Description = "Choose plant / raw food items to bring.",
+        Options = (function()
             local tbl30 = {"All"}
 
             for i, v12 in ipairs(tbl29) do
@@ -4547,8 +4344,8 @@ do
 
             return tbl30
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl24.vegetable = {}
@@ -4576,8 +4373,8 @@ do
         end,
     })
 
-    tbl.Bring:Button({
-        Title = "⚡ Bring Vegetables",
+    tbl.Bring:CreateButton({
+        Name = "⚡ Bring Vegetables",
         Callback = function()
             if #tbl24.vegetable == 0 then
                 fn3("Select items first!")
@@ -4587,14 +4384,9 @@ do
         end,
     })
 
-    tbl.Bring:Divider()
+    tbl.Bring:CreateDivider()
 
-    tbl.Bring:Section({
-        Title = fn("Mob Drops"),
-        Icon = "skull",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Bring:CreateSection((fn("Mob Drops")))
 
     local tbl30 = {
         "Wolf Pelt",
@@ -4614,10 +4406,10 @@ do
         "Ribs",
     }
 
-    tbl.Bring:Dropdown({
-        Title = "Select Mob Drops",
-        Desc = "Choose mob drop items to bring.",
-        Values = (function()
+    tbl.Bring:CreateDropdown({
+        Name = "Select Mob Drops",
+        Description = "Choose mob drop items to bring.",
+        Options = (function()
             local tbl31 = {"All"}
 
             for i, v12 in ipairs(tbl30) do
@@ -4626,8 +4418,8 @@ do
 
             return tbl31
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl24.mobDrop = {}
@@ -4655,8 +4447,8 @@ do
         end,
     })
 
-    tbl.Bring:Button({
-        Title = "⚡ Bring Mob Drops",
+    tbl.Bring:CreateButton({
+        Name = "⚡ Bring Mob Drops",
         Callback = function()
             if #tbl24.mobDrop == 0 then
                 fn3("Select mob drop items first!")
@@ -4666,14 +4458,9 @@ do
         end,
     })
 
-    tbl.Bring:Divider()
+    tbl.Bring:CreateDivider()
 
-    tbl.Bring:Section({
-        Title = fn("Others"),
-        Icon = "package",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Bring:CreateSection((fn("Others")))
 
     local tbl31 = {
         "Coal",
@@ -4694,10 +4481,10 @@ do
         "Old Car Engine",
     }
 
-    tbl.Bring:Dropdown({
-        Title = "Select Other Items",
-        Desc = "Choose fuel / scrap / misc items to bring.",
-        Values = (function()
+    tbl.Bring:CreateDropdown({
+        Name = "Select Other Items",
+        Description = "Choose fuel / scrap / misc items to bring.",
+        Options = (function()
             local tbl32 = {"All"}
 
             for i, v12 in ipairs(tbl31) do
@@ -4706,8 +4493,8 @@ do
 
             return tbl32
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl24.other = {}
@@ -4735,8 +4522,8 @@ do
         end,
     })
 
-    tbl.Bring:Button({
-        Title = "⚡ Bring Others",
+    tbl.Bring:CreateButton({
+        Name = "⚡ Bring Others",
         Callback = function()
             if #tbl24.other == 0 then
                 fn3("Select items first!")
@@ -4746,24 +4533,19 @@ do
         end,
     })
 
-    tbl.Bring:Divider()
+    tbl.Bring:CreateDivider()
 
-    tbl.Bring:Section({
-        Title = fn("Containers"),
-        Icon = "package",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Bring:CreateSection((fn("Containers")))
 
-    tbl.Bring:Paragraph({
+    tbl.Bring:CreateParagraph({
         Title = "Bring Chests",
-        Desc = "Select chest types to bring to you one by one.",
+        Text = "Select chest types to bring to you one by one.",
     })
 
-    tbl.Bring:Dropdown({
-        Title = "Select Chests to Bring",
-        Desc = "Choose which chest types to bring.",
-        Values = {
+    tbl.Bring:CreateDropdown({
+        Name = "Select Chests to Bring",
+        Description = "Choose which chest types to bring.",
+        Options = {
             "Item Chest",
             "Chest",
             "Cave Chest",
@@ -4773,8 +4555,8 @@ do
             "Loot Chest",
             "Wooden Chest",
         },
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl24.containers = {}
@@ -4787,9 +4569,9 @@ do
         end,
     })
 
-    tbl.Bring:Button({
-        Title = "⚡ Bring Chests Now",
-        Desc = "Brings selected chest types to you one by one.",
+    tbl.Bring:CreateButton({
+        Name = "⚡ Bring Chests Now",
+        Description = "Brings selected chest types to you one by one.",
         Callback = function()
             if #tbl24.containers == 0 then
                 fn3("Select chest types first!")
@@ -4854,9 +4636,9 @@ do
 
     genv.autoBringContainersEnabled = false
 
-    tbl.Bring:Toggle({
-        Title = "🔄 Auto Bring Chests",
-        Desc = "Continuously brings selected chests to you one by one every cycle.",
+    tbl.Bring:CreateToggle({
+        Name = "🔄 Auto Bring Chests",
+        Description = "Continuously brings selected chests to you one by one every cycle.",
         Default = false,
         Callback = function(autoBringContainersEnabled)
             genv.autoBringContainersEnabled = autoBringContainersEnabled
@@ -5187,45 +4969,36 @@ do
         end
     end)
 
-    tbl.Combat:Divider()
+    tbl.Combat:CreateDivider()
 
-    tbl.Combat:Section({
-        Title = fn("Hitbox Settings"),
-        Icon = "settings-2",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Combat:CreateSection((fn("Hitbox Settings")))
 
-    tbl.Combat:Slider({
-        Title = "Hitbox Size",
-        Value = {Min = 2, Max = 50, Default = 10},
-        Step = 1,
+    tbl.Combat:CreateSlider({
+        Name = "Hitbox Size",
+        Range = {2, 50},
+        CurrentValue = 10,
+        Increment = 1,
         Callback = function(size)
             tbl32.Size = size
         end,
     })
 
-    tbl.Combat:Toggle({
-        Title = "Show Hitbox (Visible)",
+    tbl.Combat:CreateToggle({
+        Name = "Show Hitbox (Visible)",
         Default = false,
         Callback = function(show)
             tbl32.Show = show
         end,
     })
 
-    tbl.Combat:Paragraph({
+    tbl.Combat:CreateParagraph({
         Title = "Health Colors",
-        Desc = "🟢 Green = Full HP (>60%)\n🟡 Yellow = Half HP (30–60%)\n🔴 Red = Critical (<30%)",
+        Text = "🟢 Green = Full HP (>60%)\n🟡 Yellow = Half HP (30–60%)\n🔴 Red = Critical (<30%)",
     })
 
-    tbl.Combat:Divider()
+    tbl.Combat:CreateDivider()
 
-    tbl.Combat:Section({
-        Title = fn("Select Mobs"),
-        Icon = "crosshair",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Combat:CreateSection((fn("Select Mobs")))
 
     local tbl33 = {
         ["Wolf / Alpha Wolf"] = "Wolf",
@@ -5243,10 +5016,10 @@ do
 
     local tbl34 = {}
 
-    tbl.Combat:Dropdown({
-        Title = "Select Mobs for Hitbox",
-        Desc = "Choose which mobs get an expanded hitbox.",
-        Values = {
+    tbl.Combat:CreateDropdown({
+        Name = "Select Mobs for Hitbox",
+        Description = "Choose which mobs get an expanded hitbox.",
+        Options = {
             "Wolf / Alpha Wolf",
             "Bunny",
             "Cultist",
@@ -5259,8 +5032,8 @@ do
             "Alien",
             "Alien Elite",
         },
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl32.Wolf = false
@@ -5289,28 +5062,23 @@ do
         end,
     })
 
-    tbl.Combat:Toggle({
-        Title = "Enable Hitbox",
+    tbl.Combat:CreateToggle({
+        Name = "Enable Hitbox",
         Default = false,
         Callback = function(enabled)
             tbl32.Enabled = enabled
         end,
     })
 
-    tbl.AutoDays:Divider()
+    tbl.AutoDays:CreateDivider()
 
-    tbl.AutoDays:Section({
-        Title = fn("Day Auto Farm"),
-        Icon = "sun",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.AutoDays:CreateSection((fn("Day Auto Farm")))
 
     local tbl35 = {active = false, thread = nil}
     local vector4 = Vector3.new(-37.08, 6.98, -16.33)
 
-    tbl.AutoDays:Toggle({
-        Title = "Activate Auto Days",
+    tbl.AutoDays:CreateToggle({
+        Name = "Activate Auto Days",
         Default = false,
         Callback = function(active)
             tbl35.active = active
@@ -5503,14 +5271,9 @@ do
         end,
     })
 
-    tbl.AutoDays:Divider()
+    tbl.AutoDays:CreateDivider()
 
-    tbl.AutoDays:Section({
-        Title = fn("Auto Cook Food"),
-        Icon = "utensils",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.AutoDays:CreateSection((fn("Auto Cook Food")))
 
     local tbl36 = {
         "Morsel",
@@ -5533,9 +5296,9 @@ do
         fn15(arg, vector)
     end
 
-    tbl.AutoDays:Dropdown({
-        Title = "Food Items to Cook",
-        Values = (function()
+    tbl.AutoDays:CreateDropdown({
+        Name = "Food Items to Cook",
+        Options = (function()
             local tbl38 = {"All"}
 
             for i, v12 in ipairs(tbl36) do
@@ -5544,8 +5307,8 @@ do
 
             return tbl38
         end)(),
-        Value = {},
-        Multi = true,
+        CurrentOption = {},
+        MultipleOptions = true,
         AllowNone = true,
         Callback = function(arg)
             tbl37 = {}
@@ -5575,8 +5338,8 @@ do
         end,
     })
 
-    tbl.AutoDays:Toggle({
-        Title = "Auto Cook Food",
+    tbl.AutoDays:CreateToggle({
+        Name = "Auto Cook Food",
         Default = false,
         Callback = function(autoDaysAutoCookEnabled)
             genv.AutoDaysAutoCookEnabled = autoDaysAutoCookEnabled
@@ -5597,12 +5360,12 @@ do
         end
     end)
 
-    tbl.Scanner:Divider()
-    tbl.Scanner:Section({Title = fn("Auto Scanner"), Icon = "scan", Opened = false})
+    tbl.Scanner:CreateDivider()
+    tbl.Scanner:CreateSection((fn("Auto Scanner")))
 
-    tbl.Scanner:Paragraph({
+    tbl.Scanner:CreateParagraph({
         Title = "Auto Scanner",
-        Desc = "Sweeps the entire map using smooth movement so other features (Auto Fuel, Auto Compress, etc.) can detect all items. Adjust speed and scan pattern below.",
+        Text = "Sweeps the entire map using smooth movement so other features (Auto Fuel, Auto Compress, etc.) can detect all items. Adjust speed and scan pattern below.",
     })
 
     genv.AutoLoadMapActive = false
@@ -5738,8 +5501,8 @@ do
         end)
     end
 
-    tbl38.toggleRef = tbl.Scanner:Toggle({
-        Title = "Scan Map",
+    tbl38.toggleRef = tbl.Scanner:CreateToggle({
+        Name = "Scan Map",
         Default = false,
         Callback = function(autoLoadMapActive)
             genv.AutoLoadMapActive = autoLoadMapActive
@@ -5752,48 +5515,46 @@ do
         end,
     })
 
-    tbl.Scanner:Slider({
-        Title = "Scan Speed",
-        Desc = "How fast the scanner moves between points. Higher = faster sweep.",
-        Value = {Min = 10, Max = 200, Default = 100},
-        Step = 5,
+    tbl.Scanner:CreateSlider({
+        Name = "Scan Speed",
+        Description = "How fast the scanner moves between points. Higher = faster sweep.",
+        Range = {10, 200},
+        CurrentValue = 100,
+        Increment = 5,
         Callback = function(speed)
             tbl39.speed = speed
         end,
     })
 
-    tbl.Scanner:Slider({
-        Title = "Step Radius",
-        Desc = "Distance between each scan ring (in studs). Smaller = more thorough.",
-        Value = {Min = 5, Max = 50, Default = 15},
-        Step = 1,
+    tbl.Scanner:CreateSlider({
+        Name = "Step Radius",
+        Description = "Distance between each scan ring (in studs). Smaller = more thorough.",
+        Range = {5, 50},
+        CurrentValue = 15,
+        Increment = 1,
         Callback = function(stepRadius)
             tbl39.stepRadius = stepRadius
         end,
     })
 
-    tbl.Scanner:Slider({
-        Title = "Step Angle",
-        Desc = "Angle between scan points on each ring (degrees). Smaller = more points.",
-        Value = {Min = 5, Max = 45, Default = 10},
-        Step = 1,
+    tbl.Scanner:CreateSlider({
+        Name = "Step Angle",
+        Description = "Angle between scan points on each ring (degrees). Smaller = more points.",
+        Range = {5, 45},
+        CurrentValue = 10,
+        Increment = 1,
         Callback = function(stepAngle)
             tbl39.stepAngle = stepAngle
         end,
     })
 
-    tbl.Combat:Divider()
+    tbl.Combat:CreateDivider()
 
-    tbl.Combat:Section({
-        Title = fn("Silent Aim"),
-        Icon = "crosshair",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Combat:CreateSection((fn("Silent Aim")))
 
-    tbl.Combat:Paragraph({
+    tbl.Combat:CreateParagraph({
         Title = "Silent Aim",
-        Desc = "Auto-aim projectiles + instant reload",
+        Text = "Auto-aim projectiles + instant reload",
     })
 
     local tbl40 = {enabled = false, fov = 60, hitPart = "HumanoidRootPart"}
@@ -5840,9 +5601,9 @@ do
         return v12
     end
 
-    tbl.Combat:Toggle({
-        Title = "Silent Aim",
-        Desc = "Auto-aims all projectiles at nearest target in FOV.",
+    tbl.Combat:CreateToggle({
+        Name = "Silent Aim",
+        Description = "Auto-aims all projectiles at nearest target in FOV.",
         Default = false,
         Callback = function(enabled)
             tbl40.enabled = enabled
@@ -5851,22 +5612,23 @@ do
         end,
     })
 
-    tbl.Combat:Slider({
-        Title = "Silent Aim FOV",
-        Desc = "Field of view radius for target detection (screen %).",
-        Value = {Min = 10, Max = 100, Default = 60},
-        Step = 5,
+    tbl.Combat:CreateSlider({
+        Name = "Silent Aim FOV",
+        Description = "Field of view radius for target detection (screen %).",
+        Range = {10, 100},
+        CurrentValue = 60,
+        Increment = 5,
         Callback = function(fov)
             tbl40.fov = fov
         end,
     })
 
-    tbl.Combat:Dropdown({
-        Title = "Silent Aim Hit Part",
-        Desc = "Which body part projectiles are aimed at.",
-        Values = {"HumanoidRootPart", "Head", "Torso", "UpperTorso"},
+    tbl.Combat:CreateDropdown({
+        Name = "Silent Aim Hit Part",
+        Description = "Which body part projectiles are aimed at.",
+        Options = {"HumanoidRootPart", "Head", "Torso", "UpperTorso"},
         Default = "HumanoidRootPart",
-        Multi = false,
+        MultipleOptions = false,
         Callback = function(hitPart)
             tbl40.hitPart = hitPart
         end,
@@ -5904,25 +5666,20 @@ do
         end)
     end
 
-    tbl.Combat:Divider()
+    tbl.Combat:CreateDivider()
 
-    tbl.Combat:Section({
-        Title = fn("Revive Players"),
-        Icon = "heart",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Combat:CreateSection((fn("Revive Players")))
 
-    tbl.Combat:Paragraph({
+    tbl.Combat:CreateParagraph({
         Title = "Revive Players",
-        Desc = "Auto Revive dead players including yourself from far away",
+        Text = "Auto Revive dead players including yourself from far away",
     })
 
     local tbl41 = {players = false, self = false}
 
-    tbl.Combat:Toggle({
-        Title = "Auto Revive Players",
-        Desc = "Automatically revives dead players (requires bandage/MedKit) in your inventory.",
+    tbl.Combat:CreateToggle({
+        Name = "Auto Revive Players",
+        Description = "Automatically revives dead players (requires bandage/MedKit) in your inventory.",
         Default = false,
         Callback = function(players)
             tbl41.players = players
@@ -5931,9 +5688,9 @@ do
         end,
     })
 
-    tbl.Combat:Toggle({
-        Title = "Auto Revive Yourself",
-        Desc = "Automatically revives yourself when dead (requires Bandage/MedKit on map).",
+    tbl.Combat:CreateToggle({
+        Name = "Auto Revive Yourself",
+        Description = "Automatically revives yourself when dead (requires Bandage/MedKit on map).",
         Default = false,
         Callback = function(self_)
             tbl41.self = self_
@@ -6350,18 +6107,13 @@ do
         end
     end)
 
-    tbl.Combat:Divider()
+    tbl.Combat:CreateDivider()
 
-    tbl.Combat:Section({
-        Title = fn("Auto Stun"),
-        Icon = "zap",
-        Opened = false,
-        Desc = "",
-    })
+    tbl.Combat:CreateSection((fn("Auto Stun")))
 
-    tbl.Combat:Paragraph({
+    tbl.Combat:CreateParagraph({
         Title = "Auto Stun",
-        Desc = "Automatically equips a flashlight, teleports to the selected entity (Deer, Owl, or Rambo) to stun it, then instantly returns you to your original position.\n\n→ Select a target below\n→ Enable the toggle to start\n→ You will snap back to your position after each stun",
+        Text = "Automatically equips a flashlight, teleports to the selected entity (Deer, Owl, or Rambo) to stun it, then instantly returns you to your original position.\n\n→ Select a target below\n→ Enable the toggle to start\n→ You will snap back to your position after each stun",
     })
 end
 
@@ -6629,12 +6381,12 @@ task.spawn(function()
     end
 end)
 
-tbl.Combat:Dropdown({
-    Title = "Stun Target",
+tbl.Combat:CreateDropdown({
+    Name = "Stun Target",
     Description = "Choose which entity to auto stun (one at a time)",
-    Values = {"Deer", "Owl", "Rambo", "Cat"},
+    Options = {"Deer", "Owl", "Rambo", "Cat"},
     Default = "Deer",
-    Multi = false,
+    MultipleOptions = false,
     Callback = function(arg)
         local target = arg or "Deer"
         tbl2.target = target
@@ -6642,18 +6394,19 @@ tbl.Combat:Dropdown({
     end,
 })
 
-tbl.Combat:Slider({
-    Title = "Stun Cooldown (seconds)",
-    Desc = "How long to wait between each auto stun cycle.",
-    Value = {Min = 1, Max = 10, Default = 2},
-    Step = 1,
+tbl.Combat:CreateSlider({
+    Name = "Stun Cooldown (seconds)",
+    Description = "How long to wait between each auto stun cycle.",
+    Range = {1, 10},
+    CurrentValue = 2,
+    Increment = 1,
     Callback = function(cooldown)
         tbl2.cooldown = cooldown
     end,
 })
 
-tbl.Combat:Toggle({
-    Title = "Auto Stun",
+tbl.Combat:CreateToggle({
+    Name = "Auto Stun",
     Default = false,
     Callback = function(enabled)
         tbl2.enabled = enabled
@@ -6674,22 +6427,17 @@ tbl.Combat:Toggle({
 })
 
 _fogRemoveEnabled = true
-tbl.Misc:Divider()
+tbl.Misc:CreateDivider()
 
-tbl.Misc:Section({
-    Title = fn("Remove Fog"),
-    Icon = "wind",
-    Opened = false,
-    Desc = "",
+tbl.Misc:CreateSection((fn("Remove Fog")))
+
+tbl.Misc:CreateParagraph({
+    Title = "Remove Fog",
+    Text = "Removes fog by destroying non-Fog children inside workspace.Map.Boundaries.",
 })
 
-tbl.Misc:Paragraph({
-    Title = "Remove Fog",
-    Desc = "Removes fog by destroying non-Fog children inside workspace.Map.Boundaries.",
-})
-
-tbl.Misc:Toggle({
-    Title = "Remove Fog",
+tbl.Misc:CreateToggle({
+    Name = "Remove Fog",
     Default = true,
     Callback = function(arg)
         _fogRemoveEnabled = arg
@@ -6703,19 +6451,14 @@ tbl.Misc:Toggle({
     end,
 })
 
-tbl.Misc:Divider()
+tbl.Misc:CreateDivider()
 
-tbl.Misc:Section({
-    Title = fn("Anti Void"),
-    Icon = "shield",
-    Opened = false,
-    Desc = "",
-})
+tbl.Misc:CreateSection((fn("Anti Void")))
 
 genv.antiVoidEnabled = false
 
-tbl.Misc:Toggle({
-    Title = "Anti Void",
+tbl.Misc:CreateToggle({
+    Name = "Anti Void",
     Default = false,
     Callback = function(antiVoidEnabled)
         genv.antiVoidEnabled = antiVoidEnabled
@@ -6830,17 +6573,12 @@ localPlayer.CharacterAdded:Connect(function()
     end
 end)
 
-tbl.Misc:Divider()
+tbl.Misc:CreateDivider()
 
-tbl.Misc:Section({
-    Title = fn("Fly"),
-    Icon = "plane",
-    Opened = false,
-    Desc = "",
-})
+tbl.Misc:CreateSection((fn("Fly")))
 
-tbl.Misc:Toggle({
-    Title = "Fly",
+tbl.Misc:CreateToggle({
+    Name = "Fly",
     Default = false,
     Callback = function(arg)
         if arg then
@@ -6851,29 +6589,25 @@ tbl.Misc:Toggle({
     end,
 })
 
-tbl.Misc:Slider({
-    Title = "Fly Speed",
-    Value = {Min = 10, Max = 300, Default = 50},
-    Step = 5,
+tbl.Misc:CreateSlider({
+    Name = "Fly Speed",
+    Range = {10, 300},
+    CurrentValue = 50,
+    Increment = 5,
     Callback = function(flySpeed)
         genv.flySpeed = flySpeed
     end,
 })
 
-tbl.Misc:Divider()
+tbl.Misc:CreateDivider()
 
-tbl.Misc:Section({
-    Title = fn("Movement"),
-    Icon = "footprints",
-    Opened = false,
-    Desc = "",
-})
+tbl.Misc:CreateSection((fn("Movement")))
 
 genv.speedEnabled = false
 genv.speedValue = 28
 
-tbl.Misc:Toggle({
-    Title = "Speed Hack",
+tbl.Misc:CreateToggle({
+    Name = "Speed Hack",
     Default = false,
     Callback = function(speedEnabled)
         genv.speedEnabled = speedEnabled
@@ -6888,10 +6622,11 @@ tbl.Misc:Toggle({
     end,
 })
 
-tbl.Misc:Slider({
-    Title = "Speed Value",
-    Value = {Min = 16, Max = 600, Default = 28},
-    Step = 1,
+tbl.Misc:CreateSlider({
+    Name = "Speed Value",
+    Range = {16, 600},
+    CurrentValue = 28,
+    Increment = 1,
     Callback = function(speedValue)
         genv.speedValue = speedValue
 
@@ -6953,8 +6688,8 @@ local function fn11(arg)
     end)
 end
 
-tbl.Misc:Toggle({
-    Title = "Jump Boost",
+tbl.Misc:CreateToggle({
+    Name = "Jump Boost",
     Default = false,
     Callback = function(jpEnabled)
         genv.jpEnabled = jpEnabled
@@ -6970,10 +6705,11 @@ tbl.Misc:Toggle({
     end,
 })
 
-tbl.Misc:Slider({
-    Title = "Jump Power",
-    Value = {Min = 50, Max = 500, Default = 60},
-    Step = 1,
+tbl.Misc:CreateSlider({
+    Name = "Jump Power",
+    Range = {50, 500},
+    CurrentValue = 60,
+    Increment = 1,
     Callback = function(jpValue)
         genv.jpValue = jpValue
 
@@ -6987,8 +6723,8 @@ tbl.Misc:Slider({
 
 local flag2 = false
 
-tbl.Misc:Toggle({
-    Title = "Infinite Jump",
+tbl.Misc:CreateToggle({
+    Name = "Infinite Jump",
     Default = false,
     Callback = function(arg)
         flag2 = arg
@@ -7027,8 +6763,8 @@ local function fn12(arg)
     end
 end
 
-tbl.Misc:Toggle({
-    Title = "Instant Interact",
+tbl.Misc:CreateToggle({
+    Name = "Instant Interact",
     Default = false,
     Callback = function(instantInteractOn)
         genv.instantInteractOn = instantInteractOn
@@ -7057,17 +6793,12 @@ tbl.Misc:Toggle({
     end,
 })
 
-tbl.Misc:Divider()
+tbl.Misc:CreateDivider()
 
-tbl.Misc:Section({
-    Title = fn("Performance Monitor"),
-    Icon = "activity",
-    Opened = false,
-    Desc = "",
-})
+tbl.Misc:CreateSection((fn("Performance Monitor")))
 
-tbl.Misc:Toggle({
-    Title = "Show FPS",
+tbl.Misc:CreateToggle({
+    Name = "Show FPS",
     Default = false,
     Callback = function(arg)
         showFPS = arg
@@ -7078,8 +6809,8 @@ tbl.Misc:Toggle({
     end,
 })
 
-tbl.Misc:Toggle({
-    Title = "Show Ping (ms)",
+tbl.Misc:CreateToggle({
+    Name = "Show Ping (ms)",
     Default = false,
     Callback = function(arg)
         showPing = arg
@@ -7090,8 +6821,8 @@ tbl.Misc:Toggle({
     end,
 })
 
-tbl.Misc:Button({
-    Title = "FPS Boost",
+tbl.Misc:CreateButton({
+    Name = "FPS Boost",
     Callback = function()
         task.spawn(function()
             pcall(function()
@@ -7131,20 +6862,15 @@ tbl.Misc:Button({
     end,
 })
 
-tbl.Misc:Divider()
+tbl.Misc:CreateDivider()
 
-tbl.Misc:Section({
-    Title = fn("Visual"),
-    Icon = "eye",
-    Opened = false,
-    Desc = "",
-})
+tbl.Misc:CreateSection((fn("Visual")))
 
 local flag3 = false
 local thread = nil
 
-tbl.Misc:Toggle({
-    Title = "Fullbright",
+tbl.Misc:CreateToggle({
+    Name = "Fullbright",
     Default = false,
     Callback = function(arg)
         flag3 = arg
@@ -7167,8 +6893,8 @@ tbl.Misc:Toggle({
 
 local flag4 = false
 
-tbl.Misc:Toggle({
-    Title = "Noclip",
+tbl.Misc:CreateToggle({
+    Name = "Noclip",
     Default = false,
     Callback = function(arg)
         flag4 = arg
@@ -7193,18 +6919,13 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
-tbl.Misc:Divider()
+tbl.Misc:CreateDivider()
 
-tbl.Misc:Section({
-    Title = fn("Universal Scripts"),
-    Icon = "terminal",
-    Opened = false,
-    Desc = "",
-})
+tbl.Misc:CreateSection((fn("Universal Scripts")))
 
-tbl.Misc:Button({
-    Title = "Infinite Yield",
-    Desc = "A powerful in-game admin console.",
+tbl.Misc:CreateButton({
+    Name = "Infinite Yield",
+    Description = "A powerful in-game admin console.",
     Callback = function()
         local ok, result2 = pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
@@ -7218,9 +6939,9 @@ tbl.Misc:Button({
     end,
 })
 
-tbl.Misc:Button({
-    Title = "Dex Explorer",
-    Desc = "Browse the full game instance tree.",
+tbl.Misc:CreateButton({
+    Name = "Dex Explorer",
+    Description = "Browse the full game instance tree.",
     Callback = function()
         local ok, result2 = pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
@@ -7234,9 +6955,9 @@ tbl.Misc:Button({
     end,
 })
 
-tbl.Misc:Button({
-    Title = "Remote Spy",
-    Desc = "Monitor all RemoteEvent and RemoteFunction calls.",
+tbl.Misc:CreateButton({
+    Name = "Remote Spy",
+    Description = "Monitor all RemoteEvent and RemoteFunction calls.",
     Callback = function()
         local ok, result2 = pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/acentriccreator/ac-remote-spy/main/source.lua"))()
@@ -7250,9 +6971,9 @@ tbl.Misc:Button({
     end,
 })
 
-tbl.Misc:Button({
-    Title = "Keyboard",
-    Desc = "On-screen keyboard tool for mobile / input.",
+tbl.Misc:CreateButton({
+    Name = "Keyboard",
+    Description = "On-screen keyboard tool for mobile / input.",
     Callback = function()
         local ok, result2 = pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/nicol4s654/nicol4s654/main/keyboard.lua"))()
@@ -7266,9 +6987,9 @@ tbl.Misc:Button({
     end,
 })
 
-tbl.Misc:Button({
-    Title = "Anim Logger",
-    Desc = "Log and view character animations.",
+tbl.Misc:CreateButton({
+    Name = "Anim Logger",
+    Description = "Log and view character animations.",
     Callback = function()
         local ok, result2 = pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/wally-rblx/AnimationLogger/main/Source.lua"))()
@@ -7282,9 +7003,9 @@ tbl.Misc:Button({
     end,
 })
 
-tbl.Misc:Button({
-    Title = "F3X (Building Tools)",
-    Desc = "In-game building and editing tools.",
+tbl.Misc:CreateButton({
+    Name = "F3X (Building Tools)",
+    Description = "In-game building and editing tools.",
     Callback = function()
         local ok, result2 = pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/F3XTeam/RBX-Building-Tools/master/RobloxLoadScript.lua"))()
@@ -7298,9 +7019,9 @@ tbl.Misc:Button({
     end,
 })
 
-tbl.Misc:Button({
-    Title = "Fly V3",
-    Desc = "Advanced smooth fly script.",
+tbl.Misc:CreateButton({
+    Name = "Fly V3",
+    Description = "Advanced smooth fly script.",
     Callback = function()
         local ok, result2 = pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/EvolvedMeme/FlyV3/main/source.lua"))()
@@ -7314,9 +7035,9 @@ tbl.Misc:Button({
     end,
 })
 
-tbl.Misc:Button({
-    Title = "VFX Logger",
-    Desc = "Log all visual effects and particles in game.",
+tbl.Misc:CreateButton({
+    Name = "VFX Logger",
+    Description = "Log all visual effects and particles in game.",
     Callback = function()
         local ok, result2 = pcall(function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/7ap/VFXLogger/main/source.lua"))()
@@ -7330,18 +7051,13 @@ tbl.Misc:Button({
     end,
 })
 
-tbl.Misc:Divider()
+tbl.Misc:CreateDivider()
 
-tbl.Misc:Section({
-    Title = fn("Tools"),
-    Icon = "wrench",
-    Opened = false,
-    Desc = "",
-})
+tbl.Misc:CreateSection((fn("Tools")))
 
-tbl.Misc:Button({
-    Title = "Teleport Tool",
-    Desc = "Equip from backpack, then click to TP to your mouse position.",
+tbl.Misc:CreateButton({
+    Name = "Teleport Tool",
+    Description = "Equip from backpack, then click to TP to your mouse position.",
     Callback = function()
         local teleportTool = localPlayer.Backpack:FindFirstChild("Teleport Tool")
         local teleportTool2 = teleportTool
@@ -7392,9 +7108,9 @@ tbl.Misc:Button({
     end,
 })
 
-tbl.Misc:Button({
-    Title = "Jerk Tool",
-    Desc = "Equip from backpack, then click to fling nearby players and mobs.",
+tbl.Misc:CreateButton({
+    Name = "Jerk Tool",
+    Description = "Equip from backpack, then click to fling nearby players and mobs.",
     Callback = function()
         local jerkTool = localPlayer.Backpack:FindFirstChild("Jerk Tool")
         local jerkTool2 = jerkTool
@@ -7470,20 +7186,15 @@ tbl.Misc:Button({
     end,
 })
 
-tbl.Misc:Divider()
+tbl.Misc:CreateDivider()
 
-tbl.Misc:Section({
-    Title = fn("Anti AFK"),
-    Icon = "shield-check",
-    Opened = false,
-    Desc = "",
-})
+tbl.Misc:CreateSection((fn("Anti AFK")))
 
 genv.antiAfkEnabled = false
 local tbl4 = {antiAfk = nil, promptAdded = nil}
 
-tbl.Misc:Toggle({
-    Title = "Anti AFK",
+tbl.Misc:CreateToggle({
+    Name = "Anti AFK",
     Default = false,
     Callback = function(antiAfkEnabled)
         genv.antiAfkEnabled = antiAfkEnabled
@@ -7521,17 +7232,12 @@ tbl.Misc:Toggle({
     end,
 })
 
-tbl.Misc:Divider()
+tbl.Misc:CreateDivider()
 
-tbl.Misc:Section({
-    Title = fn("Server Hop"),
-    Icon = "shuffle",
-    Opened = false,
-    Desc = "",
-})
+tbl.Misc:CreateSection((fn("Server Hop")))
 
-tbl.Misc:Button({
-    Title = "Server Hop",
+tbl.Misc:CreateButton({
+    Name = "Server Hop",
     Callback = function()
         local TeleportService = game:GetService("TeleportService")
         local placeId = game.PlaceId
@@ -8195,17 +7901,12 @@ local function origRefresh()
     end
 end
 
-tbl.Esp:Divider()
+tbl.Esp:CreateDivider()
 
-tbl.Esp:Section({
-    Title = fn("Global ESP Settings"),
-    Icon = "sliders",
-    Opened = false,
-    Desc = "",
-})
+tbl.Esp:CreateSection((fn("Global ESP Settings")))
 
-tbl.Esp:Toggle({
-    Title = "Chams (Fill All ESP)",
+tbl.Esp:CreateToggle({
+    Name = "Chams (Fill All ESP)",
     Default = false,
     Callback = function(arg)
         flag5 = arg
@@ -8213,23 +7914,18 @@ tbl.Esp:Toggle({
     end,
 })
 
-tbl.Esp:Divider()
+tbl.Esp:CreateDivider()
 
-tbl.Esp:Section({
-    Title = fn("Player ESP"),
-    Icon = "user",
-    Opened = false,
-    Desc = "",
+tbl.Esp:CreateSection((fn("Player ESP")))
+
+tbl.Esp:CreateParagraph({
+    Title = "Player ESP",
+    Text = "Options for player visibility, including health",
 })
 
-tbl.Esp:Paragraph({
-    Title = "Player ESP",
-    Desc = "Options for player visibility, including health",
-})
-
-tbl.Esp:Toggle({
-    Title = "Player ESP",
-    Desc = "Shows ESP highlights on all other players.",
+tbl.Esp:CreateToggle({
+    Name = "Player ESP",
+    Description = "Shows ESP highlights on all other players.",
     Default = false,
     Callback = function(enabled)
         tbl10.enabled = enabled
@@ -8244,9 +7940,9 @@ tbl.Esp:Toggle({
     end,
 })
 
-tbl.Esp:Toggle({
-    Title = "Player ESP HP Viewer",
-    Desc = "Displays health bar / HP value above players.",
+tbl.Esp:CreateToggle({
+    Name = "Player ESP HP Viewer",
+    Description = "Displays health bar / HP value above players.",
     Default = false,
     Callback = function(hpEnabled)
         tbl10.hpEnabled = hpEnabled
@@ -8260,9 +7956,9 @@ tbl.Esp:Toggle({
     end,
 })
 
-tbl.Esp:Toggle({
-    Title = "Player ESP Distance Viewer",
-    Desc = "Displays the distance (in studs) to each player.",
+tbl.Esp:CreateToggle({
+    Name = "Player ESP Distance Viewer",
+    Description = "Displays the distance (in studs) to each player.",
     Default = false,
     Callback = function(distEnabled)
         tbl10.distEnabled = distEnabled
@@ -8276,22 +7972,17 @@ tbl.Esp:Toggle({
     end,
 })
 
-tbl.Esp:Divider()
+tbl.Esp:CreateDivider()
 
-tbl.Esp:Section({
-    Title = fn("World Item ESP"),
-    Icon = "globe",
-    Opened = false,
-    Desc = "",
-})
+tbl.Esp:CreateSection((fn("World Item ESP")))
 
 local tbl11 = {"Fuel", "Food", "Health", "Scrappable", "Other"}
 local tbl12 = {}
 
-tbl.Esp:Dropdown({
-    Title = "Esp Items",
-    Desc = "Select one or more item categories to show ESP for.",
-    Values = (function()
+tbl.Esp:CreateDropdown({
+    Name = "Esp Items",
+    Description = "Select one or more item categories to show ESP for.",
+    Options = (function()
         local tbl13 = {"All"}
 
         for i, v3 in ipairs(tbl11) do
@@ -8300,8 +7991,8 @@ tbl.Esp:Dropdown({
 
         return tbl13
     end)(),
-    Value = {},
-    Multi = true,
+    CurrentOption = {},
+    MultipleOptions = true,
     AllowNone = true,
     Callback = function(arg)
         tbl12 = {}
@@ -8329,8 +8020,8 @@ tbl.Esp:Dropdown({
     end,
 })
 
-tbl.Esp:Toggle({
-    Title = "Enable Item Esp",
+tbl.Esp:CreateToggle({
+    Name = "Enable Item Esp",
     Default = false,
     Callback = function(arg)
         for i, v3 in ipairs(tbl11) do
@@ -8353,18 +8044,13 @@ tbl.Esp:Toggle({
     end,
 })
 
-tbl.Esp:Divider()
+tbl.Esp:CreateDivider()
 
-tbl.Esp:Section({
-    Title = fn("Chest ESP"),
-    Icon = "package",
-    Opened = false,
-    Desc = "",
-})
+tbl.Esp:CreateSection((fn("Chest ESP")))
 
-tbl.Esp:Paragraph({
+tbl.Esp:CreateParagraph({
     Title = "Chest ESP",
-    Desc = "Select chest types to highlight. Scan first to find available chests.",
+    Text = "Select chest types to highlight. Scan first to find available chests.",
 })
 
 local tbl13 = {}
@@ -8461,10 +8147,10 @@ local tbl15 = {
     "Wooden Chest",
 }
 
-tbl.Esp:Dropdown({
-    Title = "Select Chest Types (ESP)",
-    Desc = "Multi-select chest types to show ESP highlights for.",
-    Values = (function()
+tbl.Esp:CreateDropdown({
+    Name = "Select Chest Types (ESP)",
+    Description = "Multi-select chest types to show ESP highlights for.",
+    Options = (function()
         local tbl16 = {"All"}
 
         for i, v3 in ipairs(tbl15) do
@@ -8473,8 +8159,8 @@ tbl.Esp:Dropdown({
 
         return tbl16
     end)(),
-    Value = {},
-    Multi = true,
+    CurrentOption = {},
+    MultipleOptions = true,
     AllowNone = true,
     Callback = function(arg)
         tbl13 = {}
@@ -8502,9 +8188,9 @@ tbl.Esp:Dropdown({
     end,
 })
 
-tbl.Esp:Toggle({
-    Title = "Enable Chest ESP",
-    Desc = "Shows highlights on all selected chest types.",
+tbl.Esp:CreateToggle({
+    Name = "Enable Chest ESP",
+    Description = "Shows highlights on all selected chest types.",
     Default = false,
     Callback = function(arg)
         if arg then
@@ -8869,14 +8555,9 @@ origRefresh = function()
     end
 end
 
-tbl.Esp:Divider()
+tbl.Esp:CreateDivider()
 
-tbl.Esp:Section({
-    Title = fn("Mob ESP"),
-    Icon = "ghost",
-    Opened = false,
-    Desc = "",
-})
+tbl.Esp:CreateSection((fn("Mob ESP")))
 
 local tbl18 = {
     "Wolf / Alpha Wolf",
@@ -8912,10 +8593,10 @@ local tbl19 = {
 
 local tbl20 = {}
 
-tbl.Esp:Dropdown({
-    Title = "Esp Entity",
-    Desc = "Select one or more mob types to show ESP for.",
-    Values = (function()
+tbl.Esp:CreateDropdown({
+    Name = "Esp Entity",
+    Description = "Select one or more mob types to show ESP for.",
+    Options = (function()
         local tbl21 = {"All"}
 
         for i, v3 in ipairs(tbl18) do
@@ -8924,8 +8605,8 @@ tbl.Esp:Dropdown({
 
         return tbl21
     end)(),
-    Value = {},
-    Multi = true,
+    CurrentOption = {},
+    MultipleOptions = true,
     AllowNone = true,
     Callback = function(arg)
         tbl20 = {}
@@ -8961,8 +8642,8 @@ tbl.Esp:Dropdown({
     end,
 })
 
-tbl.Esp:Toggle({
-    Title = "Enable Entity Esp",
+tbl.Esp:CreateToggle({
+    Name = "Enable Entity Esp",
     Default = false,
     Callback = function(arg)
         for i, v3 in ipairs(tbl18) do
@@ -8998,57 +8679,49 @@ if not localPlayer:GetAttribute("SynSessionStart") then
     localPlayer:SetAttribute("SynSessionStart", os.time())
 end
 
-tbl.Stats:Divider()
+tbl.Stats:CreateDivider()
 
-tbl.Stats:Section({
-    Title = fn("Game Stats"),
-    Icon = "bar-chart-2",
-    Opened = false,
-})
+tbl.Stats:CreateSection((fn("Game Stats")))
 
 local tbl21 = {}
 local trackedDay = genv.TrackedDay
 local trackedDay2 = trackedDay or 1
 genv.TrackedDay = trackedDay2
 local v3 = nil
-tbl21.SunState = tbl.Stats:Paragraph({Title = "☀  Sun Cycle", Desc = "..."})
-tbl21.SunTime = tbl.Stats:Paragraph({Title = "⏱  Phase Timer", Desc = "..."})
-tbl21.DayCounter = tbl.Stats:Paragraph({Title = "📅  Day Count", Desc = "..."})
-tbl21.RealClock = tbl.Stats:Paragraph({Title = "🕐  Real Clock", Desc = "..."})
-tbl.Stats:Divider()
-tbl.Stats:Section({Title = fn("Environment"), Icon = "cloud", Opened = false})
-tbl21.Weather = tbl.Stats:Paragraph({Title = "🌤  Weather", Desc = "..."})
-tbl21.Temperature = tbl.Stats:Paragraph({Title = "🌡  Temperature", Desc = "..."})
-tbl21.LightLevel = tbl.Stats:Paragraph({Title = "💡  Light Level", Desc = "..."})
-tbl21.NightsSafe = tbl.Stats:Paragraph({Title = "🌙  Nights Safe", Desc = "..."})
-tbl.Stats:Divider()
-tbl.Stats:Section({Title = fn("Campfire"), Icon = "flame", Opened = false})
-tbl21.FireLevel = tbl.Stats:Paragraph({Title = "🔥  Fire Level", Desc = "..."})
-tbl21.FireStatus = tbl.Stats:Paragraph({Title = "🪵  Fire Status", Desc = "..."})
-tbl.Stats:Divider()
-tbl.Stats:Section({Title = fn("Player"), Icon = "user", Opened = false})
-tbl21.Health = tbl.Stats:Paragraph({Title = "❤  Health", Desc = "..."})
-tbl21.Hunger = tbl.Stats:Paragraph({Title = "🍖  Hunger", Desc = "..."})
-tbl21.Armour = tbl.Stats:Paragraph({Title = "🛡  Armour", Desc = "..."})
-tbl21.PlayerClass = tbl.Stats:Paragraph({Title = "⚔  Class", Desc = "..."})
-tbl21.ClassLevel = tbl.Stats:Paragraph({Title = "📈  Class Level", Desc = "..."})
-tbl21.Talent = tbl.Stats:Paragraph({Title = "✨  Talent", Desc = "..."})
-tbl21.XP = tbl.Stats:Paragraph({Title = "⭐  Experience", Desc = "..."})
-tbl21.Position = tbl.Stats:Paragraph({Title = "📍  Position", Desc = "..."})
-tbl.Stats:Divider()
+tbl21.SunState = tbl.Stats:CreateParagraph({Title = "☀  Sun Cycle", Text = "..."})
+tbl21.SunTime = tbl.Stats:CreateParagraph({Title = "⏱  Phase Timer", Text = "..."})
+tbl21.DayCounter = tbl.Stats:CreateParagraph({Title = "📅  Day Count", Text = "..."})
+tbl21.RealClock = tbl.Stats:CreateParagraph({Title = "🕐  Real Clock", Text = "..."})
+tbl.Stats:CreateDivider()
+tbl.Stats:CreateSection((fn("Environment")))
+tbl21.Weather = tbl.Stats:CreateParagraph({Title = "🌤  Weather", Text = "..."})
+tbl21.Temperature = tbl.Stats:CreateParagraph({Title = "🌡  Temperature", Text = "..."})
+tbl21.LightLevel = tbl.Stats:CreateParagraph({Title = "💡  Light Level", Text = "..."})
+tbl21.NightsSafe = tbl.Stats:CreateParagraph({Title = "🌙  Nights Safe", Text = "..."})
+tbl.Stats:CreateDivider()
+tbl.Stats:CreateSection((fn("Campfire")))
+tbl21.FireLevel = tbl.Stats:CreateParagraph({Title = "🔥  Fire Level", Text = "..."})
+tbl21.FireStatus = tbl.Stats:CreateParagraph({Title = "🪵  Fire Status", Text = "..."})
+tbl.Stats:CreateDivider()
+tbl.Stats:CreateSection((fn("Player")))
+tbl21.Health = tbl.Stats:CreateParagraph({Title = "❤  Health", Text = "..."})
+tbl21.Hunger = tbl.Stats:CreateParagraph({Title = "🍖  Hunger", Text = "..."})
+tbl21.Armour = tbl.Stats:CreateParagraph({Title = "🛡  Armour", Text = "..."})
+tbl21.PlayerClass = tbl.Stats:CreateParagraph({Title = "⚔  Class", Text = "..."})
+tbl21.ClassLevel = tbl.Stats:CreateParagraph({Title = "📈  Class Level", Text = "..."})
+tbl21.Talent = tbl.Stats:CreateParagraph({Title = "✨  Talent", Text = "..."})
+tbl21.XP = tbl.Stats:CreateParagraph({Title = "⭐  Experience", Text = "..."})
+tbl21.Position = tbl.Stats:CreateParagraph({Title = "📍  Position", Text = "..."})
+tbl.Stats:CreateDivider()
 
-tbl.Stats:Section({
-    Title = fn("Session & System"),
-    Icon = "monitor",
-    Opened = false,
-})
+tbl.Stats:CreateSection((fn("Session & System")))
 
-tbl21.Ping = tbl.Stats:Paragraph({Title = "📶  Ping", Desc = "..."})
-tbl21.FPS = tbl.Stats:Paragraph({Title = "🖥  FPS", Desc = "..."})
-tbl21.Players = tbl.Stats:Paragraph({Title = "👥  Players", Desc = "..."})
-tbl21.PlayerId = tbl.Stats:Paragraph({Title = "🪪  Player ID", Desc = "..."})
-tbl21.UpTime = tbl.Stats:Paragraph({Title = "⏳  Session Time", Desc = "..."})
-tbl21.GameVersion = tbl.Stats:Paragraph({Title = "🎮  Game Version", Desc = "..."})
+tbl21.Ping = tbl.Stats:CreateParagraph({Title = "📶  Ping", Text = "..."})
+tbl21.FPS = tbl.Stats:CreateParagraph({Title = "🖥  FPS", Text = "..."})
+tbl21.Players = tbl.Stats:CreateParagraph({Title = "👥  Players", Text = "..."})
+tbl21.PlayerId = tbl.Stats:CreateParagraph({Title = "🪪  Player ID", Text = "..."})
+tbl21.UpTime = tbl.Stats:CreateParagraph({Title = "⏳  Session Time", Text = "..."})
+tbl21.GameVersion = tbl.Stats:CreateParagraph({Title = "🎮  Game Version", Text = "..."})
 
 local function fn40()
     if not localPlayer then
@@ -9063,10 +8736,10 @@ local function fn40()
         local n4 = math.floor(n3 / 60)
         local n5 = math.floor(n3 - n4 * 60)
         local sunState = tbl21.SunState
-        local setDesc = sunState.SetDesc
+        local setDesc = function(text) sunState:Set({Text = text}) end
         local str2 = str == "Day" and "☀ Daytime" or "🌙 Nighttime"
-        setDesc(sunState, str2)
-        tbl21.SunTime:SetDesc(string.format("%02dm %02ds left", n4, n5))
+        setDesc(str2)
+        tbl21.SunTime:Set({Text = string.format("%02dm %02ds left", n4, n5)})
     end)
 
     pcall(function()
@@ -9095,10 +8768,10 @@ local function fn40()
         end
 
         local dayCounter = tbl21.DayCounter
-        local setDesc = dayCounter.SetDesc
+        local setDesc = function(text) dayCounter:Set({Text = text}) end
         local v4 = tostring
         local trackedDay3 = attribute3 or genv.TrackedDay
-        setDesc(dayCounter, "Day " .. v4(trackedDay3))
+        setDesc("Day " .. v4(trackedDay3))
     end)
 
     pcall(function()
@@ -9116,18 +8789,18 @@ local function fn40()
             n5 = 12
         end
 
-        tbl21.RealClock:SetDesc(string.format("%02d:%02d %s", n5, n6, str))
+        tbl21.RealClock:Set({Text = string.format("%02d:%02d %s", n5, n6, str)})
     end)
 
     pcall(function()
         local flag6 = #CollectionService:GetTagged("Rain") > 0
 
         if flag6 then
-            tbl21.Weather:SetDesc("🌧 Rain")
+            tbl21.Weather:Set({Text = "🌧 Rain"})
         elseif workspace:FindFirstChild("SnowHolder") then
-            tbl21.Weather:SetDesc("❄ Snow")
+            tbl21.Weather:Set({Text = "❄ Snow"})
         else
-            tbl21.Weather:SetDesc("🌤 Clear")
+            tbl21.Weather:Set({Text = "🌤 Clear"})
         end
     end)
 
@@ -9136,15 +8809,15 @@ local function fn40()
         local attribute2 = attribute or workspace:GetAttribute("Temp")
 
         if attribute2 then
-            tbl21.Temperature:SetDesc(tostring(math.floor(attribute2)) .. "°")
+            tbl21.Temperature:Set({Text = tostring(math.floor(attribute2)) .. "°"})
         else
             local character = localPlayer.Character
             local humanoidRootPart2 = character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
 
             if humanoidRootPart2 and humanoidRootPart2.Position.Y < -400 then
-                tbl21.Temperature:SetDesc("🥶 Cold")
+                tbl21.Temperature:Set({Text = "🥶 Cold"})
             else
-                tbl21.Temperature:SetDesc("😊 Normal")
+                tbl21.Temperature:Set({Text = "😊 Normal"})
             end
         end
     end)
@@ -9153,15 +8826,15 @@ local function fn40()
         local attribute = workspace:GetAttribute("State")
         local str = attribute or "Day"
         local lightLevel = tbl21.LightLevel
-        local setDesc = lightLevel.SetDesc
+        local setDesc = function(text) lightLevel:Set({Text = text}) end
         local str2 = str == "Night" and "🌑 Dark" or "☀ Light"
-        setDesc(lightLevel, str2)
+        setDesc(str2)
     end)
 
     pcall(function()
         local attribute = workspace:GetAttribute("NightsWithoutMonster")
         local n3 = attribute or 0
-        tbl21.NightsSafe:SetDesc(tostring(n3) .. " night(s)")
+        tbl21.NightsSafe:Set({Text = tostring(n3) .. " night(s)"})
     end)
 
     pcall(function()
@@ -9217,35 +8890,35 @@ local function fn40()
         end
 
         if n3 == nil then
-            tbl21.FireLevel:SetDesc("N/A")
-            tbl21.FireStatus:SetDesc("No campfire found")
+            tbl21.FireLevel:Set({Text = "N/A"})
+            tbl21.FireStatus:Set({Text = "No campfire found"})
         else
-            tbl21.FireLevel:SetDesc(tostring(n3) .. "%")
+            tbl21.FireLevel:Set({Text = tostring(n3) .. "%"})
 
             if n3 == 0 then
-                tbl21.FireStatus:SetDesc("💀 Extinguished")
+                tbl21.FireStatus:Set({Text = "💀 Extinguished"})
             elseif n3 <= 30 then
-                tbl21.FireStatus:SetDesc("🪵 Low — needs fuel!")
+                tbl21.FireStatus:Set({Text = "🪵 Low — needs fuel!"})
             elseif n3 <= 60 then
-                tbl21.FireStatus:SetDesc("🔥 Burning")
+                tbl21.FireStatus:Set({Text = "🔥 Burning"})
             else
-                tbl21.FireStatus:SetDesc("🔥🔥 Blazing")
+                tbl21.FireStatus:Set({Text = "🔥🔥 Blazing"})
             end
         end
     end)
 
     pcall(function()
         if not localPlayer.Character then
-            tbl21.Health:SetDesc("No character")
+            tbl21.Health:Set({Text = "No character"})
             return
         end
         local humanoid2 = localPlayer.Character:FindFirstChild("Humanoid")
 
         if humanoid2 then
             local v4 = math.ceil(humanoid2.Health / math.max(1, humanoid2.MaxHealth) * 100)
-            tbl21.Health:SetDesc(tostring(v4) .. "% (" .. math.floor(humanoid2.Health) .. " / " .. math.floor(humanoid2.MaxHealth) .. ")")
+            tbl21.Health:Set({Text = tostring(v4) .. "% (" .. math.floor(humanoid2.Health) .. " / " .. math.floor(humanoid2.MaxHealth) .. ")"})
         else
-            tbl21.Health:SetDesc("?")
+            tbl21.Health:Set({Text = "?"})
         end
     end)
 
@@ -9253,43 +8926,43 @@ local function fn40()
         local attribute = localPlayer:GetAttribute("Hunger")
         local n3 = attribute or 0
         local v4 = math.ceil(n3 / 2)
-        tbl21.Hunger:SetDesc(tostring(v4) .. "% (raw: " .. tostring(n3) .. ")")
+        tbl21.Hunger:Set({Text = tostring(v4) .. "% (raw: " .. tostring(n3) .. ")"})
     end)
 
     pcall(function()
         local armour = tbl21.Armour
-        local setDesc = armour.SetDesc
+        local setDesc = function(text) armour:Set({Text = text}) end
         local v4 = tostring
         local attribute = localPlayer:GetAttribute("Armour")
         local n3 = attribute or 0
-        setDesc(armour, v4(n3))
+        setDesc(v4(n3))
     end)
 
     pcall(function()
         local playerClass = tbl21.PlayerClass
-        local setDesc = playerClass.SetDesc
+        local setDesc = function(text) playerClass:Set({Text = text}) end
         local v4 = tostring
         local attribute = localPlayer:GetAttribute("Class")
         local str = attribute or "None"
-        setDesc(playerClass, v4(str))
+        setDesc(v4(str))
     end)
 
     pcall(function()
         local classLevel = tbl21.ClassLevel
-        local setDesc = classLevel.SetDesc
+        local setDesc = function(text) classLevel:Set({Text = text}) end
         local v4 = tostring
         local attribute = localPlayer:GetAttribute("ClassLevel")
         local n3 = attribute or 1
-        setDesc(classLevel, v4(n3))
+        setDesc(v4(n3))
     end)
 
     pcall(function()
         local talent = tbl21.Talent
-        local setDesc = talent.SetDesc
+        local setDesc = function(text) talent:Set({Text = text}) end
         local v4 = tostring
         local attribute = localPlayer:GetAttribute("Talent")
         local str = attribute or "None"
-        setDesc(talent, v4(str))
+        setDesc(v4(str))
     end)
 
     pcall(function()
@@ -9297,7 +8970,7 @@ local function fn40()
         local n3 = attribute or 0
         local attribute2 = localPlayer:GetAttribute("LevelUpXP")
         local n4 = attribute2 or 100
-        tbl21.XP:SetDesc(tostring(n3) .. " / " .. tostring(n4))
+        tbl21.XP:Set({Text = tostring(n3) .. " / " .. tostring(n4)})
     end)
 
     pcall(function()
@@ -9305,27 +8978,27 @@ local function fn40()
         local humanoidRootPart2 = character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
 
         if humanoidRootPart2 then
-            tbl21.Position:SetDesc(string.format("(%.0f, %.0f, %.0f)", humanoidRootPart2.Position.X, humanoidRootPart2.Position.Y, humanoidRootPart2.Position.Z))
+            tbl21.Position:Set({Text = string.format("(%.0f, %.0f, %.0f)", humanoidRootPart2.Position.X, humanoidRootPart2.Position.Y, humanoidRootPart2.Position.Z)})
         else
-            tbl21.Position:SetDesc("Unknown")
+            tbl21.Position:Set({Text = "Unknown"})
         end
     end)
 
     pcall(function()
         local n3 = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
-        tbl21.Ping:SetDesc(tostring(n3) .. " ms")
+        tbl21.Ping:Set({Text = tostring(n3) .. " ms"})
     end)
 
     pcall(function()
-        tbl21.FPS:SetDesc(tostring(n2) .. " fps")
+        tbl21.FPS:Set({Text = tostring(n2) .. " fps"})
     end)
 
     pcall(function()
-        tbl21.Players:SetDesc(tostring(#Players:GetPlayers()))
+        tbl21.Players:Set({Text = tostring(#Players:GetPlayers())})
     end)
 
     pcall(function()
-        tbl21.PlayerId:SetDesc(tostring(localPlayer.UserId))
+        tbl21.PlayerId:Set({Text = tostring(localPlayer.UserId)})
     end)
 
     pcall(function()
@@ -9338,16 +9011,16 @@ local function fn40()
         local n6 = math.floor(n5 / 24)
 
         if n6 > 0 then
-            tbl21.UpTime:SetDesc(n6 .. "d " .. n5 % 24 .. "h " .. n4 % 60 .. "m")
+            tbl21.UpTime:Set({Text = n6 .. "d " .. n5 % 24 .. "h " .. n4 % 60 .. "m"})
         elseif n5 > 0 then
-            tbl21.UpTime:SetDesc(n5 .. "h " .. n4 % 60 .. "m")
+            tbl21.UpTime:Set({Text = n5 .. "h " .. n4 % 60 .. "m"})
         else
-            tbl21.UpTime:SetDesc(n4 .. "m " .. n3 % 60 .. "s")
+            tbl21.UpTime:Set({Text = n4 .. "m " .. n3 % 60 .. "s"})
         end
     end)
 
     pcall(function()
-        tbl21.GameVersion:SetDesc("1.0.7")
+        tbl21.GameVersion:Set({Text = "1.0.7"})
     end)
 end
 
@@ -9365,21 +9038,21 @@ task.spawn(function()
     end
 end)
 
-tbl.Stats:Divider()
-tbl.Stats:Section({Title = fn("Controls"), Icon = "settings", Opened = false})
+tbl.Stats:CreateDivider()
+tbl.Stats:CreateSection((fn("Controls")))
 
-tbl.Stats:Button({
-    Title = "🔄 Refresh Stats",
-    Desc = "Manually re-fetch all stats right now.",
+tbl.Stats:CreateButton({
+    Name = "🔄 Refresh Stats",
+    Description = "Manually re-fetch all stats right now.",
     Callback = function()
         pcall(fn40)
         fn3("Stats refreshed!")
     end,
 })
 
-tbl.Stats:Toggle({
-    Title = "Auto Refresh (0.3s)",
-    Desc = "Continuously updates all stats in real time.",
+tbl.Stats:CreateToggle({
+    Name = "Auto Refresh (0.3s)",
+    Description = "Continuously updates all stats in real time.",
     Default = true,
     Callback = function(arg)
         flag6 = arg
@@ -9483,15 +9156,15 @@ local function fn43()
     return true
 end
 
-tbl.Settings:Section({Title = fn("Config"), Icon = "save"})
+tbl.Settings:CreateSection((fn("Config")))
 
-tbl.Settings:Paragraph({
+tbl.Settings:CreateParagraph({
     Title = "Save / Load Config",
-    Desc = "Saves your current speed, jump, and theme settings to disk and reloads them next time.",
+    Text = "Saves your current speed, jump, and theme settings to disk and reloads them next time.",
 })
 
-tbl.Settings:Button({
-    Title = "💾 Save Config",
+tbl.Settings:CreateButton({
+    Name = "💾 Save Config",
     Description = "Writes settings to Synvextia/bbn/config.json",
     Callback = function()
         local ok, result2 = pcall(fn42)
@@ -9505,8 +9178,8 @@ tbl.Settings:Button({
     end,
 })
 
-tbl.Settings:Button({
-    Title = "📂 Load Config",
+tbl.Settings:CreateButton({
+    Name = "📂 Load Config",
     Description = "Loads settings from disk if a save exists.",
     Callback = function()
         if fn43() then
@@ -9517,8 +9190,8 @@ tbl.Settings:Button({
     end,
 })
 
-tbl.Settings:Button({
-    Title = "🗑️ Reset Config",
+tbl.Settings:CreateButton({
+    Name = "🗑️ Reset Config",
     Description = "Resets all saved settings to defaults.",
     Callback = function()
         synvextiaConfig = {
@@ -9546,16 +9219,16 @@ tbl.Settings:Button({
     end,
 })
 
-tbl.Settings:Divider()
-tbl.Settings:Section({Title = fn("Discord Webhook"), Icon = "bell"})
+tbl.Settings:CreateDivider()
+tbl.Settings:CreateSection((fn("Discord Webhook")))
 
-tbl.Settings:Paragraph({
+tbl.Settings:CreateParagraph({
     Title = "Webhook Notifications",
-    Desc = "Paste your Discord webhook URL below to receive notifications (e.g. when config is saved, or for custom alerts).",
+    Text = "Paste your Discord webhook URL below to receive notifications (e.g. when config is saved, or for custom alerts).",
 })
 
-tbl.Settings:Input({
-    Title = "Webhook URL",
+tbl.Settings:CreateInput({
+    Name = "Webhook URL",
     Placeholder = "https://discord.com/api/webhooks/...",
     Callback = function(arg)
         local str2 = arg or ""
@@ -9568,8 +9241,8 @@ tbl.Settings:Input({
     end,
 })
 
-tbl.Settings:Button({
-    Title = "📨 Test Webhook",
+tbl.Settings:CreateButton({
+    Name = "📨 Test Webhook",
     Description = "Sends a test message to your webhook to confirm it works.",
     Callback = function()
         if str == "" then
@@ -9581,8 +9254,8 @@ tbl.Settings:Button({
     end,
 })
 
-tbl.Settings:Toggle({
-    Title = "Notify on Config Save",
+tbl.Settings:CreateToggle({
+    Name = "Notify on Config Save",
     Default = true,
     Callback = function(webhookOnSave)
         genv.webhookOnSave = webhookOnSave
@@ -9591,16 +9264,16 @@ tbl.Settings:Toggle({
     end,
 })
 
-tbl.Settings:Divider()
-tbl.Settings:Section({Title = fn("PC Keybinds"), Icon = "keyboard"})
+tbl.Settings:CreateDivider()
+tbl.Settings:CreateSection((fn("PC Keybinds")))
 
-tbl.Settings:Paragraph({
+tbl.Settings:CreateParagraph({
     Title = "PC Keyboard Shortcuts",
-    Desc = "These keybinds work on PC only:\n\n→ RightShift — Open or Close the hub\n→ RightControl — Minimize or Restore the hub\n→ Delete — Hide the hub completely\n\nTo reopen after hiding: click the ❄ Synvextia Hub button at the top of your screen, or press RightShift.\n\nThe ▶ button in the hub titlebar copies the official Synvextia YouTube channel link.",
+    Text = "These keybinds work on PC only:\n\n→ RightShift — Open or Close the hub\n→ RightControl — Minimize or Restore the hub\n→ Delete — Hide the hub completely\n\nTo reopen after hiding: click the ❄ Synvextia Hub button at the top of your screen, or press RightShift.\n\nThe ▶ button in the hub titlebar copies the official Synvextia YouTube channel link.",
 })
 
-credits:Button({
-    Title = "Click To Copy The Discord Server Link",
+credits:CreateButton({
+    Name = "Click To Copy The Discord Server Link",
     Callback = function()
         setclipboard("https://discord.gg/synvextia")
 
@@ -9612,27 +9285,27 @@ credits:Button({
     end,
 })
 
-credits:Divider()
+credits:CreateDivider()
 
-credits:Paragraph({
+credits:CreateParagraph({
     Title = "PLEASE JOIN THE DISCORD SERVER",
-    Desc = "Join the Discord server! Be part of huge events, get early access to scripts, share ideas, report bugs, and connect with the community. The key is completely keyless, and give a feedback helps make the scripts even better.",
+    Text = "Join the Discord server! Be part of huge events, get early access to scripts, share ideas, report bugs, and connect with the community. The key is completely keyless, and give a feedback helps make the scripts even better.",
     Color = "Green",
     Locked = false,
 })
 
-credits:Paragraph({
+credits:CreateParagraph({
     Title = "Team — 99 Nights in The Forest",
-    Desc = "Script written by Jay, Zyro, and Garou.\n\nOwner of the script: Jay\n\nLead Developers: Zyro and Garou\n\nSpecial thanks to Nova for the help.",
+    Text = "Script written by Jay, Zyro, and Garou.\n\nOwner of the script: Jay\n\nLead Developers: Zyro and Garou\n\nSpecial thanks to Nova for the help.",
     Color = "Green",
     Locked = false,
 })
 
-credits:Divider()
+credits:CreateDivider()
 
-credits:Paragraph({
+credits:CreateParagraph({
     Title = "Garou",
-    Desc = "Core developer of Synvextia Hub.\nHandles scripting, bug fixes, performance, and new feature implementation.",
+    Text = "Core developer of Synvextia Hub.\nHandles scripting, bug fixes, performance, and new feature implementation.",
     Color = "Purple",
     Locked = false,
 })
