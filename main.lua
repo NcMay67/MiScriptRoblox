@@ -6,7 +6,6 @@ local BaseURL = "https://raw.githubusercontent.com/NcMay67/MiScriptRoblox/refs/h
 
 -- Diccionario de Juegos (ID = Nombre del archivo en GitHub)
 local Games = {
-    [79546208627805] = "Script_clean_Luna.lua",
     [15197136141] = "FactoryTycoon.lua",
     [131795157971706] = "TSL.lua",
     [142823291]    = "MM2.lua",
