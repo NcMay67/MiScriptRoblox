@@ -152,7 +152,7 @@ do
         Opened = false,
     })
 
-    v4:CreateSection(("— Welcome to Synvextia Hub —"))
+    local lunaSection1 = v4:CreateSection(("— Welcome to Synvextia Hub —"))
 
     local tbl2 = {
         serverParagraph = nil,
@@ -180,21 +180,21 @@ do
             tbl2.memberCount = tostring(result2.approximate_member_count)
             tbl2.onlineCount = tostring(result2.approximate_presence_count)
 
-            tbl2.serverParagraph = v4:CreateParagraph({
+            tbl2.serverParagraph = lunaSection1:CreateParagraph({
                 Title = result2.guild.name,
                 Text = fn8(),
                 Image = "https://cdn.discordapp.com/icons/" .. result2.guild.id .. "/" .. result2.guild.icon .. ".png?size=1024",
                 ImageSize = 52,
             })
         else
-            tbl2.serverParagraph = v4:CreateParagraph({
+            tbl2.serverParagraph = lunaSection1:CreateParagraph({
                 Title = "Synvextia",
                 Text = "• Members: Unavailable\n• Online: Unavailable",
             })
         end
     end)()
 
-    v4:CreateButton({
+    lunaSection1:CreateButton({
         Name = "  Discord",
         Icon = "message-circle",
         Description = "Join our official Discord community",
@@ -211,7 +211,7 @@ do
         end,
     })
 
-    v4:CreateButton({
+    lunaSection1:CreateButton({
         Name = "  Youtube",
         Icon = "youtube",
         Description = "Watch our official YouTube channel",
@@ -228,7 +228,7 @@ do
         end,
     })
 
-    v4:CreateButton({
+    lunaSection1:CreateButton({
         Name = "  TikTok",
         Icon = "video",
         Description = "Follow us on TikTok for clips & shorts",
@@ -238,29 +238,29 @@ do
         end,
     })
 
-    v4:CreateDivider()
+    lunaSection1:CreateDivider()
 
-    v4:CreateSection((fn("Information")))
+    local lunaSection2 = v4:CreateSection((fn("Information")))
 
-    v4:CreateParagraph({
+    lunaSection2:CreateParagraph({
         Title = "About Synvextia Hub",
         Text = "→ Synvextia Hub is a Keyless scripting assistant hub.\n→ Designed to help people with Grinding and more!\n→ Free to use and constantly updated.\n→ Version: 1.0.0",
     })
 
-    v4:CreateDivider()
+    lunaSection2:CreateDivider()
 
-    v4:CreateSection((fn("Features")))
+    local lunaSection3 = v4:CreateSection((fn("Features")))
 
-    v4:CreateParagraph({
+    lunaSection3:CreateParagraph({
         Title = "What's Included",
         Text = "→ Auto Farm Days\n→ Auto Fuel Campfire\n→ Auto Cook Food\n→ Auto Compress Items\n→ Auto Bring / Collect Items\n→ Tree Aura (Auto Chop)\n→ Landmarks Reveal (Full Map)\n→ Send to Volcano\n→ Godmode (Combat)\n→ Silent Aim + Revive Players\n→ Player & Mob ESP\n→ Detailed Game Stats\n→ And much MORE!!",
     })
 
-    v4:CreateDivider()
+    lunaSection3:CreateDivider()
 
-    v4:CreateSection((fn("Refresh")))
+    local lunaSection4 = v4:CreateSection((fn("Refresh")))
 
-    v4:CreateButton({
+    lunaSection4:CreateButton({
         Name = "Refresh Server Info",
         Description = "Re-fetch live Discord member and online counts",
         Callback = function()
@@ -570,14 +570,14 @@ do
 
     tbl.Main:CreateDivider()
 
-    tbl.Main:CreateSection((fn("Infinite Dupe Saplings")))
+    local lunaSection5 = tbl.Main:CreateSection((fn("Infinite Dupe Saplings")))
 
-    tbl.Main:CreateParagraph({
+    lunaSection5:CreateParagraph({
         Title = "INFINITE Saplings Dupe & Circle Plant",
         Text = "In order for the feature to work, you must plant first and enable the feature that you want to be enabled (Infinite Saplings Dupe/Circle plant)",
     })
 
-    tbl.Main:CreateToggle({
+    lunaSection5:CreateToggle({
         Name = "Auto Dupe Saplings (Plant @ your position)",
         Description = "Continuously plants saplings at your location at the speed you choose.",
         Default = false,
@@ -591,7 +591,7 @@ do
         end,
     })
 
-    tbl.Main:CreateSlider({
+    lunaSection5:CreateSlider({
         Name = "Auto Plant Delay (seconds)",
         Range = {0.05, 3},
         CurrentValue = 0.1,
@@ -601,9 +601,9 @@ do
         end,
     })
 
-    tbl.Main:CreateDivider()
+    lunaSection5:CreateDivider()
 
-    tbl.Main:CreateButton({
+    lunaSection5:CreateButton({
         Name = "Plant Skybase Dupe Saplings",
         Description = "Creates a skybase spiral with saplings using your settings",
         Callback = function()
@@ -627,7 +627,7 @@ do
         end,
     })
 
-    tbl.Main:CreateSlider({
+    lunaSection5:CreateSlider({
         Name = "Skybase: Total Saplings",
         Range = {10, 500},
         CurrentValue = 200,
@@ -637,7 +637,7 @@ do
         end,
     })
 
-    tbl.Main:CreateSlider({
+    lunaSection5:CreateSlider({
         Name = "Skybase: Spiral Height",
         Range = {1, 200},
         CurrentValue = 20,
@@ -647,9 +647,9 @@ do
         end,
     })
 
-    tbl.Main:CreateDivider()
+    lunaSection5:CreateDivider()
 
-    tbl.Main:CreateButton({
+    lunaSection5:CreateButton({
         Name = "Plant Saplings in Circle",
         Description = "Plants saplings at all previewed positions.",
         Callback = function()
@@ -672,7 +672,7 @@ do
         end,
     })
 
-    tbl.Main:CreateSlider({
+    lunaSection5:CreateSlider({
         Name = "Circle Planting: Radius",
         Range = {5, 200},
         CurrentValue = 50,
@@ -683,7 +683,7 @@ do
         end,
     })
 
-    tbl.Main:CreateSlider({
+    lunaSection5:CreateSlider({
         Name = "Circle Planting: Saplings Count",
         Range = {1, 100},
         CurrentValue = 30,
@@ -694,7 +694,7 @@ do
         end,
     })
 
-    tbl.Main:CreateToggle({
+    lunaSection5:CreateToggle({
         Name = "Show Hologram Preview",
         Default = false,
         Callback = function(infDupeSaplingsShowHologram)
@@ -708,13 +708,13 @@ do
         end,
     })
 
-    tbl.Main:CreateDivider()
+    lunaSection5:CreateDivider()
 
-    tbl.Main:CreateSection((fn("Auto Plant")))
+    local lunaSection6 = tbl.Main:CreateSection((fn("Auto Plant")))
 
     genv.AutoPlantSaplings = false
 
-    tbl.Main:CreateToggle({
+    lunaSection6:CreateToggle({
         Name = "Auto Plant Saplings",
         Description = "Do NOT use this feature, if your using Infinite Dupe Saplings",
         Default = false,
@@ -749,9 +749,9 @@ do
         end
     end)
 
-    tbl.Main:CreateDivider()
+    lunaSection6:CreateDivider()
 
-    tbl.Main:CreateSection((fn("Auto Fuel Campfire")))
+    local lunaSection7 = tbl.Main:CreateSection((fn("Auto Fuel Campfire")))
 
     local tbl4 = {
         "Log",
@@ -849,7 +849,7 @@ do
         return tbl5
     end
 
-    tbl.Main:CreateDropdown({
+    lunaSection7:CreateDropdown({
         Name = "Select Fuel Items",
         Description = "Choose which items to throw into the campfire.",
         Options = (function()
@@ -892,7 +892,7 @@ do
         end,
     })
 
-    tbl.Main:CreateButton({
+    lunaSection7:CreateButton({
         Name = "⚡ Fuel Campfire Now",
         Description = "Instantly drops all selected fuel items into the campfire, one by one, FAST.",
         Callback = function()
@@ -904,7 +904,7 @@ do
         end,
     })
 
-    tbl.Main:CreateToggle({
+    lunaSection7:CreateToggle({
         Name = "Auto Fuel Campfire",
         Description = "Continuously drops selected fuel items into campfire, one by one, FAST.",
         Default = false,
@@ -923,9 +923,9 @@ do
         end
     end)
 
-    tbl.Main:CreateDivider()
+    lunaSection7:CreateDivider()
 
-    tbl.Main:CreateSection((fn("Auto Compress")))
+    local lunaSection8 = tbl.Main:CreateSection((fn("Auto Compress")))
 
     local tbl5 = {
         "Bolt",
@@ -951,7 +951,7 @@ do
     genv.AutoWoodCompressOn = false
     local vector2 = Vector3.new(21.15, 19, -6.12)
 
-    tbl.Main:CreateDropdown({
+    lunaSection8:CreateDropdown({
         Name = "Items to Compress",
         Description = "Select which items to drop into the compressor.",
         Options = (function()
@@ -994,7 +994,7 @@ do
         end,
     })
 
-    tbl.Main:CreateButton({
+    lunaSection8:CreateButton({
         Name = "⚡ Compress Items Now",
         Description = "Instantly sends all selected items to the compressor, one by one, FAST.",
         Callback = function()
@@ -1006,7 +1006,7 @@ do
         end,
     })
 
-    tbl.Main:CreateToggle({
+    lunaSection8:CreateToggle({
         Name = "Auto Compress Items",
         Description = "Continuously compresses selected items from the whole map, one by one, FAST.",
         Default = false,
@@ -1025,9 +1025,9 @@ do
         end
     end)
 
-    tbl.Main:CreateDivider()
+    lunaSection8:CreateDivider()
 
-    tbl.Main:CreateSection((fn("Auto Consume")))
+    local lunaSection9 = tbl.Main:CreateSection((fn("Auto Consume")))
 
     local tbl6 = {
         Food = {
@@ -1066,7 +1066,7 @@ do
         flag2 = arg
     end
 
-    tbl.Main:CreateDropdown({
+    lunaSection9:CreateDropdown({
         Name = "Food Items to Consume",
         Options = (function()
             local tbl7 = {"All"}
@@ -1108,7 +1108,7 @@ do
         end,
     })
 
-    tbl.Main:CreateToggle({
+    lunaSection9:CreateToggle({
         Name = "Auto Consume",
         Default = false,
         Callback = function(arg)
@@ -1187,9 +1187,9 @@ do
 
     tbl.Combat:CreateDivider()
 
-    tbl.Combat:CreateSection((fn("Godmode")))
+    local lunaSection10 = tbl.Combat:CreateSection((fn("Godmode")))
 
-    tbl.Combat:CreateParagraph({
+    lunaSection10:CreateParagraph({
         Title = "GODMODE OP",
         Text = "Keeps Health and Hunger maxed out at all times. NOTE: Mob/combat damage is server-sided in this game, so this will NOT protect you from wolf/beast attacks — only from hunger and client-side damage like fall damage.",
     })
@@ -1199,7 +1199,7 @@ do
     local v5 = nil
     local v6 = nil
 
-    tbl.Combat:CreateToggle({
+    lunaSection10:CreateToggle({
         Name = "GODMODE OP",
         Description = "MaxHealth + frame-rate HP restore. Cannot die from normal damage.",
         Default = false,
@@ -1274,9 +1274,9 @@ do
         end,
     })
 
-    tbl.Combat:CreateDivider()
+    lunaSection10:CreateDivider()
 
-    tbl.Combat:CreateSection((fn("Kill Aura")))
+    local lunaSection11 = tbl.Combat:CreateSection((fn("Kill Aura")))
 
     local tbl7 = {
         ["Old Axe"] = "1_8982038982",
@@ -1320,7 +1320,7 @@ do
     genv.KillAuraActive = false
     genv.KillAuraRadius = 100
 
-    tbl.Combat:CreateToggle({
+    lunaSection11:CreateToggle({
         Name = "Kill Aura",
         Default = false,
         Callback = function(killAuraActive)
@@ -1328,7 +1328,7 @@ do
         end,
     })
 
-    tbl.Combat:CreateSlider({
+    lunaSection11:CreateSlider({
         Name = "Kill Aura Radius",
         Increment = 1,
         Range = {10, 150},
@@ -1374,11 +1374,11 @@ do
         end
     end)
 
-    tbl.Combat:CreateDivider()
+    lunaSection11:CreateDivider()
 
-    tbl.Combat:CreateSection((fn("Auto Escape")))
+    local lunaSection12 = tbl.Combat:CreateSection((fn("Auto Escape")))
 
-    tbl.Combat:CreateParagraph({
+    lunaSection12:CreateParagraph({
         Title = "Auto Escape",
         Text = "Automatically teleports you to the campfire when you take damage. Select which enemies should trigger the escape.",
     })
@@ -1388,7 +1388,7 @@ do
     local vector3 = Vector3.new(1.87, 5, -3.67)
     local tbl9 = {conn = nil, lastHP = math.huge}
 
-    tbl.Combat:CreateDropdown({
+    lunaSection12:CreateDropdown({
         Name = "Escape Trigger (Enemy Type)",
         Description = "Teleport to campfire when hit by these enemies.",
         Options = {"Cat", "Deer", "Rambo", "Owl"},
@@ -1477,7 +1477,7 @@ do
         fn3("Auto Escape: Teleported to campfire!")
     end
 
-    tbl.Combat:CreateToggle({
+    lunaSection12:CreateToggle({
         Name = "Auto Escape",
         Default = false,
         Callback = function(arg)
@@ -1544,12 +1544,12 @@ do
     tbl9.hpConn = nil
     tbl9.hpRespawnConn = nil
 
-    tbl.Combat:CreateParagraph({
+    lunaSection12:CreateParagraph({
         Title = "Auto Escape (Health)",
         Text = "Automatically teleports you to the campfire when your HP drops below the set threshold.",
     })
 
-    tbl.Combat:CreateSlider({
+    lunaSection12:CreateSlider({
         Name = "Escape HP Threshold",
         Description = "Teleport to campfire when HP falls below this value. Range: 30–100.",
         Range = {30, 100},
@@ -1585,7 +1585,7 @@ do
         end)
     end
 
-    tbl.Combat:CreateToggle({
+    lunaSection12:CreateToggle({
         Name = "Auto Escape (Health)",
         Default = false,
         Callback = function(arg)
@@ -1631,11 +1631,11 @@ do
         end,
     })
 
-    tbl.Combat:CreateDivider()
+    lunaSection12:CreateDivider()
 
-    tbl.Combat:CreateSection((fn("Auto Bandage")))
+    local lunaSection13 = tbl.Combat:CreateSection((fn("Auto Bandage")))
 
-    tbl.Combat:CreateParagraph({
+    lunaSection13:CreateParagraph({
         Title = "Auto Bandage",
         Text = "When your HP drops below the threshold, automatically finds bandages in workspace.Items, brings them to you and uses them.",
     })
@@ -1654,7 +1654,7 @@ do
 
     local tbl10 = {enabled = false, threshold = 60}
 
-    tbl.Combat:CreateSlider({
+    lunaSection13:CreateSlider({
         Name = "Bandage HP Threshold",
         Description = "Auto-use a bandage when HP falls below this value.",
         Range = {10, 100},
@@ -1665,7 +1665,7 @@ do
         end,
     })
 
-    tbl.Combat:CreateToggle({
+    lunaSection13:CreateToggle({
         Name = "Auto Bandage",
         Description = "Automatically brings and uses bandages when HP is low.",
         Default = false,
@@ -1814,16 +1814,16 @@ do
         end
     end)
 
-    tbl.Main:CreateDivider()
+    lunaSection9:CreateDivider()
 
-    tbl.Main:CreateSection((fn("Landmarks")))
+    local lunaSection14 = tbl.Main:CreateSection((fn("Landmarks")))
 
-    tbl.Main:CreateParagraph({
+    lunaSection14:CreateParagraph({
         Title = "Reveal Landmarks (Full Map)",
         Text = "Tries to find landmarks. Re-press to catch any new ones.",
     })
 
-    tbl.Main:CreateButton({
+    lunaSection14:CreateButton({
         Name = "  Reveal Landmarks (Full Map)",
         Icon = "map-pin",
         Description = "Reveals all landmarks on the full map.",
@@ -1947,9 +1947,9 @@ do
         end,
     })
 
-    tbl.Main:CreateDivider()
+    lunaSection14:CreateDivider()
 
-    tbl.Main:CreateSection((fn("Send to Volcano")))
+    local lunaSection15 = tbl.Main:CreateSection((fn("Send to Volcano")))
 
     local tbl11 = {
         "Cultist Corpse",
@@ -1972,7 +1972,7 @@ do
         return Vector3.new(0, 50, 0)
     end
 
-    tbl.Main:CreateDropdown({
+    lunaSection15:CreateDropdown({
         Name = "Volcano Items",
         Description = "Choose what to throw into the volcano.",
         Options = (function()
@@ -2013,7 +2013,7 @@ do
         end,
     })
 
-    tbl.Main:CreateButton({
+    lunaSection15:CreateButton({
         Name = "  Send to Volcano",
         Icon = "flame",
         Description = "Drags all selected items into the volcano lava, one by one, FAST.",
@@ -2037,7 +2037,7 @@ do
         end,
     })
 
-    tbl.Main:CreateToggle({
+    lunaSection15:CreateToggle({
         Name = "Auto Send to Volcano (Loop)",
         Description = "Continuously sends selected items to the volcano, one by one, FAST.",
         Default = false,
@@ -2068,11 +2068,11 @@ do
         end
     end)
 
-    tbl.Main:CreateDivider()
+    lunaSection15:CreateDivider()
 
-    tbl.Main:CreateSection((fn("Auto Tree Chop")))
+    local lunaSection16 = tbl.Main:CreateSection((fn("Auto Tree Chop")))
 
-    tbl.Main:CreateParagraph({Title = "Tree Aura", Text = "Tree Aura Chop Trees Reach"})
+    lunaSection16:CreateParagraph({Title = "Tree Aura", Text = "Tree Aura Chop Trees Reach"})
     genv.AutoTreeChopRadius = 50
     local autoTreeChopOn = genv.AutoTreeChopOn
     local autoTreeChopOn2 = autoTreeChopOn or false
@@ -2144,7 +2144,7 @@ do
         game:GetService("ReplicatedStorage").RemoteEvents:WaitForChild("ToolDamageObject", 10)
     end
 
-    tbl.Main:CreateToggle({
+    lunaSection16:CreateToggle({
         Name = "Chop Trees Aura",
         Description = "Automatically chops trees within the aura radius.",
         Default = false,
@@ -2157,7 +2157,7 @@ do
         end,
     })
 
-    tbl.Main:CreateSlider({
+    lunaSection16:CreateSlider({
         Name = "Max Targets (Simultaneous)",
         Description = "Number of trees chopped at the same time per cycle.",
         Range = {1, 10},
@@ -2168,7 +2168,7 @@ do
         end,
     })
 
-    tbl.Main:CreateDropdown({
+    lunaSection16:CreateDropdown({
         Name = "Tree Types",
         Description = "Select which tree type the aura targets.",
         Options = {"All Trees", "Small Tree", "Large Tree", "Pine Tree"},
@@ -2187,7 +2187,7 @@ do
 
     genv.TreeAuraSelectedAxe = "Old Axe"
 
-    tbl.Main:CreateDropdown({
+    lunaSection16:CreateDropdown({
         Name = "Tree Aura Axe",
         Description = "Choose which axe Tree Aura uses to chop trees.",
         Options = {"Old Axe", "Good Axe", "Strong Axe"},
@@ -2333,7 +2333,7 @@ do
         end
     end
 
-    tbl.Main:CreateToggle({
+    lunaSection16:CreateToggle({
         Name = "Tree Health ESP",
         Description = "Shows a health bar above each tree. Green = healthy, Yellow = damaged, Red = almost chopped.",
         Default = false,
@@ -2475,7 +2475,7 @@ do
 
     tbl.Teleport:CreateDivider()
 
-    tbl.Teleport:CreateSection((fn("Teleport Locations")))
+    local lunaSection17 = tbl.Teleport:CreateSection((fn("Teleport Locations")))
 
     local function fn36(arg, cFrame)
         arg.CFrame = cFrame
@@ -2718,7 +2718,7 @@ do
 
     local str2 = "Camp"
 
-    tbl.Teleport:CreateDropdown({
+    lunaSection17:CreateDropdown({
         Name = "Select Destination",
         Description = "Choose a location to teleport to.",
         Options = {
@@ -2738,7 +2738,7 @@ do
         end,
     })
 
-    tbl.Teleport:CreateButton({
+    lunaSection17:CreateButton({
         Name = "⚡ Teleport Now",
         Description = "Teleports you to the selected destination.",
         Callback = function()
@@ -2759,9 +2759,9 @@ do
         end,
     })
 
-    tbl.Teleport:CreateDivider()
+    lunaSection17:CreateDivider()
 
-    tbl.Teleport:CreateSection((fn("TP to Caves")))
+    local lunaSection18 = tbl.Teleport:CreateSection((fn("TP to Caves")))
 
     local tbl17 = {
         CaveLevel1 = function(arg)
@@ -2888,7 +2888,7 @@ do
 
     local str3 = "CaveLevel1"
 
-    tbl.Teleport:CreateDropdown({
+    lunaSection18:CreateDropdown({
         Name = "Select Cave",
         Description = "Choose a cave level to teleport to.",
         Options = {
@@ -2906,7 +2906,7 @@ do
         end,
     })
 
-    tbl.Teleport:CreateButton({
+    lunaSection18:CreateButton({
         Name = "⚡ TP to Cave",
         Description = "Teleports you to the selected cave level.",
         Callback = function()
@@ -2927,9 +2927,9 @@ do
         end,
     })
 
-    tbl.Teleport:CreateDivider()
+    lunaSection18:CreateDivider()
 
-    tbl.Teleport:CreateSection((fn("TP to Lost Children")))
+    local lunaSection19 = tbl.Teleport:CreateSection((fn("TP to Lost Children")))
 
     local tbl18 = {"Lost Child", "Lost Child2", "Lost Child3", "Lost Child4"}
 
@@ -3059,7 +3059,7 @@ do
 
     local n8 = 1
 
-    tbl.Teleport:CreateDropdown({
+    lunaSection19:CreateDropdown({
         Name = "Select Lost Child",
         Description = "Choose which lost child to teleport to.",
         Options = {
@@ -3083,7 +3083,7 @@ do
         end,
     })
 
-    tbl.Teleport:CreateButton({
+    lunaSection19:CreateButton({
         Name = "⚡ TP to Lost Child",
         Description = "Teleports you to the selected lost child.",
         Callback = function()
@@ -3091,11 +3091,11 @@ do
         end,
     })
 
-    tbl.Teleport:CreateDivider()
+    lunaSection19:CreateDivider()
 
-    tbl.Teleport:CreateSection((fn("Teleport to Chest")))
+    local lunaSection20 = tbl.Teleport:CreateSection((fn("Teleport to Chest")))
 
-    tbl.Teleport:CreateParagraph({
+    lunaSection20:CreateParagraph({
         Title = "Teleport to Chest",
         Text = "Select a chest from the dropdown then press Teleport to go to it.",
     })
@@ -3133,7 +3133,7 @@ do
 
     local v7 = nil
     local v8 = fn41()
-    local teleport = tbl.Teleport
+    local teleport = lunaSection20
     local v9 = v8[1]
     local v11 = teleport:CreateDropdown({
         Name = "Select Chest",
@@ -3155,7 +3155,7 @@ do
         end
     end)
 
-    tbl.Teleport:CreateButton({
+    lunaSection20:CreateButton({
         Name = "⚡ Teleport to Chest",
         Description = "Teleports you to the selected chest.",
         Callback = function()
@@ -3624,7 +3624,7 @@ do
 
     tbl.Bring:CreateDivider()
 
-    tbl.Bring:CreateSection((fn("Quick Actions")))
+    local lunaSection21 = tbl.Bring:CreateSection((fn("Quick Actions")))
 
     local tbl23 = {
         "item chest",
@@ -3720,7 +3720,7 @@ do
         return n9
     end
 
-    tbl.Bring:CreateButton({
+    lunaSection21:CreateButton({
         Name = "Bring Everything",
         Callback = function()
             local character = localPlayer.Character
@@ -3790,7 +3790,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateButton({
+    lunaSection21:CreateButton({
         Name = "Bring All (No Chests)",
         Description = "Instantly brings every item from the entire map to you. Skips chests.",
         Callback = function()
@@ -3804,7 +3804,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateButton({
+    lunaSection21:CreateButton({
         Name = "Open Chests",
         Description = "Continuously fires proximity prompts on all Item Chests in the map.",
         Callback = function()
@@ -3830,11 +3830,11 @@ do
         end,
     })
 
-    tbl.Bring:CreateDivider()
+    lunaSection21:CreateDivider()
 
-    tbl.Bring:CreateSection((fn("Bring Items")))
+    local lunaSection22 = tbl.Bring:CreateSection((fn("Bring Items")))
 
-    tbl.Bring:CreateDropdown({
+    lunaSection22:CreateDropdown({
         Name = "Select Items to Bring",
         Description = "Choose items. Use 'Bring Selected Now' or enable Auto Bring.",
         Options = (function()
@@ -3877,7 +3877,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateButton({
+    lunaSection22:CreateButton({
         Name = "⚡ Bring Selected Now",
         Description = "Instantly brings all selected items to you once.",
         Callback = function()
@@ -3931,7 +3931,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateToggle({
+    lunaSection22:CreateToggle({
         Name = "🔄 Auto Bring Items",
         Description = "Continuously brings all selected items to you every second.",
         Default = false,
@@ -4033,9 +4033,9 @@ do
         containers = {},
     }
 
-    tbl.Bring:CreateDivider()
+    lunaSection22:CreateDivider()
 
-    tbl.Bring:CreateSection((fn("Armor")))
+    local lunaSection23 = tbl.Bring:CreateSection((fn("Armor")))
 
     local tbl25 = {
         "Leather Armor",
@@ -4045,7 +4045,7 @@ do
         "Iron Body",
     }
 
-    tbl.Bring:CreateDropdown({
+    lunaSection23:CreateDropdown({
         Name = "Select Armor",
         Description = "Choose armor pieces to bring.",
         Options = (function()
@@ -4086,7 +4086,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateButton({
+    lunaSection23:CreateButton({
         Name = "⚡ Bring Armor",
         Callback = function()
             if #tbl24.armor == 0 then
@@ -4097,9 +4097,9 @@ do
         end,
     })
 
-    tbl.Bring:CreateDivider()
+    lunaSection23:CreateDivider()
 
-    tbl.Bring:CreateSection((fn("Weapons")))
+    local lunaSection24 = tbl.Bring:CreateSection((fn("Weapons")))
 
     local tbl26 = {
         "Katana",
@@ -4123,7 +4123,7 @@ do
         "Old Axe",
     }
 
-    tbl.Bring:CreateDropdown({
+    lunaSection24:CreateDropdown({
         Name = "Select Weapons",
         Description = "Choose weapons to bring.",
         Options = (function()
@@ -4164,7 +4164,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateButton({
+    lunaSection24:CreateButton({
         Name = "⚡ Bring Weapons",
         Callback = function()
             if #tbl24.weapon == 0 then
@@ -4175,9 +4175,9 @@ do
         end,
     })
 
-    tbl.Bring:CreateDivider()
+    lunaSection24:CreateDivider()
 
-    tbl.Bring:CreateSection((fn("Equipment")))
+    local lunaSection25 = tbl.Bring:CreateSection((fn("Equipment")))
 
     local tbl27 = {
         "Rifle Ammo",
@@ -4192,7 +4192,7 @@ do
         "Coin Stack",
     }
 
-    tbl.Bring:CreateDropdown({
+    lunaSection25:CreateDropdown({
         Name = "Select Equipment",
         Description = "Choose equipment / utility items to bring.",
         Options = (function()
@@ -4233,7 +4233,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateButton({
+    lunaSection25:CreateButton({
         Name = "⚡ Bring Equipment",
         Callback = function()
             if #tbl24.equipment == 0 then
@@ -4244,9 +4244,9 @@ do
         end,
     })
 
-    tbl.Bring:CreateDivider()
+    lunaSection25:CreateDivider()
 
-    tbl.Bring:CreateSection((fn("Food")))
+    local lunaSection26 = tbl.Bring:CreateSection((fn("Food")))
 
     local tbl28 = {
         "Morsel",
@@ -4265,7 +4265,7 @@ do
         "Hearty Stew",
     }
 
-    tbl.Bring:CreateDropdown({
+    lunaSection26:CreateDropdown({
         Name = "Select Food",
         Description = "Choose cooked food items to bring.",
         Options = (function()
@@ -4306,7 +4306,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateButton({
+    lunaSection26:CreateButton({
         Name = "⚡ Bring Food",
         Callback = function()
             if #tbl24.food == 0 then
@@ -4317,9 +4317,9 @@ do
         end,
     })
 
-    tbl.Bring:CreateDivider()
+    lunaSection26:CreateDivider()
 
-    tbl.Bring:CreateSection((fn("Vegetables")))
+    local lunaSection27 = tbl.Bring:CreateSection((fn("Vegetables")))
 
     local tbl29 = {
         "Carrot",
@@ -4332,7 +4332,7 @@ do
         "Log",
     }
 
-    tbl.Bring:CreateDropdown({
+    lunaSection27:CreateDropdown({
         Name = "Select Vegetables / Plants",
         Description = "Choose plant / raw food items to bring.",
         Options = (function()
@@ -4373,7 +4373,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateButton({
+    lunaSection27:CreateButton({
         Name = "⚡ Bring Vegetables",
         Callback = function()
             if #tbl24.vegetable == 0 then
@@ -4384,9 +4384,9 @@ do
         end,
     })
 
-    tbl.Bring:CreateDivider()
+    lunaSection27:CreateDivider()
 
-    tbl.Bring:CreateSection((fn("Mob Drops")))
+    local lunaSection28 = tbl.Bring:CreateSection((fn("Mob Drops")))
 
     local tbl30 = {
         "Wolf Pelt",
@@ -4406,7 +4406,7 @@ do
         "Ribs",
     }
 
-    tbl.Bring:CreateDropdown({
+    lunaSection28:CreateDropdown({
         Name = "Select Mob Drops",
         Description = "Choose mob drop items to bring.",
         Options = (function()
@@ -4447,7 +4447,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateButton({
+    lunaSection28:CreateButton({
         Name = "⚡ Bring Mob Drops",
         Callback = function()
             if #tbl24.mobDrop == 0 then
@@ -4458,9 +4458,9 @@ do
         end,
     })
 
-    tbl.Bring:CreateDivider()
+    lunaSection28:CreateDivider()
 
-    tbl.Bring:CreateSection((fn("Others")))
+    local lunaSection29 = tbl.Bring:CreateSection((fn("Others")))
 
     local tbl31 = {
         "Coal",
@@ -4481,7 +4481,7 @@ do
         "Old Car Engine",
     }
 
-    tbl.Bring:CreateDropdown({
+    lunaSection29:CreateDropdown({
         Name = "Select Other Items",
         Description = "Choose fuel / scrap / misc items to bring.",
         Options = (function()
@@ -4522,7 +4522,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateButton({
+    lunaSection29:CreateButton({
         Name = "⚡ Bring Others",
         Callback = function()
             if #tbl24.other == 0 then
@@ -4533,16 +4533,16 @@ do
         end,
     })
 
-    tbl.Bring:CreateDivider()
+    lunaSection29:CreateDivider()
 
-    tbl.Bring:CreateSection((fn("Containers")))
+    local lunaSection30 = tbl.Bring:CreateSection((fn("Containers")))
 
-    tbl.Bring:CreateParagraph({
+    lunaSection30:CreateParagraph({
         Title = "Bring Chests",
         Text = "Select chest types to bring to you one by one.",
     })
 
-    tbl.Bring:CreateDropdown({
+    lunaSection30:CreateDropdown({
         Name = "Select Chests to Bring",
         Description = "Choose which chest types to bring.",
         Options = {
@@ -4569,7 +4569,7 @@ do
         end,
     })
 
-    tbl.Bring:CreateButton({
+    lunaSection30:CreateButton({
         Name = "⚡ Bring Chests Now",
         Description = "Brings selected chest types to you one by one.",
         Callback = function()
@@ -4636,7 +4636,7 @@ do
 
     genv.autoBringContainersEnabled = false
 
-    tbl.Bring:CreateToggle({
+    lunaSection30:CreateToggle({
         Name = "🔄 Auto Bring Chests",
         Description = "Continuously brings selected chests to you one by one every cycle.",
         Default = false,
@@ -4969,11 +4969,11 @@ do
         end
     end)
 
-    tbl.Combat:CreateDivider()
+    lunaSection13:CreateDivider()
 
-    tbl.Combat:CreateSection((fn("Hitbox Settings")))
+    local lunaSection31 = tbl.Combat:CreateSection((fn("Hitbox Settings")))
 
-    tbl.Combat:CreateSlider({
+    lunaSection31:CreateSlider({
         Name = "Hitbox Size",
         Range = {2, 50},
         CurrentValue = 10,
@@ -4983,7 +4983,7 @@ do
         end,
     })
 
-    tbl.Combat:CreateToggle({
+    lunaSection31:CreateToggle({
         Name = "Show Hitbox (Visible)",
         Default = false,
         Callback = function(show)
@@ -4991,14 +4991,14 @@ do
         end,
     })
 
-    tbl.Combat:CreateParagraph({
+    lunaSection31:CreateParagraph({
         Title = "Health Colors",
         Text = "🟢 Green = Full HP (>60%)\n🟡 Yellow = Half HP (30–60%)\n🔴 Red = Critical (<30%)",
     })
 
-    tbl.Combat:CreateDivider()
+    lunaSection31:CreateDivider()
 
-    tbl.Combat:CreateSection((fn("Select Mobs")))
+    local lunaSection32 = tbl.Combat:CreateSection((fn("Select Mobs")))
 
     local tbl33 = {
         ["Wolf / Alpha Wolf"] = "Wolf",
@@ -5016,7 +5016,7 @@ do
 
     local tbl34 = {}
 
-    tbl.Combat:CreateDropdown({
+    lunaSection32:CreateDropdown({
         Name = "Select Mobs for Hitbox",
         Description = "Choose which mobs get an expanded hitbox.",
         Options = {
@@ -5062,7 +5062,7 @@ do
         end,
     })
 
-    tbl.Combat:CreateToggle({
+    lunaSection32:CreateToggle({
         Name = "Enable Hitbox",
         Default = false,
         Callback = function(enabled)
@@ -5072,12 +5072,12 @@ do
 
     tbl.AutoDays:CreateDivider()
 
-    tbl.AutoDays:CreateSection((fn("Day Auto Farm")))
+    local lunaSection33 = tbl.AutoDays:CreateSection((fn("Day Auto Farm")))
 
     local tbl35 = {active = false, thread = nil}
     local vector4 = Vector3.new(-37.08, 6.98, -16.33)
 
-    tbl.AutoDays:CreateToggle({
+    lunaSection33:CreateToggle({
         Name = "Activate Auto Days",
         Default = false,
         Callback = function(active)
@@ -5271,9 +5271,9 @@ do
         end,
     })
 
-    tbl.AutoDays:CreateDivider()
+    lunaSection33:CreateDivider()
 
-    tbl.AutoDays:CreateSection((fn("Auto Cook Food")))
+    local lunaSection34 = tbl.AutoDays:CreateSection((fn("Auto Cook Food")))
 
     local tbl36 = {
         "Morsel",
@@ -5296,7 +5296,7 @@ do
         fn15(arg, vector)
     end
 
-    tbl.AutoDays:CreateDropdown({
+    lunaSection34:CreateDropdown({
         Name = "Food Items to Cook",
         Options = (function()
             local tbl38 = {"All"}
@@ -5338,7 +5338,7 @@ do
         end,
     })
 
-    tbl.AutoDays:CreateToggle({
+    lunaSection34:CreateToggle({
         Name = "Auto Cook Food",
         Default = false,
         Callback = function(autoDaysAutoCookEnabled)
@@ -5361,9 +5361,9 @@ do
     end)
 
     tbl.Scanner:CreateDivider()
-    tbl.Scanner:CreateSection((fn("Auto Scanner")))
+    local lunaSection35 = tbl.Scanner:CreateSection((fn("Auto Scanner")))
 
-    tbl.Scanner:CreateParagraph({
+    lunaSection35:CreateParagraph({
         Title = "Auto Scanner",
         Text = "Sweeps the entire map using smooth movement so other features (Auto Fuel, Auto Compress, etc.) can detect all items. Adjust speed and scan pattern below.",
     })
@@ -5501,7 +5501,7 @@ do
         end)
     end
 
-    tbl38.toggleRef = tbl.Scanner:CreateToggle({
+    tbl38.toggleRef = lunaSection35:CreateToggle({
         Name = "Scan Map",
         Default = false,
         Callback = function(autoLoadMapActive)
@@ -5515,7 +5515,7 @@ do
         end,
     })
 
-    tbl.Scanner:CreateSlider({
+    lunaSection35:CreateSlider({
         Name = "Scan Speed",
         Description = "How fast the scanner moves between points. Higher = faster sweep.",
         Range = {10, 200},
@@ -5526,7 +5526,7 @@ do
         end,
     })
 
-    tbl.Scanner:CreateSlider({
+    lunaSection35:CreateSlider({
         Name = "Step Radius",
         Description = "Distance between each scan ring (in studs). Smaller = more thorough.",
         Range = {5, 50},
@@ -5537,7 +5537,7 @@ do
         end,
     })
 
-    tbl.Scanner:CreateSlider({
+    lunaSection35:CreateSlider({
         Name = "Step Angle",
         Description = "Angle between scan points on each ring (degrees). Smaller = more points.",
         Range = {5, 45},
@@ -5548,11 +5548,11 @@ do
         end,
     })
 
-    tbl.Combat:CreateDivider()
+    lunaSection32:CreateDivider()
 
-    tbl.Combat:CreateSection((fn("Silent Aim")))
+    local lunaSection36 = tbl.Combat:CreateSection((fn("Silent Aim")))
 
-    tbl.Combat:CreateParagraph({
+    lunaSection36:CreateParagraph({
         Title = "Silent Aim",
         Text = "Auto-aim projectiles + instant reload",
     })
@@ -5601,7 +5601,7 @@ do
         return v12
     end
 
-    tbl.Combat:CreateToggle({
+    lunaSection36:CreateToggle({
         Name = "Silent Aim",
         Description = "Auto-aims all projectiles at nearest target in FOV.",
         Default = false,
@@ -5612,7 +5612,7 @@ do
         end,
     })
 
-    tbl.Combat:CreateSlider({
+    lunaSection36:CreateSlider({
         Name = "Silent Aim FOV",
         Description = "Field of view radius for target detection (screen %).",
         Range = {10, 100},
@@ -5623,7 +5623,7 @@ do
         end,
     })
 
-    tbl.Combat:CreateDropdown({
+    lunaSection36:CreateDropdown({
         Name = "Silent Aim Hit Part",
         Description = "Which body part projectiles are aimed at.",
         Options = {"HumanoidRootPart", "Head", "Torso", "UpperTorso"},
@@ -5666,18 +5666,18 @@ do
         end)
     end
 
-    tbl.Combat:CreateDivider()
+    lunaSection36:CreateDivider()
 
-    tbl.Combat:CreateSection((fn("Revive Players")))
+    local lunaSection37 = tbl.Combat:CreateSection((fn("Revive Players")))
 
-    tbl.Combat:CreateParagraph({
+    lunaSection37:CreateParagraph({
         Title = "Revive Players",
         Text = "Auto Revive dead players including yourself from far away",
     })
 
     local tbl41 = {players = false, self = false}
 
-    tbl.Combat:CreateToggle({
+    lunaSection37:CreateToggle({
         Name = "Auto Revive Players",
         Description = "Automatically revives dead players (requires bandage/MedKit) in your inventory.",
         Default = false,
@@ -5688,7 +5688,7 @@ do
         end,
     })
 
-    tbl.Combat:CreateToggle({
+    lunaSection37:CreateToggle({
         Name = "Auto Revive Yourself",
         Description = "Automatically revives yourself when dead (requires Bandage/MedKit on map).",
         Default = false,
@@ -6107,11 +6107,11 @@ do
         end
     end)
 
-    tbl.Combat:CreateDivider()
+    lunaSection37:CreateDivider()
 
-    tbl.Combat:CreateSection((fn("Auto Stun")))
+    local lunaSection38 = tbl.Combat:CreateSection((fn("Auto Stun")))
 
-    tbl.Combat:CreateParagraph({
+    lunaSection38:CreateParagraph({
         Title = "Auto Stun",
         Text = "Automatically equips a flashlight, teleports to the selected entity (Deer, Owl, or Rambo) to stun it, then instantly returns you to your original position.\n\n→ Select a target below\n→ Enable the toggle to start\n→ You will snap back to your position after each stun",
     })
@@ -6381,7 +6381,7 @@ task.spawn(function()
     end
 end)
 
-tbl.Combat:CreateDropdown({
+lunaSection38:CreateDropdown({
     Name = "Stun Target",
     Description = "Choose which entity to auto stun (one at a time)",
     Options = {"Deer", "Owl", "Rambo", "Cat"},
@@ -6394,7 +6394,7 @@ tbl.Combat:CreateDropdown({
     end,
 })
 
-tbl.Combat:CreateSlider({
+lunaSection38:CreateSlider({
     Name = "Stun Cooldown (seconds)",
     Description = "How long to wait between each auto stun cycle.",
     Range = {1, 10},
@@ -6405,7 +6405,7 @@ tbl.Combat:CreateSlider({
     end,
 })
 
-tbl.Combat:CreateToggle({
+lunaSection38:CreateToggle({
     Name = "Auto Stun",
     Default = false,
     Callback = function(enabled)
@@ -6429,14 +6429,14 @@ tbl.Combat:CreateToggle({
 _fogRemoveEnabled = true
 tbl.Misc:CreateDivider()
 
-tbl.Misc:CreateSection((fn("Remove Fog")))
+local lunaSection39 = tbl.Misc:CreateSection((fn("Remove Fog")))
 
-tbl.Misc:CreateParagraph({
+lunaSection39:CreateParagraph({
     Title = "Remove Fog",
     Text = "Removes fog by destroying non-Fog children inside workspace.Map.Boundaries.",
 })
 
-tbl.Misc:CreateToggle({
+lunaSection39:CreateToggle({
     Name = "Remove Fog",
     Default = true,
     Callback = function(arg)
@@ -6451,13 +6451,13 @@ tbl.Misc:CreateToggle({
     end,
 })
 
-tbl.Misc:CreateDivider()
+lunaSection39:CreateDivider()
 
-tbl.Misc:CreateSection((fn("Anti Void")))
+local lunaSection40 = tbl.Misc:CreateSection((fn("Anti Void")))
 
 genv.antiVoidEnabled = false
 
-tbl.Misc:CreateToggle({
+lunaSection40:CreateToggle({
     Name = "Anti Void",
     Default = false,
     Callback = function(antiVoidEnabled)
@@ -6573,11 +6573,11 @@ localPlayer.CharacterAdded:Connect(function()
     end
 end)
 
-tbl.Misc:CreateDivider()
+lunaSection40:CreateDivider()
 
-tbl.Misc:CreateSection((fn("Fly")))
+local lunaSection41 = tbl.Misc:CreateSection((fn("Fly")))
 
-tbl.Misc:CreateToggle({
+lunaSection41:CreateToggle({
     Name = "Fly",
     Default = false,
     Callback = function(arg)
@@ -6589,7 +6589,7 @@ tbl.Misc:CreateToggle({
     end,
 })
 
-tbl.Misc:CreateSlider({
+lunaSection41:CreateSlider({
     Name = "Fly Speed",
     Range = {10, 300},
     CurrentValue = 50,
@@ -6599,14 +6599,14 @@ tbl.Misc:CreateSlider({
     end,
 })
 
-tbl.Misc:CreateDivider()
+lunaSection41:CreateDivider()
 
-tbl.Misc:CreateSection((fn("Movement")))
+local lunaSection42 = tbl.Misc:CreateSection((fn("Movement")))
 
 genv.speedEnabled = false
 genv.speedValue = 28
 
-tbl.Misc:CreateToggle({
+lunaSection42:CreateToggle({
     Name = "Speed Hack",
     Default = false,
     Callback = function(speedEnabled)
@@ -6622,7 +6622,7 @@ tbl.Misc:CreateToggle({
     end,
 })
 
-tbl.Misc:CreateSlider({
+lunaSection42:CreateSlider({
     Name = "Speed Value",
     Range = {16, 600},
     CurrentValue = 28,
@@ -6688,7 +6688,7 @@ local function fn11(arg)
     end)
 end
 
-tbl.Misc:CreateToggle({
+lunaSection42:CreateToggle({
     Name = "Jump Boost",
     Default = false,
     Callback = function(jpEnabled)
@@ -6705,7 +6705,7 @@ tbl.Misc:CreateToggle({
     end,
 })
 
-tbl.Misc:CreateSlider({
+lunaSection42:CreateSlider({
     Name = "Jump Power",
     Range = {50, 500},
     CurrentValue = 60,
@@ -6723,7 +6723,7 @@ tbl.Misc:CreateSlider({
 
 local flag2 = false
 
-tbl.Misc:CreateToggle({
+lunaSection42:CreateToggle({
     Name = "Infinite Jump",
     Default = false,
     Callback = function(arg)
@@ -6763,7 +6763,7 @@ local function fn12(arg)
     end
 end
 
-tbl.Misc:CreateToggle({
+lunaSection42:CreateToggle({
     Name = "Instant Interact",
     Default = false,
     Callback = function(instantInteractOn)
@@ -6793,11 +6793,11 @@ tbl.Misc:CreateToggle({
     end,
 })
 
-tbl.Misc:CreateDivider()
+lunaSection42:CreateDivider()
 
-tbl.Misc:CreateSection((fn("Performance Monitor")))
+local lunaSection43 = tbl.Misc:CreateSection((fn("Performance Monitor")))
 
-tbl.Misc:CreateToggle({
+lunaSection43:CreateToggle({
     Name = "Show FPS",
     Default = false,
     Callback = function(arg)
@@ -6809,7 +6809,7 @@ tbl.Misc:CreateToggle({
     end,
 })
 
-tbl.Misc:CreateToggle({
+lunaSection43:CreateToggle({
     Name = "Show Ping (ms)",
     Default = false,
     Callback = function(arg)
@@ -6821,7 +6821,7 @@ tbl.Misc:CreateToggle({
     end,
 })
 
-tbl.Misc:CreateButton({
+lunaSection43:CreateButton({
     Name = "FPS Boost",
     Callback = function()
         task.spawn(function()
@@ -6862,14 +6862,14 @@ tbl.Misc:CreateButton({
     end,
 })
 
-tbl.Misc:CreateDivider()
+lunaSection43:CreateDivider()
 
-tbl.Misc:CreateSection((fn("Visual")))
+local lunaSection44 = tbl.Misc:CreateSection((fn("Visual")))
 
 local flag3 = false
 local thread = nil
 
-tbl.Misc:CreateToggle({
+lunaSection44:CreateToggle({
     Name = "Fullbright",
     Default = false,
     Callback = function(arg)
@@ -6893,7 +6893,7 @@ tbl.Misc:CreateToggle({
 
 local flag4 = false
 
-tbl.Misc:CreateToggle({
+lunaSection44:CreateToggle({
     Name = "Noclip",
     Default = false,
     Callback = function(arg)
@@ -6919,11 +6919,11 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
-tbl.Misc:CreateDivider()
+lunaSection44:CreateDivider()
 
-tbl.Misc:CreateSection((fn("Universal Scripts")))
+local lunaSection45 = tbl.Misc:CreateSection((fn("Universal Scripts")))
 
-tbl.Misc:CreateButton({
+lunaSection45:CreateButton({
     Name = "Infinite Yield",
     Description = "A powerful in-game admin console.",
     Callback = function()
@@ -6939,7 +6939,7 @@ tbl.Misc:CreateButton({
     end,
 })
 
-tbl.Misc:CreateButton({
+lunaSection45:CreateButton({
     Name = "Dex Explorer",
     Description = "Browse the full game instance tree.",
     Callback = function()
@@ -6955,7 +6955,7 @@ tbl.Misc:CreateButton({
     end,
 })
 
-tbl.Misc:CreateButton({
+lunaSection45:CreateButton({
     Name = "Remote Spy",
     Description = "Monitor all RemoteEvent and RemoteFunction calls.",
     Callback = function()
@@ -6971,7 +6971,7 @@ tbl.Misc:CreateButton({
     end,
 })
 
-tbl.Misc:CreateButton({
+lunaSection45:CreateButton({
     Name = "Keyboard",
     Description = "On-screen keyboard tool for mobile / input.",
     Callback = function()
@@ -6987,7 +6987,7 @@ tbl.Misc:CreateButton({
     end,
 })
 
-tbl.Misc:CreateButton({
+lunaSection45:CreateButton({
     Name = "Anim Logger",
     Description = "Log and view character animations.",
     Callback = function()
@@ -7003,7 +7003,7 @@ tbl.Misc:CreateButton({
     end,
 })
 
-tbl.Misc:CreateButton({
+lunaSection45:CreateButton({
     Name = "F3X (Building Tools)",
     Description = "In-game building and editing tools.",
     Callback = function()
@@ -7019,7 +7019,7 @@ tbl.Misc:CreateButton({
     end,
 })
 
-tbl.Misc:CreateButton({
+lunaSection45:CreateButton({
     Name = "Fly V3",
     Description = "Advanced smooth fly script.",
     Callback = function()
@@ -7035,7 +7035,7 @@ tbl.Misc:CreateButton({
     end,
 })
 
-tbl.Misc:CreateButton({
+lunaSection45:CreateButton({
     Name = "VFX Logger",
     Description = "Log all visual effects and particles in game.",
     Callback = function()
@@ -7051,11 +7051,11 @@ tbl.Misc:CreateButton({
     end,
 })
 
-tbl.Misc:CreateDivider()
+lunaSection45:CreateDivider()
 
-tbl.Misc:CreateSection((fn("Tools")))
+local lunaSection46 = tbl.Misc:CreateSection((fn("Tools")))
 
-tbl.Misc:CreateButton({
+lunaSection46:CreateButton({
     Name = "Teleport Tool",
     Description = "Equip from backpack, then click to TP to your mouse position.",
     Callback = function()
@@ -7108,7 +7108,7 @@ tbl.Misc:CreateButton({
     end,
 })
 
-tbl.Misc:CreateButton({
+lunaSection46:CreateButton({
     Name = "Jerk Tool",
     Description = "Equip from backpack, then click to fling nearby players and mobs.",
     Callback = function()
@@ -7186,14 +7186,14 @@ tbl.Misc:CreateButton({
     end,
 })
 
-tbl.Misc:CreateDivider()
+lunaSection46:CreateDivider()
 
-tbl.Misc:CreateSection((fn("Anti AFK")))
+local lunaSection47 = tbl.Misc:CreateSection((fn("Anti AFK")))
 
 genv.antiAfkEnabled = false
 local tbl4 = {antiAfk = nil, promptAdded = nil}
 
-tbl.Misc:CreateToggle({
+lunaSection47:CreateToggle({
     Name = "Anti AFK",
     Default = false,
     Callback = function(antiAfkEnabled)
@@ -7232,11 +7232,11 @@ tbl.Misc:CreateToggle({
     end,
 })
 
-tbl.Misc:CreateDivider()
+lunaSection47:CreateDivider()
 
-tbl.Misc:CreateSection((fn("Server Hop")))
+local lunaSection48 = tbl.Misc:CreateSection((fn("Server Hop")))
 
-tbl.Misc:CreateButton({
+lunaSection48:CreateButton({
     Name = "Server Hop",
     Callback = function()
         local TeleportService = game:GetService("TeleportService")
@@ -7903,9 +7903,9 @@ end
 
 tbl.Esp:CreateDivider()
 
-tbl.Esp:CreateSection((fn("Global ESP Settings")))
+local lunaSection49 = tbl.Esp:CreateSection((fn("Global ESP Settings")))
 
-tbl.Esp:CreateToggle({
+lunaSection49:CreateToggle({
     Name = "Chams (Fill All ESP)",
     Default = false,
     Callback = function(arg)
@@ -7914,16 +7914,16 @@ tbl.Esp:CreateToggle({
     end,
 })
 
-tbl.Esp:CreateDivider()
+lunaSection49:CreateDivider()
 
-tbl.Esp:CreateSection((fn("Player ESP")))
+local lunaSection50 = tbl.Esp:CreateSection((fn("Player ESP")))
 
-tbl.Esp:CreateParagraph({
+lunaSection50:CreateParagraph({
     Title = "Player ESP",
     Text = "Options for player visibility, including health",
 })
 
-tbl.Esp:CreateToggle({
+lunaSection50:CreateToggle({
     Name = "Player ESP",
     Description = "Shows ESP highlights on all other players.",
     Default = false,
@@ -7940,7 +7940,7 @@ tbl.Esp:CreateToggle({
     end,
 })
 
-tbl.Esp:CreateToggle({
+lunaSection50:CreateToggle({
     Name = "Player ESP HP Viewer",
     Description = "Displays health bar / HP value above players.",
     Default = false,
@@ -7956,7 +7956,7 @@ tbl.Esp:CreateToggle({
     end,
 })
 
-tbl.Esp:CreateToggle({
+lunaSection50:CreateToggle({
     Name = "Player ESP Distance Viewer",
     Description = "Displays the distance (in studs) to each player.",
     Default = false,
@@ -7972,14 +7972,14 @@ tbl.Esp:CreateToggle({
     end,
 })
 
-tbl.Esp:CreateDivider()
+lunaSection50:CreateDivider()
 
-tbl.Esp:CreateSection((fn("World Item ESP")))
+local lunaSection51 = tbl.Esp:CreateSection((fn("World Item ESP")))
 
 local tbl11 = {"Fuel", "Food", "Health", "Scrappable", "Other"}
 local tbl12 = {}
 
-tbl.Esp:CreateDropdown({
+lunaSection51:CreateDropdown({
     Name = "Esp Items",
     Description = "Select one or more item categories to show ESP for.",
     Options = (function()
@@ -8020,7 +8020,7 @@ tbl.Esp:CreateDropdown({
     end,
 })
 
-tbl.Esp:CreateToggle({
+lunaSection51:CreateToggle({
     Name = "Enable Item Esp",
     Default = false,
     Callback = function(arg)
@@ -8044,11 +8044,11 @@ tbl.Esp:CreateToggle({
     end,
 })
 
-tbl.Esp:CreateDivider()
+lunaSection51:CreateDivider()
 
-tbl.Esp:CreateSection((fn("Chest ESP")))
+local lunaSection52 = tbl.Esp:CreateSection((fn("Chest ESP")))
 
-tbl.Esp:CreateParagraph({
+lunaSection52:CreateParagraph({
     Title = "Chest ESP",
     Text = "Select chest types to highlight. Scan first to find available chests.",
 })
@@ -8147,7 +8147,7 @@ local tbl15 = {
     "Wooden Chest",
 }
 
-tbl.Esp:CreateDropdown({
+lunaSection52:CreateDropdown({
     Name = "Select Chest Types (ESP)",
     Description = "Multi-select chest types to show ESP highlights for.",
     Options = (function()
@@ -8188,7 +8188,7 @@ tbl.Esp:CreateDropdown({
     end,
 })
 
-tbl.Esp:CreateToggle({
+lunaSection52:CreateToggle({
     Name = "Enable Chest ESP",
     Description = "Shows highlights on all selected chest types.",
     Default = false,
@@ -8555,9 +8555,9 @@ origRefresh = function()
     end
 end
 
-tbl.Esp:CreateDivider()
+lunaSection52:CreateDivider()
 
-tbl.Esp:CreateSection((fn("Mob ESP")))
+local lunaSection53 = tbl.Esp:CreateSection((fn("Mob ESP")))
 
 local tbl18 = {
     "Wolf / Alpha Wolf",
@@ -8593,7 +8593,7 @@ local tbl19 = {
 
 local tbl20 = {}
 
-tbl.Esp:CreateDropdown({
+lunaSection53:CreateDropdown({
     Name = "Esp Entity",
     Description = "Select one or more mob types to show ESP for.",
     Options = (function()
@@ -8642,7 +8642,7 @@ tbl.Esp:CreateDropdown({
     end,
 })
 
-tbl.Esp:CreateToggle({
+lunaSection53:CreateToggle({
     Name = "Enable Entity Esp",
     Default = false,
     Callback = function(arg)
@@ -8681,47 +8681,47 @@ end
 
 tbl.Stats:CreateDivider()
 
-tbl.Stats:CreateSection((fn("Game Stats")))
+local lunaSection54 = tbl.Stats:CreateSection((fn("Game Stats")))
 
 local tbl21 = {}
 local trackedDay = genv.TrackedDay
 local trackedDay2 = trackedDay or 1
 genv.TrackedDay = trackedDay2
 local v3 = nil
-tbl21.SunState = tbl.Stats:CreateParagraph({Title = "☀  Sun Cycle", Text = "..."})
-tbl21.SunTime = tbl.Stats:CreateParagraph({Title = "⏱  Phase Timer", Text = "..."})
-tbl21.DayCounter = tbl.Stats:CreateParagraph({Title = "📅  Day Count", Text = "..."})
-tbl21.RealClock = tbl.Stats:CreateParagraph({Title = "🕐  Real Clock", Text = "..."})
-tbl.Stats:CreateDivider()
-tbl.Stats:CreateSection((fn("Environment")))
-tbl21.Weather = tbl.Stats:CreateParagraph({Title = "🌤  Weather", Text = "..."})
-tbl21.Temperature = tbl.Stats:CreateParagraph({Title = "🌡  Temperature", Text = "..."})
-tbl21.LightLevel = tbl.Stats:CreateParagraph({Title = "💡  Light Level", Text = "..."})
-tbl21.NightsSafe = tbl.Stats:CreateParagraph({Title = "🌙  Nights Safe", Text = "..."})
-tbl.Stats:CreateDivider()
-tbl.Stats:CreateSection((fn("Campfire")))
-tbl21.FireLevel = tbl.Stats:CreateParagraph({Title = "🔥  Fire Level", Text = "..."})
-tbl21.FireStatus = tbl.Stats:CreateParagraph({Title = "🪵  Fire Status", Text = "..."})
-tbl.Stats:CreateDivider()
-tbl.Stats:CreateSection((fn("Player")))
-tbl21.Health = tbl.Stats:CreateParagraph({Title = "❤  Health", Text = "..."})
-tbl21.Hunger = tbl.Stats:CreateParagraph({Title = "🍖  Hunger", Text = "..."})
-tbl21.Armour = tbl.Stats:CreateParagraph({Title = "🛡  Armour", Text = "..."})
-tbl21.PlayerClass = tbl.Stats:CreateParagraph({Title = "⚔  Class", Text = "..."})
-tbl21.ClassLevel = tbl.Stats:CreateParagraph({Title = "📈  Class Level", Text = "..."})
-tbl21.Talent = tbl.Stats:CreateParagraph({Title = "✨  Talent", Text = "..."})
-tbl21.XP = tbl.Stats:CreateParagraph({Title = "⭐  Experience", Text = "..."})
-tbl21.Position = tbl.Stats:CreateParagraph({Title = "📍  Position", Text = "..."})
-tbl.Stats:CreateDivider()
+tbl21.SunState = lunaSection54:CreateParagraph({Title = "☀  Sun Cycle", Text = "..."})
+tbl21.SunTime = lunaSection54:CreateParagraph({Title = "⏱  Phase Timer", Text = "..."})
+tbl21.DayCounter = lunaSection54:CreateParagraph({Title = "📅  Day Count", Text = "..."})
+tbl21.RealClock = lunaSection54:CreateParagraph({Title = "🕐  Real Clock", Text = "..."})
+lunaSection54:CreateDivider()
+local lunaSection55 = tbl.Stats:CreateSection((fn("Environment")))
+tbl21.Weather = lunaSection55:CreateParagraph({Title = "🌤  Weather", Text = "..."})
+tbl21.Temperature = lunaSection55:CreateParagraph({Title = "🌡  Temperature", Text = "..."})
+tbl21.LightLevel = lunaSection55:CreateParagraph({Title = "💡  Light Level", Text = "..."})
+tbl21.NightsSafe = lunaSection55:CreateParagraph({Title = "🌙  Nights Safe", Text = "..."})
+lunaSection55:CreateDivider()
+local lunaSection56 = tbl.Stats:CreateSection((fn("Campfire")))
+tbl21.FireLevel = lunaSection56:CreateParagraph({Title = "🔥  Fire Level", Text = "..."})
+tbl21.FireStatus = lunaSection56:CreateParagraph({Title = "🪵  Fire Status", Text = "..."})
+lunaSection56:CreateDivider()
+local lunaSection57 = tbl.Stats:CreateSection((fn("Player")))
+tbl21.Health = lunaSection57:CreateParagraph({Title = "❤  Health", Text = "..."})
+tbl21.Hunger = lunaSection57:CreateParagraph({Title = "🍖  Hunger", Text = "..."})
+tbl21.Armour = lunaSection57:CreateParagraph({Title = "🛡  Armour", Text = "..."})
+tbl21.PlayerClass = lunaSection57:CreateParagraph({Title = "⚔  Class", Text = "..."})
+tbl21.ClassLevel = lunaSection57:CreateParagraph({Title = "📈  Class Level", Text = "..."})
+tbl21.Talent = lunaSection57:CreateParagraph({Title = "✨  Talent", Text = "..."})
+tbl21.XP = lunaSection57:CreateParagraph({Title = "⭐  Experience", Text = "..."})
+tbl21.Position = lunaSection57:CreateParagraph({Title = "📍  Position", Text = "..."})
+lunaSection57:CreateDivider()
 
-tbl.Stats:CreateSection((fn("Session & System")))
+local lunaSection58 = tbl.Stats:CreateSection((fn("Session & System")))
 
-tbl21.Ping = tbl.Stats:CreateParagraph({Title = "📶  Ping", Text = "..."})
-tbl21.FPS = tbl.Stats:CreateParagraph({Title = "🖥  FPS", Text = "..."})
-tbl21.Players = tbl.Stats:CreateParagraph({Title = "👥  Players", Text = "..."})
-tbl21.PlayerId = tbl.Stats:CreateParagraph({Title = "🪪  Player ID", Text = "..."})
-tbl21.UpTime = tbl.Stats:CreateParagraph({Title = "⏳  Session Time", Text = "..."})
-tbl21.GameVersion = tbl.Stats:CreateParagraph({Title = "🎮  Game Version", Text = "..."})
+tbl21.Ping = lunaSection58:CreateParagraph({Title = "📶  Ping", Text = "..."})
+tbl21.FPS = lunaSection58:CreateParagraph({Title = "🖥  FPS", Text = "..."})
+tbl21.Players = lunaSection58:CreateParagraph({Title = "👥  Players", Text = "..."})
+tbl21.PlayerId = lunaSection58:CreateParagraph({Title = "🪪  Player ID", Text = "..."})
+tbl21.UpTime = lunaSection58:CreateParagraph({Title = "⏳  Session Time", Text = "..."})
+tbl21.GameVersion = lunaSection58:CreateParagraph({Title = "🎮  Game Version", Text = "..."})
 
 local function fn40()
     if not localPlayer then
@@ -9038,10 +9038,10 @@ task.spawn(function()
     end
 end)
 
-tbl.Stats:CreateDivider()
-tbl.Stats:CreateSection((fn("Controls")))
+lunaSection58:CreateDivider()
+local lunaSection59 = tbl.Stats:CreateSection((fn("Controls")))
 
-tbl.Stats:CreateButton({
+lunaSection59:CreateButton({
     Name = "🔄 Refresh Stats",
     Description = "Manually re-fetch all stats right now.",
     Callback = function()
@@ -9050,7 +9050,7 @@ tbl.Stats:CreateButton({
     end,
 })
 
-tbl.Stats:CreateToggle({
+lunaSection59:CreateToggle({
     Name = "Auto Refresh (0.3s)",
     Description = "Continuously updates all stats in real time.",
     Default = true,
@@ -9156,14 +9156,14 @@ local function fn43()
     return true
 end
 
-tbl.Settings:CreateSection((fn("Config")))
+local lunaSection60 = tbl.Settings:CreateSection((fn("Config")))
 
-tbl.Settings:CreateParagraph({
+lunaSection60:CreateParagraph({
     Title = "Save / Load Config",
     Text = "Saves your current speed, jump, and theme settings to disk and reloads them next time.",
 })
 
-tbl.Settings:CreateButton({
+lunaSection60:CreateButton({
     Name = "💾 Save Config",
     Description = "Writes settings to Synvextia/bbn/config.json",
     Callback = function()
@@ -9178,7 +9178,7 @@ tbl.Settings:CreateButton({
     end,
 })
 
-tbl.Settings:CreateButton({
+lunaSection60:CreateButton({
     Name = "📂 Load Config",
     Description = "Loads settings from disk if a save exists.",
     Callback = function()
@@ -9190,7 +9190,7 @@ tbl.Settings:CreateButton({
     end,
 })
 
-tbl.Settings:CreateButton({
+lunaSection60:CreateButton({
     Name = "🗑️ Reset Config",
     Description = "Resets all saved settings to defaults.",
     Callback = function()
@@ -9219,15 +9219,15 @@ tbl.Settings:CreateButton({
     end,
 })
 
-tbl.Settings:CreateDivider()
-tbl.Settings:CreateSection((fn("Discord Webhook")))
+lunaSection60:CreateDivider()
+local lunaSection61 = tbl.Settings:CreateSection((fn("Discord Webhook")))
 
-tbl.Settings:CreateParagraph({
+lunaSection61:CreateParagraph({
     Title = "Webhook Notifications",
     Text = "Paste your Discord webhook URL below to receive notifications (e.g. when config is saved, or for custom alerts).",
 })
 
-tbl.Settings:CreateInput({
+lunaSection61:CreateInput({
     Name = "Webhook URL",
     Placeholder = "https://discord.com/api/webhooks/...",
     Callback = function(arg)
@@ -9241,7 +9241,7 @@ tbl.Settings:CreateInput({
     end,
 })
 
-tbl.Settings:CreateButton({
+lunaSection61:CreateButton({
     Name = "📨 Test Webhook",
     Description = "Sends a test message to your webhook to confirm it works.",
     Callback = function()
@@ -9254,7 +9254,7 @@ tbl.Settings:CreateButton({
     end,
 })
 
-tbl.Settings:CreateToggle({
+lunaSection61:CreateToggle({
     Name = "Notify on Config Save",
     Default = true,
     Callback = function(webhookOnSave)
@@ -9264,10 +9264,10 @@ tbl.Settings:CreateToggle({
     end,
 })
 
-tbl.Settings:CreateDivider()
-tbl.Settings:CreateSection((fn("PC Keybinds")))
+lunaSection61:CreateDivider()
+local lunaSection62 = tbl.Settings:CreateSection((fn("PC Keybinds")))
 
-tbl.Settings:CreateParagraph({
+lunaSection62:CreateParagraph({
     Title = "PC Keyboard Shortcuts",
     Text = "These keybinds work on PC only:\n\n→ RightShift — Open or Close the hub\n→ RightControl — Minimize or Restore the hub\n→ Delete — Hide the hub completely\n\nTo reopen after hiding: click the ❄ Synvextia Hub button at the top of your screen, or press RightShift.\n\nThe ▶ button in the hub titlebar copies the official Synvextia YouTube channel link.",
 })
