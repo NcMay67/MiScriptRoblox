@@ -2172,7 +2172,7 @@ do
         Name = "Tree Types",
         Description = "Select which tree type the aura targets.",
         Options = {"All Trees", "Small Tree", "Large Tree", "Pine Tree"},
-        Default = "All Trees",
+        CurrentOption = "All Trees",
         MultipleOptions = false,
         Callback = function(typeFilter)
             tbl13.typeFilter = typeFilter
@@ -2191,7 +2191,7 @@ do
         Name = "Tree Aura Axe",
         Description = "Choose which axe Tree Aura uses to chop trees.",
         Options = {"Old Axe", "Good Axe", "Strong Axe"},
-        Default = "Old Axe",
+        CurrentOption = "Old Axe",
         MultipleOptions = false,
         Callback = function(arg)
             local treeAuraSelectedAxe = arg or "Old Axe"
@@ -2731,7 +2731,7 @@ do
             "Random Tree",
             "Volcano",
         },
-        Default = "Camp",
+        CurrentOption = "Camp",
         MultipleOptions = false,
         Callback = function(arg)
             str2 = arg
@@ -2899,7 +2899,7 @@ do
             "CaveLevel5",
             "CaveOuter",
         },
-        Default = "CaveLevel1",
+        CurrentOption = "CaveLevel1",
         MultipleOptions = false,
         Callback = function(arg)
             str3 = arg
@@ -3068,7 +3068,7 @@ do
             "Lost Child #3",
             "Lost Child #4",
         },
-        Default = "Lost Child #1",
+        CurrentOption = "Lost Child #1",
         MultipleOptions = false,
         Callback = function(arg)
             if arg == "Lost Child #1" then
@@ -5627,7 +5627,7 @@ do
         Name = "Silent Aim Hit Part",
         Description = "Which body part projectiles are aimed at.",
         Options = {"HumanoidRootPart", "Head", "Torso", "UpperTorso"},
-        Default = "HumanoidRootPart",
+        CurrentOption = "HumanoidRootPart",
         MultipleOptions = false,
         Callback = function(hitPart)
             tbl40.hitPart = hitPart
@@ -6385,7 +6385,7 @@ tbl.Combat:CreateDropdown({
     Name = "Stun Target",
     Description = "Choose which entity to auto stun (one at a time)",
     Options = {"Deer", "Owl", "Rambo", "Cat"},
-    Default = "Deer",
+    CurrentOption = "Deer",
     MultipleOptions = false,
     Callback = function(arg)
         local target = arg or "Deer"
